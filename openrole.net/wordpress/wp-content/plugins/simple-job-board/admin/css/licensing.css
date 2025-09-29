@@ -1,0 +1,81 @@
+.sjb-license-popup-wrapper {
+  display: none;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.sjb-license-popup-wrapper .sjbl-modal-container {
+  background-color: #f6f6f6;
+  padding: 20px;
+  border-radius: 6px;
+  top: 25%;
+  left: 40%;
+  width: 450px;
+  position: absolute;
+  box-sizing: border-box;
+}
+.sjbl-button {
+  border: 2px solid #27ae60;
+  color: #27ae60;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 5px 25px 5px 26px;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: background-color 0.2s ease-out;
+  text-decoration: none;
+  background-color: transparent;
+}
+.sjbl-button:hover {
+  background-color: #27ae60;
+  color: #fff;
+}
+.sjbl-discard {
+  margin-left: 1em;
+  color: #b32d2e;
+  text-decoration: none;
+}
+.sjbl-field {
+  width: 100%;
+  padding: 6px;
+  line-height: 2;
+  min-height: 30px;
+}
+.smb-5 {
+  margin-bottom: 5px;
+}
+.sjbl-modal-container h2 {
+  margin: 0 0 20px;
+}
+.sjbl-help-link {
+  font-weight: 700;
+  text-decoration: none;
+}
+.ajbl-addon-name {
+  text-transform: capitalize;
+}
+.sjb-addon-license-meta input {
+  margin-bottom: 5px;
+}
+.sjb-error {
+  display: none;
+  color: #b32d2e !important;
+  font-weight: bold;
+}
+.sjb-success {
+  display: none;
+  color: green !important;
+  font-weight: bold;
+}
+.sjb-addon-license-meta {
+  margin-top: 15px;
+}
+
+.activate_license::before {
+  color: rgba(0, 0, 0, 0.7) !important;
+}

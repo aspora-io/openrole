@@ -1,0 +1,202 @@
+/* Your Admin Style */
+
+form#hmrm-general-settings-form input.regular-text,
+table.hmrm-education-info-table input.regular-text,
+table.hmrm-experience-info-table input.regular-text {
+    max-width: 300px;
+}
+
+#hmrm_shortcode {
+    padding: 10px;
+    text-align: center;
+    border: 2px dotted #FF0000;
+    background: #FFAA2B;
+    font-size: 18px;
+    font-weight: 600;
+    max-width: 430px;
+}
+
+table.hmrm-education-info-table,
+table.hmrm-experience-info-table,
+table.hmrm-skills-table {
+    border: 1px solid #CCC;
+}
+
+table.hmrm-styles-table {
+    width: 100%;
+    border: 0;
+}
+
+table.hmrm-education-info-table th,
+table.hmrm-education-info-table td,
+table.hmrm-experience-info-table th,
+table.hmrm-experience-info-table td,
+table.hmrm-skills-table th,
+table.hmrm-skills-table td,
+table.hmrm-styles-table th,
+table.hmrm-styles-table td {
+    padding: 10px;
+    border-bottom: 1px solid #CCC;
+    background: #F8F8F8;
+    text-align: left;
+    vertical-align: middle;
+}
+
+table.hmrm-styles-table th,
+table.hmrm-styles-table td {
+    border: 0px solid #000;
+    max-width: 160px;
+}
+
+table.hmrm-styles-table input.regular-text {
+    max-width: 100%;
+    width: 100%;
+}
+
+table.hmrm-styles-table th {
+    max-width: 100px;
+}
+
+a.hmrm-skills-delete,
+a.hmrm-exp-delete {
+    color: #CC0000;
+}
+
+a.hmrm-skills-delete:hover,
+a.hmrm-exp-delete:hover {
+    color: #FF0000;
+}
+
+
+/* Alert Bar Started */
+
+.hmrm-alert {
+    padding: 20px !important;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.hmrm-alert.success {
+    background-color: #6ABD6E;
+}
+
+.hmrm-alert.error {
+    background-color: #F66358;
+}
+
+.hmrm-alert.warning {
+    background-color: #FFAA2B;
+}
+
+.hmrm-alert.info {
+    background-color: #47A8F5;
+}
+
+.hmrm-closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hmrm-closebtn:hover {
+    color: black;
+}
+
+
+/* Alert Bar Ended */
+
+
+/* Common Admin Styles Started */
+
+.hmrm-wrap {
+    display: inline-block;
+    min-height: 100px;
+    clear: both;
+    width: 100%;
+}
+
+.hmrm_personal_wrap.hmrm_personal_help {
+    background: #fff;
+    margin: 0 20px 20px 0;
+    padding: 15px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+}
+
+.hmrm_personal_wrap h1 {
+    font-size: 30px !important;
+    text-align: center;
+    border: none;
+    padding: 15px 10px !important;
+    background: #6029F6;
+    color: #fff;
+    margin: 15px !important;
+    line-height: 1;
+    /*margin: 12px 12px 20px 0 !important;*/
+    border-radius: 3px;
+}
+
+.hmrm_personal_wrap .help-link {
+    padding: 16px;
+}
+
+.hmrm-hlp-btn {
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+    margin-right: 10px;
+    padding: 12px 16px;
+}
+
+.hmrm-hlp-btn:hover {
+    color: #f1f1f1;
+}
+
+.hmrm-btn-1 {
+    background-color: #49B158;
+}
+
+.hmrm-btn-2 {
+    background-color: #A62F66;
+}
+
+.hmrm-btn-3 {
+    background-color: #F25757;
+}
+
+.hmrm-btn-4 {
+    background-color: #FC368C;
+}
+
+.hmrm_personal_wrap .hire-ad {
+    padding: 10px 20px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background: #ffffe0;
+    border: 1px solid #E6DB55;
+    margin: 30px auto;
+    width: 60%;
+}
+
+.hmrm-admin-sidebar .postbox {
+    text-align: center;
+}
+
+.hmrm-admin-sidebar .postbox h3.hndle {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+    border-bottom: 1px solid #ccd0d4;
+}
+
+
+/* Common Admin Styles Ended */

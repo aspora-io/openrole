@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:6.4-php8.2-apache
+    container_name: openrole_wordpress_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: ${DB_NAME:-openrole_prod}
+      WORDPRESS_DB_USER: ${DB_USER:-openrole_user}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: or_
+      WORDPRESS_DEBUG: 'false'
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_MEMORY_LIMIT', '512M');
+        define('WP_MAX_MEMORY_LIMIT', '1G');
+        define('DISALLOW_FILE_EDIT', true);
+        define('WP_AUTO_UPDATE_CORE', false);
+        define('FORCE_SSL_ADMIN', true);
+        define('WP_CACHE', true);
+        define('COMPRESS_CSS', true);
+        define('COMPRESS_SCRIPTS', true);
+        define('CONCATENATE_SCRIPTS', true);
+        define('ENFORCE_GZIP', true);
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./ssl:/etc/ssl/certs/openrole:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - openrole_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: openrole_mysql_prod
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-openrole_prod}
+      MYSQL_USER: ${DB_USER:-openrole_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-backup:/backup
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+      interval: 30s
+      start_period: 30s
+    networks:
+      - openrole_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: openrole_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/ssl/certs/openrole:ro
+      - wordpress_data:/var/www/html:ro
+    depends_on:
+      - wordpress
+    networks:
+      - openrole_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: openrole_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - openrole_network
+
+volumes:
+  wordpress_data:
+  mysql_data:
+  redis_data:
+
+networks:
+  openrole_network:
+    driver: bridge

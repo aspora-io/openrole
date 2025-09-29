@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:6.4-php8.2-apache
+    container_name: openrole_wordpress
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: openrole
+      WORDPRESS_DB_USER: openrole_user
+      WORDPRESS_DB_PASSWORD: openrole_pass_2024
+      WORDPRESS_TABLE_PREFIX: or_
+      WORDPRESS_DEBUG: 'true'
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_MEMORY_LIMIT', '256M');
+        define('WP_MAX_MEMORY_LIMIT', '512M');
+        define('DISALLOW_FILE_EDIT', true);
+        define('WP_AUTO_UPDATE_CORE', false);
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - openrole_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: openrole_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass_2024
+      MYSQL_DATABASE: openrole
+      MYSQL_USER: openrole_user
+      MYSQL_PASSWORD: openrole_pass_2024
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 3
+      interval: 30s
+    networks:
+      - openrole_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: openrole_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root_pass_2024
+    ports:
+      - "8083:80"
+    depends_on:
+      - mysql
+    networks:
+      - openrole_network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: openrole_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - openrole_network
+
+volumes:
+  mysql_data:
+
+networks:
+  openrole_network:
+    driver: bridge

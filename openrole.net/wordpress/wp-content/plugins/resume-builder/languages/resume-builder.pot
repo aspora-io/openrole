@@ -1,0 +1,498 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Resume Builder\n"
+"POT-Creation-Date: 2021-05-26 15:39-0400\n"
+"PO-Revision-Date: 2018-01-19 15:22-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: resume-builder.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: includes/api.php:76 includes/class.resume-builder-resumes.php:37
+#: templates/front/parts/header.php:38
+msgid "Download Attachment"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:42
+msgid "Save Resume"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:43
+msgid "Go Back"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:44
+msgid "Styling Options"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:45
+#: includes/widgets/resume.php:67
+msgid "Introduction"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:46
+msgid "History"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:47
+msgid "Heading"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:48
+msgid "Details"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:49
+msgid "Text"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:50
+msgid "Skill"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:51
+#: includes/widgets/resume.php:69
+msgid "Skills"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:52
+msgid "Title"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:53
+msgid "Rating"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:54
+msgid "optional"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:55
+msgid "Star"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:56
+msgid "Stars"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:57
+msgid "Company/School"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:58
+msgid "Degree/Job Title"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:59
+msgid "Date Range"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:60
+msgid "Resume Wrapper"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:61
+msgid "No Container"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:62
+msgid "Contained"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:63
+msgid "Background Color"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:64
+msgid "Padding"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:65
+msgid "Max Width"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:66
+msgid "Percent"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:67
+msgid "Pixels"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:68
+msgid "Radius"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:69
+msgid "Shadow"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:70
+msgid "No"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:71
+msgid "Yes"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:72
+msgid "Photo Size"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:73
+msgid "Small"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:74
+msgid "Medium"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:75
+msgid "Large"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:76
+msgid "Skills Position"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:77
+msgid "Left"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:78
+msgid "Right"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:79
+msgid "Skills Ratings"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:80
+msgid "Hide"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:81
+msgid "Show"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:82
+msgid "Text Color"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:83
+msgid "Highlight Color"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:84
+msgid "Star Color"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:85
+msgid "Remove"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:86
+msgid "Replace"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:87
+msgid "Upload Photo"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:88
+msgid "Name"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:89
+msgid "Email"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:90
+msgid "Phone"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:91
+msgid "Website"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:92
+msgid "Location"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:93
+msgid ""
+"Are you sure you want to close this resume? You will lose any changes you "
+"made since opening it."
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:94
+msgid "Yes, close it"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:95
+msgid "Required Fields"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:96
+msgid "\"Name\" and \"Title\" are required."
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:97
+msgid "Okay"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:98
+#: templates/admin/welcome.php:29
+msgid "Create a Resume"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:99
+msgid "No resumes found."
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:100
+msgid "Untrash"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:101
+msgid "Delete"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:102
+msgid "View"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:103
+msgid "Duplicate"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:104
+msgid "Move to Trash"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:105
+msgid "Copied!"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:106
+msgid "Copy Shortcode"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:107
+msgid ""
+"Are you sure you want to permanently delete this resume? It cannot be "
+"undone."
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:108
+msgid "Yes, delete it"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:109
+msgid "Use this Photo"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:110
+msgid "Select or Upload a photo for this resume"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:111
+msgid "Attachment"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:112
+msgid "Add Attachment"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:113
+msgid "Select or Upload a file attachment for this resume"
+msgstr ""
+
+#: includes/class.resume-builder-admin-enqueues.php:114
+msgid "Attachment Button Text"
+msgstr ""
+
+#: includes/class.resume-builder-admin-menus.php:24
+#: includes/class.resume-builder-admin-menus.php:25
+#: includes/class.resume-builder-post-type.php:46
+#: includes/class.resume-builder-post-type.php:48
+#: includes/class.resume-builder-post-type.php:60
+#: templates/admin/resumes.php:5
+msgid "Resumes"
+msgstr ""
+
+#: includes/class.resume-builder-admin-menus.php:26
+msgid "What's New?"
+msgstr ""
+
+#: includes/class.resume-builder-admin-menus.php:33
+#: includes/class.resume-builder-admin-menus.php:42
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/class.resume-builder-core.php:48
+msgid "copy"
+msgstr ""
+
+#: includes/class.resume-builder-functions.php:37
+msgid "What's new?"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:47
+#: includes/class.resume-builder-post-type.php:49
+msgid "Resume"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:50
+msgid "Add New"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:51
+msgid "Add New Resume"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:52
+msgid "New Resume"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:53
+msgid "Edit Resume"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:54
+msgid "View Resume"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:55
+msgid "All Resumes"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:56
+#: templates/admin/resumes.php:28
+msgid "Search Resumes"
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:57
+msgid "No Resumes found."
+msgstr ""
+
+#: includes/class.resume-builder-post-type.php:58
+msgid "No Resumes found in Trash."
+msgstr ""
+
+#: includes/widgets/resume.php:37
+msgid "Title (optional):"
+msgstr ""
+
+#: includes/widgets/resume.php:49
+msgid "Resume:"
+msgstr ""
+
+#: includes/widgets/resume.php:62
+msgid "Section(s):"
+msgstr ""
+
+#: includes/widgets/resume.php:64
+msgid "Full Resume"
+msgstr ""
+
+#: includes/widgets/resume.php:65
+msgid "Header"
+msgstr ""
+
+#: includes/widgets/resume.php:66
+msgid "Contact Information"
+msgstr ""
+
+#: includes/widgets/resume.php:68
+msgid "Education & Experience"
+msgstr ""
+
+#: includes/widgets/resume.php:74
+msgid "Style:"
+msgstr ""
+
+#: includes/widgets/resume.php:76
+msgid "Compact"
+msgstr ""
+
+#: includes/widgets/resume.php:77
+msgid "Normal"
+msgstr ""
+
+#: templates/admin/resumes.php:5
+msgid "Search"
+msgstr ""
+
+#: templates/admin/resumes.php:5 templates/admin/resumes.php:14
+msgid "Published"
+msgstr ""
+
+#: templates/admin/resumes.php:5
+msgid "Trashed"
+msgstr ""
+
+#: templates/admin/resumes.php:23
+msgid "Trash"
+msgstr ""
+
+#: templates/admin/welcome.php:12
+#, php-format
+msgid "Thanks for using %s."
+msgstr ""
+
+#: templates/admin/welcome.php:14
+#, php-format
+msgid ""
+"If this is your first time using %s, have a look at the %s. If you just "
+"recently updated, you can find out what's new below. Go and %s!"
+msgstr ""
+
+#: templates/admin/welcome.php:14
+msgid "Examples"
+msgstr ""
+
+#: templates/admin/welcome.php:14
+msgid "create a resume"
+msgstr ""
+
+#: templates/admin/welcome.php:20
+msgid "Quick Links"
+msgstr ""
+
+#: templates/admin/welcome.php:36
+msgid "Resume Examples"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Resume Builder"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://wordpress.org/plugins/resume-builder/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Create beautiful resumes with ease."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Justin Scheetz"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://resumebuilder.studio"
+msgstr ""

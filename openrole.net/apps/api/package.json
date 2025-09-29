@@ -1,0 +1,31 @@
+{
+  "name": "@openrole/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist --target=bun",
+    "start": "bun run dist/index.js",
+    "test": "bun test",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "@openrole/database": "workspace:*",
+    "@openrole/shared": "workspace:*",
+    "@hono/node-server": "^1.11.1",
+    "@hono/zod-validator": "^0.2.1",
+    "bullmq": "^5.7.8",
+    "hono": "^4.3.4",
+    "ioredis": "^5.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "resend": "^3.2.0",
+    "stripe": "^15.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.6",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5"
+  }
+}
