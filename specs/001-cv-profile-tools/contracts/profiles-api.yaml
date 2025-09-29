@@ -1,0 +1,530 @@
+openapi: 3.0.3
+info:
+  title: CV & Profile Tools API - Profiles
+  version: 1.0.0
+  description: Candidate profile management endpoints
+
+servers:
+  - url: https://api.openrole.net/v1
+
+paths:
+  /profiles:
+    get:
+      summary: Search candidate profiles
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: skills
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: minSalary
+          in: query
+          schema:
+            type: integer
+        - name: maxSalary
+          in: query
+          schema:
+            type: integer
+        - name: privacy
+          in: query
+          schema:
+            type: string
+            enum: [public, semi_private]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProfileSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /profiles/me:
+    get:
+      summary: Get current user's profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User's profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileDetail'
+        '404':
+          description: Profile not found
+    
+    put:
+      summary: Update current user's profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileDetail'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /profiles/{profileId}:
+    get:
+      summary: Get profile by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileDetail'
+        '403':
+          description: Access denied due to privacy settings
+        '404':
+          description: Profile not found
+
+  /profiles/me/work-experience:
+    post:
+      summary: Add work experience
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceRequest'
+      responses:
+        '201':
+          description: Work experience added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+
+  /profiles/me/work-experience/{experienceId}:
+    put:
+      summary: Update work experience
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: experienceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceRequest'
+      responses:
+        '200':
+          description: Work experience updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+    
+    delete:
+      summary: Delete work experience
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: experienceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Work experience deleted
+
+  /profiles/me/education:
+    post:
+      summary: Add education
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRequest'
+      responses:
+        '201':
+          description: Education added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+
+  /profiles/me/skills:
+    put:
+      summary: Update profile skills
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProfileSkillRequest'
+      responses:
+        '200':
+          description: Skills updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileSkill'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ProfileSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        headline:
+          type: string
+        location:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        salaryRange:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        isVerified:
+          type: boolean
+        privacy:
+          type: string
+          enum: [public, semi_private, anonymous]
+
+    ProfileDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProfileSummary'
+        - type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+              format: email
+            phone:
+              type: string
+            bio:
+              type: string
+            workExperience:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkExperience'
+            education:
+              type: array
+              items:
+                $ref: '#/components/schemas/Education'
+            portfolioItems:
+              type: array
+              items:
+                $ref: '#/components/schemas/PortfolioItem'
+
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        headline:
+          type: string
+          maxLength: 120
+        bio:
+          type: string
+          maxLength: 2000
+        location:
+          type: string
+          maxLength: 100
+        remoteWork:
+          type: boolean
+        salaryExpectationMin:
+          type: integer
+          minimum: 0
+        salaryExpectationMax:
+          type: integer
+          minimum: 0
+        privacyLevel:
+          type: string
+          enum: [public, semi_private, anonymous]
+
+    WorkExperience:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        jobTitle:
+          type: string
+        company:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+        achievements:
+          type: string
+        location:
+          type: string
+        isRemote:
+          type: boolean
+
+    WorkExperienceRequest:
+      type: object
+      required:
+        - jobTitle
+        - company
+        - startDate
+      properties:
+        jobTitle:
+          type: string
+          minLength: 1
+          maxLength: 100
+        company:
+          type: string
+          minLength: 1
+          maxLength: 100
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          maxLength: 2000
+        achievements:
+          type: string
+          maxLength: 2000
+        location:
+          type: string
+          maxLength: 100
+        isRemote:
+          type: boolean
+          default: false
+
+    Education:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        institution:
+          type: string
+        degree:
+          type: string
+        fieldOfStudy:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        grade:
+          type: string
+
+    EducationRequest:
+      type: object
+      required:
+        - institution
+        - degree
+      properties:
+        institution:
+          type: string
+          minLength: 1
+          maxLength: 200
+        degree:
+          type: string
+          minLength: 1
+          maxLength: 100
+        fieldOfStudy:
+          type: string
+          maxLength: 100
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        grade:
+          type: string
+          maxLength: 20
+
+    ProfileSkill:
+      type: object
+      properties:
+        skillId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        proficiencyLevel:
+          type: string
+          enum: [beginner, intermediate, advanced, expert]
+        yearsExperience:
+          type: integer
+
+    ProfileSkillRequest:
+      type: object
+      required:
+        - skillId
+        - proficiencyLevel
+      properties:
+        skillId:
+          type: string
+          format: uuid
+        proficiencyLevel:
+          type: string
+          enum: [beginner, intermediate, advanced, expert]
+        yearsExperience:
+          type: integer
+          minimum: 0
+          maximum: 50
+
+    PortfolioItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [image, document, link, code]
+        url:
+          type: string
+        thumbnailUrl:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized"
+
+    ValidationError:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string

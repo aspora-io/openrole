@@ -1,0 +1,420 @@
+openapi: 3.0.3
+info:
+  title: CV & Profile Tools API - Applications
+  version: 1.0.0
+  description: Job application tracking and management endpoints
+
+servers:
+  - url: https://api.openrole.net/v1
+
+paths:
+  /applications:
+    get:
+      summary: Get user's job applications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [submitted, received, under_review, interview, rejected, offer, hired, withdrawn]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  applications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobApplication'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      summary: Create job application
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreateRequest'
+      responses:
+        '201':
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+        '400':
+          description: Validation error or duplicate application
+
+  /applications/{applicationId}:
+    get:
+      summary: Get application details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplicationDetail'
+        '404':
+          description: Application not found
+
+    put:
+      summary: Update application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdateRequest'
+      responses:
+        '200':
+          description: Application updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+
+  /applications/{applicationId}/withdraw:
+    post:
+      summary: Withdraw application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Application withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+
+  /applications/{applicationId}/status-history:
+    get:
+      summary: Get application status history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Status history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationStatusLog'
+
+  /applications/external:
+    post:
+      summary: Add external job application
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalApplicationRequest'
+      responses:
+        '201':
+          description: External application added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobApplication'
+
+  /applications/stats:
+    get:
+      summary: Get application statistics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month, quarter, year]
+            default: month
+      responses:
+        '200':
+          description: Application statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationStats'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    JobApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        jobId:
+          type: string
+          format: uuid
+          nullable: true
+        jobTitle:
+          type: string
+        companyName:
+          type: string
+        cvDocumentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [submitted, received, under_review, interview, rejected, offer, hired, withdrawn]
+        appliedAt:
+          type: string
+          format: date-time
+        lastStatusChange:
+          type: string
+          format: date-time
+        isExternal:
+          type: boolean
+          description: Whether this is an external application
+
+    JobApplicationDetail:
+      allOf:
+        - $ref: '#/components/schemas/JobApplication'
+        - type: object
+          properties:
+            coverLetter:
+              type: string
+            cvDocument:
+              $ref: '#/components/schemas/CVDocumentSummary'
+            statusHistory:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApplicationStatusLog'
+            feedback:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApplicationFeedback'
+
+    ApplicationCreateRequest:
+      type: object
+      required:
+        - jobId
+        - cvDocumentId
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        cvDocumentId:
+          type: string
+          format: uuid
+        coverLetter:
+          type: string
+          maxLength: 5000
+
+    ApplicationUpdateRequest:
+      type: object
+      properties:
+        coverLetter:
+          type: string
+          maxLength: 5000
+
+    ExternalApplicationRequest:
+      type: object
+      required:
+        - jobTitle
+        - companyName
+      properties:
+        jobTitle:
+          type: string
+          minLength: 1
+          maxLength: 200
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 200
+        applicationUrl:
+          type: string
+          format: uri
+        cvDocumentId:
+          type: string
+          format: uuid
+        coverLetter:
+          type: string
+          maxLength: 5000
+        appliedAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+          maxLength: 1000
+
+    ApplicationStatusLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fromStatus:
+          type: string
+          enum: [submitted, received, under_review, interview, rejected, offer, hired, withdrawn]
+          nullable: true
+        toStatus:
+          type: string
+          enum: [submitted, received, under_review, interview, rejected, offer, hired, withdrawn]
+        changedBy:
+          type: string
+          enum: [system, employer, candidate]
+        reason:
+          type: string
+        notes:
+          type: string
+        changedAt:
+          type: string
+          format: date-time
+
+    ApplicationFeedback:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tag:
+          type: string
+          enum: [too_junior, missing_skills, over_budget, culture_fit, location, other]
+        customReason:
+          type: string
+        isAnonymized:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ApplicationStats:
+      type: object
+      properties:
+        totalApplications:
+          type: integer
+        applicationsByStatus:
+          type: object
+          properties:
+            submitted:
+              type: integer
+            received:
+              type: integer
+            under_review:
+              type: integer
+            interview:
+              type: integer
+            rejected:
+              type: integer
+            offer:
+              type: integer
+            hired:
+              type: integer
+            withdrawn:
+              type: integer
+        responseRate:
+          type: number
+          format: float
+          description: Percentage of applications that received a response
+        averageResponseTime:
+          type: number
+          format: float
+          description: Average time to first response in days
+        topRejectionReasons:
+          type: array
+          items:
+            type: object
+            properties:
+              reason:
+                type: string
+              count:
+                type: integer
+
+    CVDocumentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        label:
+          type: string
+        isGenerated:
+          type: boolean
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer

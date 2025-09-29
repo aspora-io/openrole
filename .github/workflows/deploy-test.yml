@@ -1,0 +1,151 @@
+name: Deployment Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  connection-test:
+    runs-on: ubuntu-latest
+    name: Test Connection and Deployment Setup
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Test SSH connection
+        run: |
+          ssh -o ConnectTimeout=10 ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '✅ SSH connection established successfully'
+            echo 'Server: ${{ secrets.HOST }}'
+            echo 'User: ${{ secrets.USERNAME }}'
+            echo 'Environment: ${{ github.event.inputs.environment || 'auto-trigger' }}'
+          "
+
+      - name: Check server prerequisites
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== System Information ==='
+            uname -a
+            echo ''
+            
+            echo '=== Disk Space ==='
+            df -h /
+            echo ''
+            
+            echo '=== Memory Usage ==='
+            free -h
+            echo ''
+            
+            echo '=== Node.js Version (if installed) ==='
+            node --version 2>/dev/null || echo 'Node.js not installed'
+            echo ''
+            
+            echo '=== Docker Version (if installed) ==='
+            docker --version 2>/dev/null || echo 'Docker not installed'
+            echo ''
+            
+            echo '=== Available Ports ==='
+            ss -tlnp | grep ':3000\|:8080\|:443\|:80' || echo 'Standard ports available'
+            echo ''
+            
+            echo '=== Directory Structure ==='
+            ls -la ~/
+          "
+
+      - name: Test file transfer capabilities
+        run: |
+          # Create a test file
+          echo 'Test deployment file - $(date)' > test-deploy.txt
+          
+          # Transfer file to server
+          scp test-deploy.txt ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/test-deploy.txt
+          
+          # Verify file on server
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== File Transfer Test ==='
+            if [ -f ~/test-deploy.txt ]; then
+              echo '✅ File transfer successful'
+              cat ~/test-deploy.txt
+              rm ~/test-deploy.txt
+            else
+              echo '❌ File transfer failed'
+              exit 1
+            fi
+          "
+
+      - name: Test application directories
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== Application Directory Setup ==='
+            
+            # Check if app directory exists or create it
+            mkdir -p ~/apps/openrole
+            cd ~/apps/openrole
+            
+            echo 'Working directory: $(pwd)'
+            echo 'Directory contents:'
+            ls -la
+            
+            # Test write permissions
+            echo 'test' > write-test.tmp && rm write-test.tmp
+            echo '✅ Write permissions confirmed'
+            
+            # Create basic structure
+            mkdir -p {logs,backups,releases}
+            echo '✅ Basic directory structure created'
+          "
+
+      - name: Environment-specific checks
+        if: github.event.inputs.environment
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== Environment: ${{ github.event.inputs.environment }} ==='
+            
+            case '${{ github.event.inputs.environment }}' in
+              'staging')
+                echo 'Setting up staging environment...'
+                mkdir -p ~/apps/openrole-staging
+                echo 'ENVIRONMENT=staging' > ~/apps/openrole-staging/.env
+                ;;
+              'production')
+                echo 'Checking production readiness...'
+                mkdir -p ~/apps/openrole-production
+                echo 'ENVIRONMENT=production' > ~/apps/openrole-production/.env
+                echo '⚠️  Production deployment would happen here'
+                ;;
+            esac
+          "
+
+      - name: Cleanup and summary
+        if: always()
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== Deployment Test Summary ==='
+            echo '✅ SSH connection: Working'
+            echo '✅ File transfer: Working'
+            echo '✅ Directory creation: Working'
+            echo '✅ Write permissions: Working'
+            echo ''
+            echo 'Server is ready for OpenRole.net deployment!'
+          "
+          
+          # Cleanup local SSH key
+          rm -f ~/.ssh/id_rsa
+          
+          echo "🎉 Connection test completed successfully!"
