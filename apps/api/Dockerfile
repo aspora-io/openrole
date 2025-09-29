@@ -6,8 +6,6 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json* ./
-COPY ../../package.json ../../package.json
-COPY ../../turbo.json ../../turbo.json
 
 RUN npm install
 

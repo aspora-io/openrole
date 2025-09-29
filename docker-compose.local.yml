@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  openrole-web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3011
+
+  openrole-api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "3011:3001"
+    environment:
+      - NODE_ENV=development
