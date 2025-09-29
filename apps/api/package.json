@@ -3,18 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node",
-    "start": "bun run dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && cp package.json dist/",
+    "start": "node dist/index.js",
     "lint": "eslint src/**/*.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "hono": "^4.5.0"
+    "hono": "^4.5.0",
+    "@hono/node-server": "^1.12.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "bun-types": "latest",
+    "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }
 }

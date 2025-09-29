@@ -77,6 +77,16 @@ const port = parseInt(process.env.PORT || '3001')
 console.log(`🚀 OpenRole.net API starting on port ${port}`)
 console.log(`📚 Environment: ${process.env.NODE_ENV || 'development'}`)
 
+// For Node.js deployment
+if (typeof Bun === 'undefined') {
+  const { serve } = require('@hono/node-server')
+  serve({
+    fetch: app.fetch,
+    port: port,
+  })
+  console.log(`🌐 Server running at http://localhost:${port}`)
+}
+
 export default {
   port,
   fetch: app.fetch,
