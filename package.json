@@ -1,0 +1,30 @@
+{
+  "name": "openrole",
+  "version": "1.0.0",
+  "description": "Transparent job platform for fair hiring",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "start": "turbo run start",
+    "start:staging": "NODE_ENV=staging turbo run start",
+    "start:production": "NODE_ENV=production turbo run start"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "npm@10.8.2",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}
