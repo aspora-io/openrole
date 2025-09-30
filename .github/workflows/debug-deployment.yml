@@ -1,0 +1,87 @@
+name: Debug Deployment - OpenRole.net
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Debug deployment status
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            
+            echo "🔍 Debugging OpenRole.net deployment..."
+            
+            cd ~/apps/openrole-production/current
+            
+            echo ""
+            echo "📊 All running containers:"
+            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+            
+            echo ""
+            echo "🔗 Traefik network inspection:"
+            docker network inspect traefik --format '{{range .Containers}}Container: {{.Name}} ({{.IPv4Address}}){{"\n"}}{{end}}'
+            
+            echo ""
+            echo "📋 Container logs (last 10 lines each):"
+            echo "--- openrole-web logs ---"
+            docker logs openrole-web --tail 10 2>&1 || echo "Failed to get web logs"
+            
+            echo ""
+            echo "--- openrole-api logs ---"
+            docker logs openrole-api --tail 10 2>&1 || echo "Failed to get API logs"
+            
+            echo ""
+            echo "🌐 Testing internal connectivity:"
+            echo "Testing web container health..."
+            docker exec openrole-web curl -s localhost:3000 | head -2 || echo "Web container internal test failed"
+            
+            echo ""
+            echo "Testing API container health..."
+            docker exec openrole-api curl -s localhost:3001/health || echo "API container internal test failed"
+            
+            echo ""
+            echo "🔧 Traefik container status:"
+            docker ps | grep traefik || echo "No Traefik container found"
+            
+            echo ""
+            echo "📂 Current directory contents:"
+            ls -la
+            
+            echo ""
+            echo "🎯 Docker compose files:"
+            echo "--- docker-compose.traefik.yml ---"
+            head -10 docker-compose.traefik.yml
+            echo ""
+            echo "--- docker-compose.override.yml ---"
+            cat docker-compose.override.yml
+          EOF
+
+      - name: Test external connectivity
+        run: |
+          echo "🌍 Testing external connectivity to OpenRole.net..."
+          
+          echo "Testing with timeout 30s..."
+          timeout 30 curl -v https://openrole.net 2>&1 | head -20 || echo "Connection failed with timeout"
+          
+          echo ""
+          echo "Testing with different user agent..."
+          timeout 15 curl -s -A "Mozilla/5.0" https://openrole.net | head -3 || echo "User agent test failed"
+          
+          echo ""
+          echo "Testing API endpoint..."
+          timeout 15 curl -v https://api.openrole.net/health 2>&1 | head -10 || echo "API test failed"
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
