@@ -31,13 +31,14 @@ jobs:
       - name: Create deployment archive
         run: |
           # Create a clean archive without git history
-          tar czf openrole-deploy.tar.gz \
+          tar czf /tmp/openrole-deploy.tar.gz \
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='.github' \
             --exclude='*.log' \
             --exclude='.env*' \
             .
+          mv /tmp/openrole-deploy.tar.gz .
 
       - name: Deploy to server
         run: |
