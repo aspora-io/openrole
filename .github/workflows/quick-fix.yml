@@ -1,0 +1,78 @@
+name: Quick Fix OpenRole.net
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Quick fix deployment
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            
+            echo "🔧 Quick fix deployment for OpenRole.net..."
+            
+            # Stop all OpenRole containers (clean slate)
+            echo "Stopping all OpenRole containers..."
+            docker stop $(docker ps -q --filter "name=openrole") 2>/dev/null || true
+            docker stop $(docker ps -q --filter "name=release-") 2>/dev/null || true
+            docker rm $(docker ps -aq --filter "name=openrole") 2>/dev/null || true
+            docker rm $(docker ps -aq --filter "name=release-") 2>/dev/null || true
+            
+            # Ensure Traefik network exists
+            docker network create traefik 2>/dev/null || echo "Traefik network exists"
+            
+            # Go to current deployment
+            cd ~/apps/openrole-production/current
+            
+            # Start with clean docker-compose
+            echo "Starting containers..."
+            docker-compose -f docker-compose.traefik.yml down 2>/dev/null || true
+            docker-compose -f docker-compose.traefik.yml up -d --build
+            
+            # Wait for startup
+            sleep 20
+            
+            echo ""
+            echo "📊 Container status:"
+            docker ps | grep -E "current|openrole"
+            
+            echo ""
+            echo "🔍 Container logs:"
+            CONTAINERS=$(docker ps --format "{{.Names}}" | grep -E "web|api" | head -2)
+            for container in $CONTAINERS; do
+              echo "--- $container ---"
+              docker logs $container --tail 3 2>/dev/null || echo "No logs"
+            done
+            
+            echo ""
+            echo "✅ Quick fix complete!"
+          EOF
+
+      - name: Test endpoints
+        run: |
+          sleep 30
+          echo "🌐 Testing endpoints:"
+          
+          # Test with curl
+          curl -s -k -o /dev/null -w "Web Response: %{http_code} (in %{time_total}s)\n" --max-time 10 https://openrole.net || echo "Web test failed"
+          curl -s -k -o /dev/null -w "API Response: %{http_code} (in %{time_total}s)\n" --max-time 10 https://api.openrole.net/health || echo "API test failed"
+          
+          # Try to get a sample of the response
+          echo ""
+          echo "📄 Sample response:"
+          timeout 10 curl -s -k https://openrole.net | head -3 || echo "No response received"
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
