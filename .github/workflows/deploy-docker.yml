@@ -14,7 +14,7 @@ on:
       branch:
         description: 'Branch to deploy'
         required: true
-        default: '001-cv-profile-tools'
+        default: 'master'
         type: string
 
 jobs:
@@ -28,6 +28,11 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
 
+      - name: Verify Docker configuration
+        run: |
+          echo "Docker compose configuration:"
+          cat docker-compose.traefik.yml
+
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
@@ -37,119 +42,87 @@ jobs:
 
       - name: Deploy to server
         run: |
-          # Create deployment script
-          cat << 'DEPLOY_SCRIPT' > deploy-remote.sh
-          #!/bin/bash
-          set -e
-          
-          DEPLOY_DIR="$HOME/apps/openrole-${{ github.event.inputs.environment }}"
-          RELEASE_DIR="release-$(date +%Y%m%d-%H%M%S)"
-          
-          echo "🚀 Starting Docker-based deployment..."
-          
-          # Create directories
-          mkdir -p $DEPLOY_DIR/{releases,logs}
-          cd $DEPLOY_DIR
-          
-          # Clone repository (using public URL)
-          echo "📦 Cloning repository..."
-          git clone --depth 1 --branch ${{ github.event.inputs.branch }} https://github.com/aspora-io/openrole.git releases/$RELEASE_DIR
-          cd releases/$RELEASE_DIR
-          
-          # Create production env file
-          cat > .env.production << EOF
-          NODE_ENV=production
-          NEXT_PUBLIC_API_URL=https://api.openrole.net
-          EOF
-          
-          # Stop existing containers
-          if [ -L "$DEPLOY_DIR/current" ]; then
-            cd $DEPLOY_DIR/current
-            docker-compose -f docker-compose.traefik.yml down || true
-          fi
-          
-          # Update symlink
-          cd $DEPLOY_DIR
-          rm -f current
-          ln -sf releases/$RELEASE_DIR current
-          
-          # Start new containers
-          cd current
-          echo "🐳 Building and starting containers..."
-          docker-compose -f docker-compose.traefik.yml up -d --build
-          
-          # Wait for containers to start
-          sleep 10
-          
-          # Check container status
-          echo "📊 Container status:"
-          docker ps | grep openrole || echo "No OpenRole containers found"
-          
-          # Cleanup old releases (keep last 5)
-          cd $DEPLOY_DIR/releases
-          ls -t | tail -n +6 | xargs -r rm -rf
-          
-          echo "✅ Docker deployment completed!"
-          DEPLOY_SCRIPT
-          
-          # Copy and execute deployment script
-          scp deploy-remote.sh ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "bash /tmp/deploy-remote.sh && rm /tmp/deploy-remote.sh"
+          # Deploy using Docker on the server
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '🚀 Starting OpenRole Docker deployment...'
+            
+            # Check that Promptcade is still running (safety check)
+            echo 'Checking Promptcade status before deployment...'
+            curl -s https://promptcade.com/health || echo 'Promptcade health check failed'
+            
+            # Create deployment directory
+            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
+            cd ~/apps/openrole-${{ github.event.inputs.environment }}
+            
+            # Clone/update repository
+            if [ -d 'openrole' ]; then
+              cd openrole
+              git fetch origin
+              git checkout ${{ github.event.inputs.branch }}
+              git pull origin ${{ github.event.inputs.branch }}
+            else
+              git clone https://github.com/aspora-io/openrole.git
+              cd openrole
+              git checkout ${{ github.event.inputs.branch }}
+            fi
+            
+            # Check for existing OpenRole containers and stop them specifically
+            echo 'Checking for existing OpenRole containers...'
+            docker ps | grep openrole || echo 'No existing OpenRole containers'
+            
+            # Stop only OpenRole containers to avoid affecting other services
+            docker stop openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to stop'
+            docker rm openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to remove'
+            
+            # Build and start new containers
+            echo 'Building and starting OpenRole containers...'
+            docker-compose -f docker-compose.traefik.yml up -d --build
+            
+            # Wait for containers to be healthy
+            echo 'Waiting for containers to start...'
+            sleep 10
+            
+            echo '✅ Docker deployment completed!'
+            echo 'Environment: ${{ github.event.inputs.environment }}'
+            echo 'Branch: ${{ github.event.inputs.branch }}'
+            
+            # Show container status
+            docker ps | grep openrole || echo 'OpenRole containers starting...'
+          "
 
       - name: Health check
         run: |
-          sleep 15
+          # Wait for containers to start
+          echo "Waiting 30 seconds for containers to start..."
+          sleep 30
           
-          # Check if containers are running
+          # Check if containers are running and test endpoints
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-            echo '🔍 Checking deployment status...'
-            docker ps | grep openrole || echo '⚠️  No OpenRole containers running'
+            echo 'Checking container status...'
+            docker ps | grep openrole
             
-            echo ''
-            echo '📋 Container logs (last 10 lines):'
-            docker logs openrole-web 2>&1 | tail -10 || echo 'Web container not found'
-            echo '---'
-            docker logs openrole-api 2>&1 | tail -10 || echo 'API container not found'
+            echo 'Testing endpoints...'
+            curl -f https://openrole.net || echo 'Website not yet ready'
+            curl -f https://api.openrole.net/health || echo 'API health check not yet ready'
+            
+            echo 'Checking Promptcade is still working...'
+            curl -s https://promptcade.com/health || echo 'Promptcade health check failed'
+            
+            echo '✅ Deployment verification complete'
           "
-          
-          # Test endpoints
-          echo ""
-          echo "🌐 Testing endpoints:"
-          curl -s -o /dev/null -w "HTTPS Status: %{http_code}\n" https://openrole.net || echo "Failed to reach https://openrole.net"
-          curl -s -o /dev/null -w "API Status: %{http_code}\n" https://api.openrole.net/health || echo "Failed to reach API"
 
       - name: Cleanup
         if: always()
         run: |
           rm -f ~/.ssh/id_rsa
-          rm -f deploy-remote.sh
 
-      - name: Deployment summary
+      - name: Deployment notification
         if: always()
         run: |
           if [ ${{ job.status }} == 'success' ]; then
-            echo "# 🚀 Deployment Successful!"
-            echo ""
-            echo "**Environment:** ${{ github.event.inputs.environment }}"
-            echo "**Branch:** ${{ github.event.inputs.branch }}"
-            echo "**Time:** $(date)"
-            echo ""
-            echo "## 🌐 Access URLs:"
-            echo "- Web: https://openrole.net"
-            echo "- API: https://api.openrole.net"
-            echo ""
-            echo "## 📋 Next Steps:"
-            echo "1. Verify the site is accessible"
-            echo "2. Check container logs if needed: \`docker logs openrole-web\`"
-            echo "3. Monitor application health"
+            echo "🚀 Successfully deployed OpenRole.net to ${{ github.event.inputs.environment }}"
+            echo "Branch: ${{ github.event.inputs.branch }}"
+            echo "Time: $(date)"
           else
-            echo "# ❌ Deployment Failed"
-            echo ""
-            echo "Please check the logs above for error details."
-            echo ""
-            echo "## 🔧 Troubleshooting:"
-            echo "1. Check SSH connectivity"
-            echo "2. Verify Docker is installed on server"
-            echo "3. Check disk space on server"
-            echo "4. Review container build logs"
+            echo "❌ Deployment failed"
           fi
