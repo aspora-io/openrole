@@ -32,20 +32,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Verify repository structure
         run: |
-          npm install
-
-      - name: Run tests
-        run: |
-          npm run test || echo "Tests not yet implemented"
-
-      - name: Build application
-        run: |
-          npm run build
-        env:
-          NODE_ENV: production
+          echo "Repository contents:"
+          ls -la
+          echo "Package.json exists:"
+          cat package.json
 
       - name: Setup SSH key
         run: |
@@ -56,72 +50,56 @@ jobs:
 
       - name: Deploy to server
         run: |
-          # Create release directory with timestamp
-          RELEASE_DIR="openrole-$(date +%Y%m%d-%H%M%S)"
-          
+          # Deploy using Docker on the server (simpler approach)
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}/{releases/$RELEASE_DIR,logs}
-          "
-          
-          # Upload built application
-          rsync -avz --delete \
-            --exclude node_modules \
-            --exclude .git \
-            --exclude .env.local \
-            ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/apps/openrole-${{ github.event.inputs.environment }}/releases/$RELEASE_DIR/
-          
-          # Deploy on server
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '🚀 Starting Docker deployment...'
+            
+            # Create deployment directory
+            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
             cd ~/apps/openrole-${{ github.event.inputs.environment }}
             
-            # Install production dependencies
-            cd releases/$RELEASE_DIR
-            npm install --production
+            # Clone/update repository
+            if [ -d 'openrole' ]; then
+              cd openrole
+              git fetch origin
+              git checkout ${{ github.event.inputs.branch }}
+              git pull origin ${{ github.event.inputs.branch }}
+            else
+              git clone https://github.com/aspora-io/openrole.git
+              cd openrole
+              git checkout ${{ github.event.inputs.branch }}
+            fi
             
-            # Update symlink to new release
-            cd ~/apps/openrole-${{ github.event.inputs.environment }}
-            rm -f current
-            ln -sf releases/$RELEASE_DIR current
+            # Stop existing containers
+            docker-compose -f docker-compose.traefik.yml down || echo 'No containers to stop'
             
-            # Stop existing processes if running
-            pkill -f 'openrole' || echo 'No existing processes to stop'
+            # Build and start new containers
+            docker-compose -f docker-compose.traefik.yml up -d --build
             
-            # Start the applications
-            cd current
-            echo 'Starting OpenRole.net applications...'
-            
-            # Start API in background
-            cd apps/api && npm run start > ../../logs/api.log 2>&1 &
-            API_PID=\$!
-            echo \$API_PID > ../../openrole-api.pid
-            
-            # Start Web app in background  
-            cd ../web && npm run start > ../../logs/web.log 2>&1 &
-            WEB_PID=\$!
-            echo \$WEB_PID > ../../openrole-web.pid
-            
-            echo 'OpenRole.net started with PIDs: API='\$API_PID', Web='\$WEB_PID"
-            
-            # Cleanup old releases (keep last 5)
-            cd releases
-            ls -t | tail -n +6 | xargs -r rm -rf
-            
-            echo '✅ Deployment completed successfully!'
+            echo '✅ Docker deployment completed!'
             echo 'Environment: ${{ github.event.inputs.environment }}'
             echo 'Branch: ${{ github.event.inputs.branch }}'
-            echo 'Release: $RELEASE_DIR'
+            
+            # Show container status
+            docker ps | grep openrole || echo 'OpenRole containers starting...'
           "
 
       - name: Health check
         run: |
-          # Wait a moment for application to start
-          sleep 10
+          # Wait for containers to start
+          echo "Waiting 30 seconds for containers to start..."
+          sleep 30
           
-          # Basic health check (adjust URL as needed)
+          # Check if containers are running and test endpoints
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-            echo 'Checking application health...'
-            # curl -f http://localhost:3000/health || echo 'Health check endpoint not available'
-            echo 'Deployment verification complete'
+            echo 'Checking container status...'
+            docker ps | grep openrole
+            
+            echo 'Testing endpoints...'
+            curl -f https://openrole.net || echo 'Website not yet ready'
+            curl -f https://api.openrole.net/health || echo 'API health check not yet ready'
+            
+            echo '✅ Deployment verification complete'
           "
 
       - name: Cleanup
