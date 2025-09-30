@@ -1,0 +1,1079 @@
+openapi: 3.0.3
+info:
+  title: OpenRole CV & Profile Tools API
+  description: API contracts for candidate profile management and CV tools
+  version: 1.0.0
+  contact:
+    name: OpenRole.net
+    url: https://openrole.net
+servers:
+  - url: https://api.openrole.net/v1
+    description: Production server
+  - url: http://localhost:3011/v1
+    description: Development server
+
+paths:
+  # Profile Management
+  /profiles:
+    get:
+      summary: Get candidate profiles (employer search)
+      description: Search and filter candidate profiles with privacy controls
+      operationId: searchProfiles
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: skills
+          in: query
+          description: Comma-separated list of skills to filter by
+          schema:
+            type: string
+            example: "typescript,react,node.js"
+        - name: location
+          in: query
+          description: Location filter
+          schema:
+            type: string
+            example: "Dublin"
+        - name: salaryMin
+          in: query
+          description: Minimum salary expectation in EUR
+          schema:
+            type: integer
+            minimum: 20000
+            example: 50000
+        - name: salaryMax
+          in: query
+          description: Maximum salary expectation in EUR
+          schema:
+            type: integer
+            maximum: 500000
+            example: 80000
+        - name: experienceYears
+          in: query
+          description: Minimum years of experience
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 50
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of profiles per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Profiles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicProfile'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  totalCount:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /profiles/me:
+    get:
+      summary: Get current user's profile
+      description: Retrieve the authenticated candidate's profile
+      operationId: getCurrentProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update current user's profile
+      description: Update the authenticated candidate's profile information
+      operationId: updateCurrentProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    post:
+      summary: Create candidate profile
+      description: Create a new candidate profile for authenticated user
+      operationId: createProfile
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreateRequest'
+      responses:
+        '201':
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Profile already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /profiles/me/privacy:
+    put:
+      summary: Update privacy settings
+      description: Update privacy and visibility settings for the profile
+      operationId: updatePrivacySettings
+      tags: [Profiles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacySettingsRequest'
+      responses:
+        '200':
+          description: Privacy settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacySettings'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # Work Experience
+  /profiles/me/experience:
+    get:
+      summary: Get work experience entries
+      description: Retrieve all work experience for authenticated candidate
+      operationId: getWorkExperience
+      tags: [Experience]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Work experience retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  experience:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkExperience'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Add work experience
+      description: Add a new work experience entry
+      operationId: addWorkExperience
+      tags: [Experience]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceRequest'
+      responses:
+        '201':
+          description: Work experience added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /profiles/me/experience/{experienceId}:
+    put:
+      summary: Update work experience
+      description: Update an existing work experience entry
+      operationId: updateWorkExperience
+      tags: [Experience]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: experienceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceRequest'
+      responses:
+        '200':
+          description: Work experience updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete work experience
+      description: Delete a work experience entry
+      operationId: deleteWorkExperience
+      tags: [Experience]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: experienceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Work experience deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Education
+  /profiles/me/education:
+    get:
+      summary: Get education entries
+      description: Retrieve all education for authenticated candidate
+      operationId: getEducation
+      tags: [Education]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Education retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  education:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Education'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Add education
+      description: Add a new education entry
+      operationId: addEducation
+      tags: [Education]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRequest'
+      responses:
+        '201':
+          description: Education added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /profiles/me/education/{educationId}:
+    put:
+      summary: Update education
+      description: Update an existing education entry
+      operationId: updateEducation
+      tags: [Education]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: educationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationRequest'
+      responses:
+        '200':
+          description: Education updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete education
+      description: Delete an education entry
+      operationId: deleteEducation
+      tags: [Education]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: educationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Education deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CandidateProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        headline:
+          type: string
+          minLength: 10
+          maxLength: 255
+          example: "Senior Full-Stack Developer"
+        summary:
+          type: string
+          maxLength: 2000
+          example: "Experienced developer with 5+ years building scalable web applications..."
+        location:
+          type: string
+          example: "Dublin, Ireland"
+        phoneNumber:
+          type: string
+          example: "+353 1 234 5678"
+        portfolioUrl:
+          type: string
+          format: uri
+          example: "https://johndoe.dev"
+        linkedinUrl:
+          type: string
+          format: uri
+          example: "https://linkedin.com/in/johndoe"
+        githubUrl:
+          type: string
+          format: uri
+          example: "https://github.com/johndoe"
+        experienceYears:
+          type: integer
+          minimum: 0
+          maximum: 50
+          example: 5
+        skills:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+          example: ["TypeScript", "React", "Node.js", "PostgreSQL"]
+        industries:
+          type: array
+          items:
+            type: string
+          example: ["Technology", "SaaS", "E-commerce"]
+        salaryExpectationMin:
+          type: integer
+          minimum: 20000
+          example: 60000
+        salaryExpectationMax:
+          type: integer
+          minimum: 20000
+          example: 80000
+        availableFrom:
+          type: string
+          format: date
+          example: "2024-01-15"
+        willingToRelocate:
+          type: boolean
+          example: false
+        remotePreference:
+          type: string
+          enum: [remote, hybrid, office]
+          example: "hybrid"
+        privacyLevel:
+          type: string
+          enum: [public, semi-private, anonymous]
+          example: "semi-private"
+        profileVisibleToEmployers:
+          type: boolean
+          example: true
+        contactInfoVisible:
+          type: boolean
+          example: false
+        salaryVisible:
+          type: boolean
+          example: true
+        emailVerified:
+          type: boolean
+          example: true
+        profileComplete:
+          type: boolean
+          example: true
+        idVerified:
+          type: boolean
+          example: false
+        verifiedBadge:
+          type: boolean
+          readOnly: true
+          example: false
+        profileViews:
+          type: integer
+          readOnly: true
+          example: 45
+        lastActiveAt:
+          type: string
+          format: date-time
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - headline
+        - location
+        - experienceYears
+        - skills
+        - salaryExpectationMin
+        - salaryExpectationMax
+        - remotePreference
+
+    PublicProfile:
+      type: object
+      description: Profile data visible to employers based on privacy settings
+      properties:
+        id:
+          type: string
+          format: uuid
+        headline:
+          type: string
+          example: "Senior Full-Stack Developer"
+        summary:
+          type: string
+          example: "Experienced developer with 5+ years..."
+        location:
+          type: string
+          example: "Dublin, Ireland"
+        experienceYears:
+          type: integer
+          example: 5
+        skills:
+          type: array
+          items:
+            type: string
+          example: ["TypeScript", "React", "Node.js"]
+        industries:
+          type: array
+          items:
+            type: string
+          example: ["Technology", "SaaS"]
+        salaryExpectationMin:
+          type: integer
+          example: 60000
+        salaryExpectationMax:
+          type: integer
+          example: 80000
+        remotePreference:
+          type: string
+          enum: [remote, hybrid, office]
+          example: "hybrid"
+        verifiedBadge:
+          type: boolean
+          example: true
+        profileViews:
+          type: integer
+          example: 45
+        lastActiveAt:
+          type: string
+          format: date-time
+        # Conditional fields based on privacy settings
+        phoneNumber:
+          type: string
+          description: "Only visible if contactInfoVisible=true"
+        portfolioUrl:
+          type: string
+          format: uri
+          description: "Only visible if contactInfoVisible=true"
+        linkedinUrl:
+          type: string
+          format: uri
+          description: "Only visible if contactInfoVisible=true"
+        githubUrl:
+          type: string
+          format: uri
+          description: "Only visible if contactInfoVisible=true"
+
+    ProfileCreateRequest:
+      type: object
+      properties:
+        headline:
+          type: string
+          minLength: 10
+          maxLength: 255
+        summary:
+          type: string
+          maxLength: 2000
+        location:
+          type: string
+        phoneNumber:
+          type: string
+        portfolioUrl:
+          type: string
+          format: uri
+        linkedinUrl:
+          type: string
+          format: uri
+        githubUrl:
+          type: string
+          format: uri
+        experienceYears:
+          type: integer
+          minimum: 0
+          maximum: 50
+        skills:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+        industries:
+          type: array
+          items:
+            type: string
+        salaryExpectationMin:
+          type: integer
+          minimum: 20000
+        salaryExpectationMax:
+          type: integer
+          minimum: 20000
+        availableFrom:
+          type: string
+          format: date
+        willingToRelocate:
+          type: boolean
+        remotePreference:
+          type: string
+          enum: [remote, hybrid, office]
+      required:
+        - headline
+        - location
+        - experienceYears
+        - skills
+        - salaryExpectationMin
+        - salaryExpectationMax
+        - remotePreference
+
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        headline:
+          type: string
+          minLength: 10
+          maxLength: 255
+        summary:
+          type: string
+          maxLength: 2000
+        location:
+          type: string
+        phoneNumber:
+          type: string
+        portfolioUrl:
+          type: string
+          format: uri
+        linkedinUrl:
+          type: string
+          format: uri
+        githubUrl:
+          type: string
+          format: uri
+        experienceYears:
+          type: integer
+          minimum: 0
+          maximum: 50
+        skills:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 50
+        industries:
+          type: array
+          items:
+            type: string
+        salaryExpectationMin:
+          type: integer
+          minimum: 20000
+        salaryExpectationMax:
+          type: integer
+          minimum: 20000
+        availableFrom:
+          type: string
+          format: date
+        willingToRelocate:
+          type: boolean
+        remotePreference:
+          type: string
+          enum: [remote, hybrid, office]
+
+    PrivacySettingsRequest:
+      type: object
+      properties:
+        privacyLevel:
+          type: string
+          enum: [public, semi-private, anonymous]
+        profileVisibleToEmployers:
+          type: boolean
+        contactInfoVisible:
+          type: boolean
+        salaryVisible:
+          type: boolean
+      required:
+        - privacyLevel
+        - profileVisibleToEmployers
+        - contactInfoVisible
+        - salaryVisible
+
+    PrivacySettings:
+      type: object
+      properties:
+        privacyLevel:
+          type: string
+          enum: [public, semi-private, anonymous]
+        profileVisibleToEmployers:
+          type: boolean
+        contactInfoVisible:
+          type: boolean
+        salaryVisible:
+          type: boolean
+        updatedAt:
+          type: string
+          format: date-time
+
+    WorkExperience:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        profileId:
+          type: string
+          format: uuid
+        jobTitle:
+          type: string
+          example: "Senior Software Engineer"
+        companyName:
+          type: string
+          example: "Tech Corp Ltd"
+        companyWebsite:
+          type: string
+          format: uri
+          example: "https://techcorp.com"
+        location:
+          type: string
+          example: "Dublin, Ireland"
+        startDate:
+          type: string
+          format: date
+          example: "2020-03-01"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          example: "2023-02-28"
+        isCurrent:
+          type: boolean
+          example: false
+        description:
+          type: string
+          example: "Led a team of 5 developers building microservices architecture..."
+        achievements:
+          type: array
+          items:
+            type: string
+          example: ["Reduced API response times by 40%", "Implemented CI/CD pipeline reducing deployment time by 60%"]
+        skills:
+          type: array
+          items:
+            type: string
+          example: ["TypeScript", "Docker", "AWS", "PostgreSQL"]
+        sortOrder:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - jobTitle
+        - companyName
+        - location
+        - startDate
+        - description
+        - isCurrent
+
+    WorkExperienceRequest:
+      type: object
+      properties:
+        jobTitle:
+          type: string
+          minLength: 2
+          maxLength: 200
+        companyName:
+          type: string
+          minLength: 2
+          maxLength: 200
+        companyWebsite:
+          type: string
+          format: uri
+        location:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        isCurrent:
+          type: boolean
+        description:
+          type: string
+          minLength: 10
+          maxLength: 2000
+        achievements:
+          type: array
+          items:
+            type: string
+            minLength: 10
+            maxLength: 500
+          maxItems: 20
+        skills:
+          type: array
+          items:
+            type: string
+        sortOrder:
+          type: integer
+      required:
+        - jobTitle
+        - companyName
+        - location
+        - startDate
+        - description
+        - isCurrent
+
+    Education:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        profileId:
+          type: string
+          format: uuid
+        institutionName:
+          type: string
+          example: "Trinity College Dublin"
+        degree:
+          type: string
+          example: "Bachelor of Science"
+        fieldOfStudy:
+          type: string
+          example: "Computer Science"
+        location:
+          type: string
+          example: "Dublin, Ireland"
+        startDate:
+          type: string
+          format: date
+          example: "2016-09-01"
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          example: "2020-06-30"
+        isOngoing:
+          type: boolean
+          example: false
+        grade:
+          type: string
+          example: "First Class Honours"
+        description:
+          type: string
+          example: "Relevant coursework: Data Structures, Algorithms, Database Design..."
+        sortOrder:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - institutionName
+        - degree
+        - fieldOfStudy
+        - location
+        - startDate
+        - isOngoing
+
+    EducationRequest:
+      type: object
+      properties:
+        institutionName:
+          type: string
+          minLength: 2
+          maxLength: 200
+        degree:
+          type: string
+          minLength: 2
+          maxLength: 200
+        fieldOfStudy:
+          type: string
+          minLength: 2
+          maxLength: 200
+        location:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        isOngoing:
+          type: boolean
+        grade:
+          type: string
+        description:
+          type: string
+          maxLength: 1000
+        sortOrder:
+          type: integer
+      required:
+        - institutionName
+        - degree
+        - fieldOfStudy
+        - location
+        - startDate
+        - isOngoing
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        totalPages:
+          type: integer
+          example: 5
+        hasNextPage:
+          type: boolean
+          example: true
+        hasPreviousPage:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Validation failed"
+        message:
+          type: string
+          example: "The provided data is invalid"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        timestamp:
+          type: string
+          format: date-time
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Validation failed"
+        message:
+          type: string
+          example: "The provided data is invalid"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "headline"
+              message:
+                type: string
+                example: "Headline must be at least 10 characters"
+              code:
+                type: string
+                example: "MIN_LENGTH"
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'

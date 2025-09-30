@@ -1,6 +1,30 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: openrole-postgres
+    environment:
+      POSTGRES_DB: openrole_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # Redis for sessions/caching
+  redis:
+    image: redis:7-alpine
+    container_name: openrole-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  # Web Application
   openrole-web:
     build:
       context: ./apps/web
@@ -10,7 +34,18 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://localhost:3011
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/openrole_dev
+    depends_on:
+      - postgres
+      - redis
+      - openrole-api
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
 
+  # API Application  
   openrole-api:
     build:
       context: ./apps/api
@@ -19,3 +54,17 @@ services:
       - "3011:3001"
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/openrole_dev
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=dev_secret_change_in_production
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+      - /app/dist
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

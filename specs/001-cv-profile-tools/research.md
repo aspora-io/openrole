@@ -1,91 +1,172 @@
 # Research: CV & Profile Tools
 
-## File Upload and Storage
+**Date**: 2025-09-30  
+**Feature**: CV & Profile Tools for OpenRole.net  
+**Status**: Complete
 
-**Decision**: Use multipart/form-data uploads with S3-compatible storage (Cloudflare R2)  
-**Rationale**: Cloudflare R2 provides cost-effective storage with edge distribution, tight integration with existing Cloudflare infrastructure, and S3 API compatibility for easy migration  
+## Research Summary
+
+This research phase analyzed technical requirements for implementing comprehensive CV and profile tools across 5 development phases. No NEEDS CLARIFICATION items remained in the feature specification after the clarification session, allowing direct progression to design phase.
+
+## Technology Decisions
+
+### File Upload & Storage
+**Decision**: File system storage with PostgreSQL metadata tracking  
+**Rationale**: 
+- Simplicity for MVP phase without cloud storage complexity
+- PostgreSQL handles structured metadata (file names, versions, labels)
+- File system provides direct access for CV generation processes
+- Cost-effective for initial deployment
 **Alternatives considered**: 
-- AWS S3: More expensive egress costs
-- Local filesystem: Not scalable, deployment complexity
-- Database BLOB: Performance and size limitations
+- AWS S3: More scalable but adds complexity and cost for MVP
+- Database BLOB storage: Poor performance for large files
 
-## CV Processing and Generation
-
-**Decision**: PDF-lib for CV generation, Multer for file handling, sharp for image processing  
-**Rationale**: PDF-lib provides client-side PDF generation without server dependencies, Multer is the standard Express middleware for multipart uploads, sharp offers fast image optimization  
+### CV Generation Engine
+**Decision**: Server-side HTML-to-PDF generation using Puppeteer  
+**Rationale**:
+- Template-based approach allows multiple CV formats
+- HTML provides flexible styling and responsive design
+- Puppeteer ensures consistent PDF output across environments
+- Can generate accessible PDFs with proper structure
 **Alternatives considered**:
-- Puppeteer: Heavy server-side dependencies, slower
-- jsPDF: Limited formatting capabilities
-- Canvas API: Browser compatibility issues
+- Third-party services (PDFShift, HTMLCSStoJSON): External dependencies and cost
+- Client-side generation: Browser compatibility issues and performance concerns
 
-## Privacy and Access Control
-
-**Decision**: Row-level security (RLS) in PostgreSQL with Drizzle ORM  
-**Rationale**: Database-level security ensures data isolation even if application logic fails, Drizzle provides type-safe query building with RLS support  
+### Privacy Control Implementation
+**Decision**: Database-level privacy flags with middleware enforcement  
+**Rationale**:
+- Row-level security can be implemented in PostgreSQL
+- Middleware ensures consistent privacy enforcement across API endpoints
+- Allows granular control (public, semi-private, anonymous levels)
+- Audit trail for privacy setting changes
 **Alternatives considered**:
-- Application-level filtering: More error-prone, bypass risk
-- Separate schemas: Complex multi-tenancy overhead
-- Redis-based permissions: Additional infrastructure complexity
+- Application-level filtering: More error-prone and harder to audit
+- Separate privacy database: Unnecessary complexity for MVP
 
-## Search and Filtering
-
-**Decision**: PostgreSQL full-text search with GIN indexes for basic search, Elasticsearch for advanced filtering in later phases  
-**Rationale**: PostgreSQL FTS provides good performance for MVP with minimal infrastructure, easy to extend with Elasticsearch later for complex faceted search  
+### Form Validation Strategy
+**Decision**: Zod schemas shared between frontend and backend  
+**Rationale**:
+- Single source of truth for validation rules
+- TypeScript integration provides compile-time safety
+- Frontend validation improves UX, backend validation ensures security
+- Reusable across profile forms, CV generation, and file uploads
 **Alternatives considered**:
-- Elasticsearch from start: Over-engineering for MVP
-- Simple LIKE queries: Poor performance at scale
-- Third-party search API: Vendor lock-in, cost concerns
+- Separate validation libraries: Code duplication and maintenance overhead
+- Backend-only validation: Poor user experience
 
-## Real-time Application Updates
-
-**Decision**: Server-Sent Events (SSE) for application status updates  
-**Rationale**: Simpler than WebSockets for one-way communication, better browser support, automatic reconnection handling  
+### Application Status Tracking
+**Decision**: Finite state machine with PostgreSQL enum types  
+**Rationale**:
+- Clear state transitions prevent invalid status changes
+- Database constraints ensure data consistency
+- Simplifies business logic and error handling
+- Supports audit trail for application lifecycle
 **Alternatives considered**:
-- WebSockets: Overkill for one-way updates
-- Polling: Higher server load, poor UX
-- Push notifications: Complex setup, requires user consent
+- String-based status: Error-prone and harder to validate
+- External workflow engine: Overkill for MVP requirements
 
-## Authentication and Authorization
-
-**Decision**: JWT tokens with refresh token rotation, RBAC using Drizzle schema  
-**Rationale**: Stateless authentication scales well, refresh tokens provide security without frequent re-login, Drizzle enables type-safe role/permission queries  
+### Authentication Integration
+**Decision**: Extend existing JWT + Redis session system  
+**Rationale**:
+- Leverages existing authentication infrastructure
+- JWT tokens can include profile completion status
+- Redis sessions support real-time profile updates
+- Maintains security standards established in constitution
 **Alternatives considered**:
-- Session-based auth: Stateful, Redis dependency
-- OAuth only: Vendor dependency, complex user flow
-- Simple API keys: No expiration, limited security
+- Separate auth system: Unnecessary complexity and user confusion
+- Session-only auth: Less scalable for API access patterns
 
-## Image Optimization and CDN
+## Performance Considerations
 
-**Decision**: Next.js Image component with Cloudflare Images for processing  
-**Rationale**: Next.js Image handles responsive images and lazy loading, Cloudflare Images provides on-demand processing and global CDN distribution  
-**Alternatives considered**:
-- Sharp server-side: Increased server load, no caching
-- Client-side compression: Inconsistent results, larger uploads
-- Third-party service: Additional cost, API dependencies
+### File Upload Optimization
+- Chunked upload for large CV files (up to 10MB limit)
+- Client-side file validation before upload
+- Progress indicators for better UX
+- Background virus scanning integration point for future phases
 
-## Data Validation and Types
+### CV Generation Performance
+- Template caching to reduce Puppeteer overhead
+- Background job processing for non-real-time CV generation
+- PDF optimization for smaller file sizes
+- Concurrent generation limits to prevent resource exhaustion
 
-**Decision**: Zod for runtime validation with TypeScript integration  
-**Rationale**: Zod provides compile-time and runtime type safety, excellent error messages, seamless integration with form libraries and API validation  
-**Alternatives considered**:
-- Joi: Less TypeScript integration
-- Yup: Older API, less type inference
-- Manual validation: Error-prone, no type inference
+### Database Query Optimization
+- Indexes on privacy levels and user lookup patterns
+- Pagination for profile search results
+- Selective field loading based on privacy settings
+- Connection pooling for file upload operations
 
-## Testing Strategy
+## Security Research
 
-**Decision**: Vitest for unit tests, Playwright for E2E, MSW for API mocking  
-**Rationale**: Vitest offers faster test execution with native TypeScript support, Playwright provides reliable cross-browser testing, MSW enables realistic API mocking without server dependencies  
-**Alternatives considered**:
-- Jest: Slower, ESM support issues
-- Cypress: Flakier tests, debugging challenges
-- Manual API mocking: Inconsistent, maintenance overhead
+### File Upload Security
+- MIME type validation with file content verification
+- Antivirus scanning integration points
+- Secure file naming to prevent path traversal
+- Temporary upload area with cleanup processes
 
-## Background Jobs and Processing
+### Privacy Compliance
+- GDPR Article 17 (right to erasure) implementation strategy
+- Data retention policy enforcement mechanisms
+- Audit logging for privacy setting changes
+- Consent management for profile visibility
 
-**Decision**: BullMQ with Redis for job queues (email notifications, CV processing)  
-**Rationale**: BullMQ provides reliable job processing with Redis backing, excellent observability, and retry mechanisms essential for email and file processing  
-**Alternatives considered**:
-- Database-based queues: Polling overhead, scaling issues
-- Cloud functions: Cold start latency, vendor lock-in
-- Simple cron jobs: No reliability guarantees, poor error handling
+### Access Control
+- Role-based permissions for employer profile access
+- API rate limiting for profile search endpoints
+- File access tokens with expiration
+- Audit trail for profile view tracking
+
+## Integration Points
+
+### Existing System Integration
+- User authentication system (already implemented)
+- Job application workflow (planned extension)
+- Email notification system (for application updates)
+- Search and filtering infrastructure (for profile discovery)
+
+### External Service Integration (Future Phases)
+- Payment processing for premium CV services
+- AI/ML services for CV optimization
+- Third-party job board integrations
+- Career development resource APIs
+
+## Accessibility Research
+
+### Form Accessibility
+- ARIA labels for complex form interactions
+- Keyboard navigation for file upload components
+- Screen reader compatibility for CV preview
+- Error message announcements
+
+### Generated CV Accessibility
+- PDF/UA compliance for generated documents
+- Alt text generation for embedded images
+- Proper heading structure in CV templates
+- High contrast options for visual accessibility
+
+## Technical Debt Considerations
+
+### Phase 1 MVP Technical Debt
+- File system storage will need migration to cloud storage
+- Basic CV templates will need design system integration
+- Privacy controls may need more granular permissions
+- Search functionality will need optimization for scale
+
+### Migration Planning
+- Database schema designed for backward compatibility
+- API versioning strategy for breaking changes
+- File storage abstraction layer for future cloud migration
+- Feature flag system for gradual rollout
+
+## Conclusion
+
+Research phase completed successfully with all technical approaches validated against constitutional requirements. No blocking technical concerns identified. Design phase can proceed with confidence in selected technologies and architectural patterns.
+
+Key success factors:
+1. Leveraging existing authentication and database infrastructure
+2. Privacy-by-design approach aligns with transparency principles
+3. File upload security maintains platform trust
+4. Scalable architecture supports 5-phase development plan
+5. Accessibility considerations embedded from start
+
+Next phase: Design & Contracts generation based on research findings.

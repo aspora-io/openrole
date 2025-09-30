@@ -1,247 +1,716 @@
-# Quickstart: CV & Profile Tools
+# Quickstart Guide: CV & Profile Tools
+
+**Date**: 2025-09-30  
+**Feature**: CV & Profile Tools for OpenRole.net  
+**Purpose**: Validation script for testing complete feature implementation
 
 ## Overview
-This quickstart guide validates the core user journeys for the CV & Profile Tools feature through step-by-step testing scenarios.
+
+This quickstart guide provides step-by-step validation of the CV & Profile Tools feature implementation. It serves as both documentation and an integration test script to verify all functional requirements are met.
 
 ## Prerequisites
-- Authentication system working
-- Database schema deployed
-- API endpoints available
-- Frontend components implemented
 
-## Test Scenarios
+- OpenRole.net platform running with authentication system
+- PostgreSQL database with extended schema
+- File system storage configured
+- Test user accounts (candidate and employer)
+- API client (curl, Postman, or automated test runner)
 
-### 1. Candidate Profile Creation
-**Goal**: Verify complete profile creation flow
+## Environment Setup
 
-**Steps**:
-1. Navigate to `/profile/create`
-2. Fill in basic information:
-   - First name: "Jane"
-   - Last name: "Smith"
-   - Email: "jane.smith@example.com"
-   - Headline: "Senior Software Engineer"
-   - Location: "London, UK"
-3. Add work experience:
-   - Job title: "Senior Developer"
-   - Company: "TechCorp"
-   - Start date: "2022-01-01"
-   - End date: Current
-   - Description: "Led development of React applications"
-   - Achievements: "Reduced load time by 40%"
-4. Add education:
-   - Institution: "University of London"
-   - Degree: "Computer Science BSc"
-   - Field: "Software Engineering"
-   - Graduation: "2020-06-01"
-5. Add skills: "TypeScript", "React", "Node.js"
-6. Set salary expectations: £60,000 - £80,000
-7. Set privacy to "semi_private"
-8. Save profile
+```bash
+# 1. Start local development environment
+cd /home/alan/business/openrole
+docker-compose -f docker-compose.local.yml up -d
 
-**Expected Results**:
-- Profile created successfully
-- All data persisted correctly
-- Profile completeness indicator shows 100%
-- Redirect to profile view page
+# 2. Verify services are running
+curl http://localhost:3011/v1/health
+curl http://localhost:3010
 
-### 2. CV Upload and Management
-**Goal**: Test CV upload, labeling, and version management
+# 3. Set environment variables for testing
+export API_BASE="http://localhost:3011/v1"
+export WEB_BASE="http://localhost:3010"
+export TEST_TOKEN="<jwt-token-for-candidate-user>"
+export EMPLOYER_TOKEN="<jwt-token-for-employer-user>"
+```
 
-**Steps**:
-1. Navigate to `/profile/cvs`
-2. Click "Upload CV"
-3. Select PDF file (< 10MB)
-4. Add label: "Technical CV"
-5. Upload file
-6. Verify CV appears in list
-7. Upload second CV with label: "Management CV"
-8. Set "Technical CV" as active
-9. Edit label of "Management CV" to "Leadership CV"
-10. Download "Technical CV"
+## Test Data Preparation
 
-**Expected Results**:
-- Both CVs uploaded successfully
-- File size validation works (reject >10MB)
-- Labels can be edited
-- Active CV marked correctly
-- Download returns correct file
-- File URLs are secure/temporary
+```bash
+# Create test CV file
+echo "Sample CV content for testing" > test-cv.pdf
 
-### 3. Privacy Controls and Visibility
-**Goal**: Verify privacy settings affect profile visibility
+# Create test portfolio files
+echo "Sample portfolio document" > portfolio-sample.pdf
+echo "Sample code snippet" > code-sample.txt
+```
 
-**Steps**:
-1. Create profile with privacy "public"
-2. Log in as employer user
-3. Search for candidate by location
-4. Verify profile appears with full details
-5. Log back in as candidate
-6. Change privacy to "semi_private"
-7. Log in as employer again
-8. Search and verify contact details hidden
-9. Change to "anonymous"
-10. Verify profile not discoverable in search
+## Phase 1: MVP Features Testing
 
-**Expected Results**:
-- Public: Full profile visible in search
-- Semi-private: Profile visible but contact hidden
-- Anonymous: Profile not in search results
-- Privacy changes take effect immediately
+### FR-001: Basic Profile Creation
 
-### 4. Job Application Flow
-**Goal**: Test complete application submission and tracking
+**Test: Create candidate profile with required fields**
 
-**Steps**:
-1. Browse to job posting page
-2. Click "Apply for this job"
-3. Select CV from dropdown
-4. Write cover letter
-5. Submit application
-6. Navigate to applications dashboard
-7. Verify application appears with "submitted" status
-8. (Simulate employer action) Update status to "received"
-9. Check application shows updated status
-10. View detailed application page
-11. Verify status history shows transition
+```bash
+# Create profile
+curl -X POST "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "headline": "Senior Full-Stack Developer",
+    "summary": "Experienced developer with 5+ years building scalable web applications using modern JavaScript frameworks and cloud technologies.",
+    "location": "Dublin, Ireland",
+    "phoneNumber": "+353 1 234 5678",
+    "portfolioUrl": "https://johndoe.dev",
+    "linkedinUrl": "https://linkedin.com/in/johndoe",
+    "githubUrl": "https://github.com/johndoe",
+    "experienceYears": 5,
+    "skills": ["TypeScript", "React", "Node.js", "PostgreSQL", "AWS"],
+    "industries": ["Technology", "SaaS"],
+    "salaryExpectationMin": 60000,
+    "salaryExpectationMax": 80000,
+    "availableFrom": "2024-02-01",
+    "willingToRelocate": false,
+    "remotePreference": "hybrid"
+  }'
 
-**Expected Results**:
-- Application submitted successfully
-- Status updates reflected in dashboard
-- Status history maintained
-- Cover letter and CV linked correctly
-- Email notifications sent (if implemented)
+# Expected: 201 Created with profile data
+# Verify: Profile contains all submitted fields
+# Verify: profileComplete = false (needs work experience)
+# Verify: verifiedBadge = false (needs email verification)
+```
 
-### 5. CV Generation from Profile
-**Goal**: Test automated CV generation feature
+**Test: Profile validation rules**
 
-**Steps**:
-1. Ensure profile has complete work experience and education
-2. Navigate to CV generation page
-3. Select "ATS-Safe" template
-4. Choose sections to include: all except references
-5. Generate CV
-6. Preview generated CV
-7. Download generated CV
-8. Verify CV contains profile data correctly formatted
+```bash
+# Test minimum salary validation
+curl -X POST "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "headline": "Test",
+    "salaryExpectationMin": 15000
+  }'
 
-**Expected Results**:
-- CV generated successfully
-- All profile data included and formatted
-- PDF is well-formatted and readable
-- Generated CV saved to CV list
-- Template styling applied correctly
+# Expected: 422 Validation Error
+# Verify: Error mentions minimum salary of 20000
+```
 
-### 6. External Application Tracking
-**Goal**: Test manual entry of external job applications
+### FR-002: CV Upload with File Validation
 
-**Steps**:
-1. Navigate to applications page
-2. Click "Add External Application"
-3. Fill in details:
-   - Job title: "DevOps Engineer"
-   - Company: "StartupCo"
-   - Application URL: "https://jobs.startupco.com/apply/123"
-   - Applied date: Today
-   - Notes: "Applied via company website"
-4. Save external application
-5. Update status to "interview"
-6. Add notes about interview process
+**Test: Upload valid CV file**
 
-**Expected Results**:
-- External application saved correctly
-- Appears in applications dashboard
-- Can be updated and tracked like internal applications
-- Clearly marked as external application
+```bash
+# Upload PDF CV
+curl -X POST "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@test-cv.pdf" \
+  -F "label=Software Engineer CV" \
+  -F "isDefault=true"
 
-### 7. Application Status Updates and Feedback
-**Goal**: Test employer feedback and candidate notifications
+# Expected: 201 Created with CV document metadata
+# Verify: File size is recorded correctly
+# Verify: MIME type is application/pdf
+# Verify: Version number is 1 (first CV)
+# Verify: isDefault = true
+# Verify: status = processing (initially)
+```
 
-**Steps**:
-1. (As employer) Update application status to "rejected"
-2. Select rejection reason: "missing_skills"
-3. (As candidate) View updated application
-4. Verify rejection reason visible (anonymized)
-5. Check applications stats page
-6. Verify rejection reason counted in statistics
+**Test: File size and type validation**
 
-**Expected Results**:
-- Status updated immediately
-- Rejection feedback anonymized and helpful
-- Statistics updated correctly
-- Candidate receives notification
+```bash
+# Test oversized file (>10MB)
+dd if=/dev/zero of=large-file.pdf bs=1M count=11
+curl -X POST "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@large-file.pdf" \
+  -F "label=Large CV"
 
-### 8. Profile Verification Process
-**Goal**: Test verified candidate badge workflow
+# Expected: 413 Payload Too Large
+# Verify: Error message mentions 10MB limit
 
-**Steps**:
-1. Complete profile with all required fields
-2. Verify email address (click link in email)
-3. Upload ID verification documents
-4. (Simulate admin approval) Approve verification
-5. Verify "Verified Candidate" badge appears
-6. Check badge shows in search results
+# Test invalid file type
+echo "not a cv" > invalid.txt
+curl -X POST "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@invalid.txt" \
+  -F "label=Invalid CV"
 
-**Expected Results**:
-- Email verification working
-- ID upload secure and processed
-- Badge awarded after all criteria met
-- Badge visible to employers in search
+# Expected: 422 Validation Error
+# Verify: Error mentions supported file types
+```
 
-### 9. Data Export and Privacy Compliance
-**Goal**: Test GDPR compliance features
+### FR-003: Privacy Controls
 
-**Steps**:
-1. Navigate to profile settings
-2. Click "Export My Data"
-3. Download exported data file
-4. Verify all profile data included
-5. Click "Delete My Account"
-6. Confirm deletion understanding
-7. Verify profile inaccessible
-8. Check applications anonymized but retained
+**Test: Set privacy levels**
 
-**Expected Results**:
-- Data export contains all user data
-- Export format is readable (JSON/CSV)
-- Account deletion removes personal data
-- Historical applications anonymized
-- Deletion irreversible after confirmation
+```bash
+# Set semi-private privacy
+curl -X PUT "$API_BASE/profiles/me/privacy" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "privacyLevel": "semi-private",
+    "profileVisibleToEmployers": true,
+    "contactInfoVisible": false,
+    "salaryVisible": true
+  }'
 
-### 10. Performance and Accessibility
-**Goal**: Validate non-functional requirements
+# Expected: 200 OK with updated privacy settings
+# Verify: Settings are applied correctly
+```
 
-**Steps**:
-1. Test profile page load time (should be <2.5s)
-2. Navigate using only keyboard
-3. Test with screen reader
-4. Verify color contrast meets WCAG standards
-5. Test on mobile device
-6. Upload maximum file size (10MB)
-7. Test with slow network connection
+**Test: Privacy enforcement in employer search**
 
-**Expected Results**:
-- Page loads within performance targets
-- All features keyboard accessible
-- Screen reader compatibility
-- Mobile responsive design works
-- File size limits enforced
-- Graceful degradation on slow connections
+```bash
+# Search profiles as employer
+curl -X GET "$API_BASE/profiles?skills=typescript" \
+  -H "Authorization: Bearer $EMPLOYER_TOKEN"
+
+# Expected: 200 OK with profile list
+# Verify: Contact info is hidden (contactInfoVisible=false)
+# Verify: Salary info is visible (salaryVisible=true)
+# Verify: Profile appears in search (profileVisibleToEmployers=true)
+```
+
+### FR-004: Salary Expectations
+
+**Test: Salary range specifications**
+
+```bash
+# Update salary expectations
+curl -X PUT "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "salaryExpectationMin": 65000,
+    "salaryExpectationMax": 85000
+  }'
+
+# Expected: 200 OK with updated profile
+# Verify: Salary range is updated
+# Verify: Min <= Max validation enforced
+```
+
+### FR-005: Employer Profile Search
+
+**Test: Search and filter functionality**
+
+```bash
+# Test skill-based search
+curl -X GET "$API_BASE/profiles?skills=typescript,react&location=Dublin" \
+  -H "Authorization: Bearer $EMPLOYER_TOKEN"
+
+# Expected: 200 OK with matching profiles
+# Verify: Results contain profiles with specified skills
+# Verify: Location filtering works
+
+# Test salary range filtering
+curl -X GET "$API_BASE/profiles?salaryMin=50000&salaryMax=90000" \
+  -H "Authorization: Bearer $EMPLOYER_TOKEN"
+
+# Expected: 200 OK with profiles in salary range
+# Verify: Only profiles within range are returned
+```
+
+### FR-006: Multiple CV Versions
+
+**Test: CV version management**
+
+```bash
+# Upload second CV version
+curl -X POST "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@test-cv-v2.pdf" \
+  -F "label=Product Manager CV" \
+  -F "isDefault=false"
+
+# Expected: 201 Created
+# Verify: Version number is 2
+# Verify: isDefault = false
+# Verify: Previous CV remains default
+
+# List all CV versions
+curl -X GET "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 200 OK with array of CV documents
+# Verify: Both versions are listed
+# Verify: Version numbers are correct
+```
+
+### FR-007: CV Attachment to Applications
+
+**Test: CV selection in applications**
+
+```bash
+# Get available CVs for application
+curl -X GET "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Apply to job with specific CV
+CV_ID="<cv-document-id>"
+JOB_ID="<job-posting-id>"
+
+curl -X POST "$API_BASE/applications" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"jobId\": \"$JOB_ID\",
+    \"cvDocumentId\": \"$CV_ID\",
+    \"coverLetter\": \"I am interested in this position...\"
+  }"
+
+# Expected: 201 Created with application
+# Verify: CV is attached to application
+# Verify: Correct CV version is referenced
+```
+
+## Phase 2: Enhanced Profile Features
+
+### FR-008: CV Generation from Profile
+
+**Test: Template-based CV generation**
+
+```bash
+# Get available templates
+curl -X GET "$API_BASE/cv/templates" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 200 OK with template list
+# Verify: Templates include ATS-safe, modern, classic categories
+# Verify: Each template has preview and description
+
+# Generate CV from profile
+TEMPLATE_ID="<template-uuid>"
+curl -X POST "$API_BASE/cv/generate" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"templateId\": \"$TEMPLATE_ID\",
+    \"label\": \"Generated CV - Modern\",
+    \"isDefault\": false,
+    \"sections\": {
+      \"includePersonalDetails\": true,
+      \"includeWorkExperience\": true,
+      \"includeEducation\": true,
+      \"includeSkills\": true,
+      \"includePortfolio\": false
+    }
+  }"
+
+# Expected: 202 Accepted (async processing)
+# Verify: Returns CV ID and processing status
+# Verify: Estimated completion time provided
+```
+
+### FR-009: Portfolio Management
+
+**Test: Portfolio item upload**
+
+```bash
+# Add portfolio project
+curl -X POST "$API_BASE/portfolio" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@portfolio-sample.pdf" \
+  -F "title=E-commerce Platform" \
+  -F "description=Complete redesign of checkout flow resulting in 25% conversion increase" \
+  -F "type=project" \
+  -F "technologies=[\"React\", \"TypeScript\", \"Stripe\"]" \
+  -F "projectDate=2023-06-15" \
+  -F "role=Lead Frontend Developer" \
+  -F "isPublic=true"
+
+# Expected: 201 Created with portfolio item
+# Verify: File is uploaded and stored
+# Verify: Metadata is correctly recorded
+
+# Add external link portfolio item
+curl -X POST "$API_BASE/portfolio" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Open Source Library",
+    "description": "TypeScript library for form validation",
+    "type": "code",
+    "externalUrl": "https://github.com/johndoe/validation-lib",
+    "technologies": ["TypeScript", "Jest", "GitHub Actions"],
+    "projectDate": "2023-03-10",
+    "role": "Creator and Maintainer",
+    "isPublic": true
+  }'
+
+# Expected: 201 Created
+# Verify: External URL is stored
+# Verify: No file is uploaded
+```
+
+### FR-010: External Link Validation
+
+**Test: Link validation system**
+
+```bash
+# Check portfolio item validation status
+PORTFOLIO_ID="<portfolio-item-id>"
+curl -X GET "$API_BASE/portfolio/$PORTFOLIO_ID" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 200 OK with portfolio item
+# Verify: linkValidated field exists
+# Verify: validationStatus shows current state
+# Verify: lastValidationCheck timestamp
+
+# Test invalid URL handling
+curl -X POST "$API_BASE/portfolio" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Broken Link Test",
+    "description": "Testing invalid URL handling",
+    "type": "link",
+    "externalUrl": "https://invalid-domain-that-does-not-exist.com",
+    "isPublic": false
+  }'
+
+# Expected: 201 Created
+# Note: Validation happens asynchronously
+# Verify: validationStatus eventually becomes "unreachable"
+```
+
+### FR-011: Achievements vs Responsibilities
+
+**Test: Work experience with achievements**
+
+```bash
+# Add work experience with structured achievements
+curl -X POST "$API_BASE/profiles/me/experience" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jobTitle": "Senior Software Engineer",
+    "companyName": "Tech Corp Ltd",
+    "companyWebsite": "https://techcorp.com",
+    "location": "Dublin, Ireland",
+    "startDate": "2020-03-01",
+    "endDate": "2023-02-28",
+    "isCurrent": false,
+    "description": "Led development of microservices architecture and mentored junior developers in best practices.",
+    "achievements": [
+      "Reduced API response times by 40% through database optimization",
+      "Implemented CI/CD pipeline reducing deployment time from 2 hours to 15 minutes",
+      "Mentored 3 junior developers resulting in 2 promotions"
+    ],
+    "skills": ["TypeScript", "Docker", "AWS", "PostgreSQL", "Kubernetes"]
+  }'
+
+# Expected: 201 Created with work experience
+# Verify: Achievements are stored separately from description
+# Verify: Achievements are measurable and specific
+# Verify: Skills are properly categorized
+```
+
+### FR-012: Verified Candidate Badge
+
+**Test: Verification badge calculation**
+
+```bash
+# Check initial verification status
+curl -X GET "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: verifiedBadge = false initially
+# Verify: emailVerified, profileComplete, idVerified fields exist
+
+# Simulate email verification (admin endpoint in real implementation)
+curl -X PUT "$API_BASE/admin/users/verify-email" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "<user-id>"}'
+
+# Check updated verification status
+curl -X GET "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: emailVerified = true
+# Verify: verifiedBadge calculation updates correctly
+# Verify: Badge shows in employer search results
+```
+
+## Phase 3: Advanced Features Testing
+
+### FR-013: Tailored CV Generation
+
+**Test: Job-specific CV generation**
+
+```bash
+# Generate CV tailored to specific job posting
+JOB_ID="<target-job-id>"
+curl -X POST "$API_BASE/cv/generate/tailored" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"templateId\": \"$TEMPLATE_ID\",
+    \"label\": \"CV for Frontend Developer Role\",
+    \"targetJobId\": \"$JOB_ID\",
+    \"emphasizeSkills\": [\"React\", \"TypeScript\", \"CSS\"],
+    \"includeRelevantExperience\": true
+  }"
+
+# Expected: 202 Accepted (async processing)
+# Verify: CV generation considers job requirements
+# Verify: Relevant skills and experience are highlighted
+```
+
+### FR-014: Blind CV Option
+
+**Test: Anonymous CV generation**
+
+```bash
+# Generate blind CV with personal identifiers removed
+curl -X POST "$API_BASE/cv/generate" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"templateId\": \"$TEMPLATE_ID\",
+    \"label\": \"Blind CV - No Personal Info\",
+    \"blindMode\": true,
+    \"removePersonalInfo\": true,
+    \"removeContactDetails\": true,
+    \"removePhotoPlaceholder\": true
+  }"
+
+# Expected: 202 Accepted
+# Verify: Generated CV contains no identifying information
+# Verify: Experience and skills remain intact
+# Verify: Company names can be optionally anonymized
+```
+
+### FR-015: Application Status Tracking
+
+**Test: Enhanced application tracking**
+
+```bash
+# Check application status
+APPLICATION_ID="<application-id>"
+curl -X GET "$API_BASE/applications/$APPLICATION_ID/status" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 200 OK with detailed status history
+# Verify: Status progression is tracked
+# Verify: Timestamps for each status change
+# Verify: Interview scheduling information when applicable
+```
+
+### FR-016: External Application Tracking
+
+**Test: Manual external application entry**
+
+```bash
+# Add external application
+curl -X POST "$API_BASE/external-applications" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "companyName": "External Company Ltd",
+    "jobTitle": "Senior Developer",
+    "jobUrl": "https://externalcompany.com/jobs/senior-dev",
+    "applicationDate": "2023-12-01",
+    "status": "applied",
+    "notes": "Applied through their website, used my React-focused CV",
+    "source": "Company website",
+    "cvDocumentId": "<cv-id-used>"
+  }'
+
+# Expected: 201 Created with external application
+# Verify: Application is tracked alongside internal applications
+# Verify: CV reference is maintained
+# Verify: Notes and source information preserved
+```
+
+### FR-017 & FR-018: Rejection Feedback
+
+**Test: Standardized rejection reasons and feedback**
+
+```bash
+# Simulate employer providing rejection feedback
+curl -X PUT "$API_BASE/applications/$APPLICATION_ID/status" \
+  -H "Authorization: Bearer $EMPLOYER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "rejected",
+    "rejectionReason": "Experience level mismatch",
+    "rejectionFeedback": "Candidate has strong technical skills but requires more senior-level experience for this role. Consider applying for mid-level positions.",
+    "feedbackShared": true
+  }'
+
+# Check candidate view of feedback
+curl -X GET "$API_BASE/applications/$APPLICATION_ID/feedback" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 200 OK with anonymized feedback
+# Verify: Personal identifiers removed from feedback
+# Verify: Constructive feedback preserved
+# Verify: Standardized rejection reasons used
+```
+
+## Integration Testing
+
+### Full User Journey Test
+
+**Test: Complete candidate onboarding to job application**
+
+```bash
+# 1. Create profile
+# 2. Add work experience and education
+# 3. Upload CV
+# 4. Set privacy preferences
+# 5. Add portfolio items
+# 6. Generate tailored CV
+# 7. Apply to job with generated CV
+# 8. Track application status
+
+# This test validates the entire user workflow
+# Expected: All steps complete successfully
+# Verify: Data consistency across all features
+# Verify: Privacy settings respected throughout
+```
+
+### Performance Testing
+
+**Test: File upload and processing performance**
+
+```bash
+# Upload maximum size CV (10MB)
+time curl -X POST "$API_BASE/cv" \
+  -H "Authorization: Bearer $TEST_TOKEN" \
+  -F "file=@large-cv.pdf" \
+  -F "label=Large CV Test"
+
+# Expected: Response time < 30 seconds
+# Verify: File processing completes successfully
+# Verify: Virus scanning (if implemented) completes
+```
+
+### Security Testing
+
+**Test: Authorization and privacy enforcement**
+
+```bash
+# Attempt to access other user's CV
+OTHER_CV_ID="<other-user-cv-id>"
+curl -X GET "$API_BASE/cv/$OTHER_CV_ID" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 403 Forbidden or 404 Not Found
+# Verify: Cross-user data access prevented
+
+# Test file download security
+curl -X GET "$API_BASE/cv/$CV_ID/download?token=invalid-token" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Expected: 403 Forbidden
+# Verify: Invalid tokens rejected
+# Verify: Token expiration enforced
+```
+
+## Error Handling Testing
+
+### Validation Error Testing
+
+```bash
+# Test all validation scenarios:
+# - Invalid email formats
+# - Salary min > max
+# - Missing required fields
+# - File type restrictions
+# - File size limits
+# - Invalid URL formats
+# - Invalid date ranges
+
+# Each test should return appropriate error codes and messages
+```
+
+### Edge Cases
+
+```bash
+# Test edge cases:
+# - Profile with 0 experience years
+# - Maximum skills array (50 items)
+# - Special characters in text fields
+# - Unicode handling in uploads
+# - Concurrent CV uploads
+# - Network interruption during upload
+```
 
 ## Success Criteria
-All test scenarios must pass for the feature to be considered complete:
 
-- ✅ Profile creation and management working
-- ✅ CV upload and generation functional
-- ✅ Privacy controls effective
-- ✅ Application tracking accurate
-- ✅ Performance targets met
-- ✅ Accessibility requirements satisfied
-- ✅ GDPR compliance implemented
+### Functional Requirements Validation
 
-## Rollback Plan
-If critical issues found:
-1. Disable CV generation temporarily
-2. Fall back to basic profile view
-3. Maintain existing applications data
-4. Fix issues in staging before re-deployment
+- [ ] All 31 functional requirements (FR-001 through FR-031) tested
+- [ ] Privacy controls enforce visibility rules correctly
+- [ ] File upload/download works securely
+- [ ] CV generation produces valid documents
+- [ ] Application tracking maintains data integrity
+- [ ] Search and filtering perform within acceptable limits
+
+### Performance Requirements
+
+- [ ] CV upload completes within 30 seconds for 10MB files
+- [ ] Profile search returns results within 500ms
+- [ ] CV generation completes within 2 minutes
+- [ ] API response times under 200ms for standard operations
+
+### Security Requirements
+
+- [ ] Authentication required for all endpoints
+- [ ] Authorization prevents cross-user data access
+- [ ] File access tokens expire correctly
+- [ ] Privacy settings enforced consistently
+- [ ] Input validation prevents injection attacks
+
+### Accessibility Requirements
+
+- [ ] Generated CVs meet WCAG 2.1 AA standards
+- [ ] File download URLs are screen reader accessible
+- [ ] Error messages are properly announced
+- [ ] Form validation provides clear feedback
+
+## Cleanup
+
+```bash
+# Remove test files
+rm -f test-cv*.pdf portfolio-sample.pdf code-sample.txt large-file.pdf invalid.txt
+
+# Reset test user profiles (optional)
+curl -X DELETE "$API_BASE/profiles/me" \
+  -H "Authorization: Bearer $TEST_TOKEN"
+
+# Stop development services
+docker-compose -f docker-compose.local.yml down
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **File upload fails**: Check file permissions and storage configuration
+2. **CV generation timeout**: Verify Puppeteer installation and memory limits
+3. **Database connection errors**: Ensure PostgreSQL is running and schema is migrated
+4. **Authentication failures**: Verify JWT configuration and token validity
+5. **Privacy violations**: Check middleware implementation and database queries
+
+### Debug Commands
+
+```bash
+# Check service health
+curl $API_BASE/health
+
+# View service logs
+docker-compose logs api
+docker-compose logs web
+
+# Database query testing
+docker exec openrole-postgres psql -U postgres -d openrole_dev -c "SELECT * FROM candidate_profiles LIMIT 5;"
+```
+
+This quickstart guide serves as comprehensive validation that the CV & Profile Tools feature meets all requirements and handles edge cases appropriately. It should be run after implementation to ensure quality and completeness.
