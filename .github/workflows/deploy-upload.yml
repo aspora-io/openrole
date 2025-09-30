@@ -74,7 +74,7 @@ jobs:
             # Stop existing containers if any
             if [ -L "$DEPLOY_DIR/current" ]; then
               cd $DEPLOY_DIR/current
-              docker-compose -f docker-compose.traefik.yml down || true
+              docker-compose -f docker-compose.traefik.yml -p openrole down || true
             fi
             
             # Update symlink
@@ -88,7 +88,7 @@ jobs:
             # Build and start containers
             cd current
             echo "🐳 Building and starting containers..."
-            docker-compose -f docker-compose.traefik.yml up -d --build
+            docker-compose -f docker-compose.traefik.yml -p openrole up -d --build
             
             # Wait for containers
             sleep 10
