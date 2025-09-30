@@ -82,6 +82,9 @@ jobs:
             rm -f current
             ln -sf releases/$CURRENT_RELEASE current
             
+            # Ensure Traefik network exists
+            docker network create traefik 2>/dev/null || echo "Traefik network already exists"
+            
             # Build and start containers
             cd current
             echo "🐳 Building and starting containers..."
