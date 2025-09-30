@@ -1,0 +1,121 @@
+name: Deploy OpenRole.net (Upload)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create deployment archive
+        run: |
+          # Create a clean archive without git history
+          tar czf openrole-deploy.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.github' \
+            --exclude='*.log' \
+            --exclude='.env*' \
+            .
+
+      - name: Deploy to server
+        run: |
+          DEPLOY_DIR="apps/openrole-${{ github.event.inputs.environment }}"
+          RELEASE_DIR="release-$(date +%Y%m%d-%H%M%S)"
+          
+          # Create remote directory
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "mkdir -p ~/$DEPLOY_DIR/releases/$RELEASE_DIR"
+          
+          # Upload archive
+          scp openrole-deploy.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/$DEPLOY_DIR/releases/$RELEASE_DIR/
+          
+          # Extract and deploy on server
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            
+            DEPLOY_DIR="$HOME/apps/openrole-${{ github.event.inputs.environment }}"
+            RELEASE_DIR="release-$(date +%Y%m%d-%H%M%S)"
+            CURRENT_RELEASE=$(ls -t $DEPLOY_DIR/releases | head -1)
+            
+            cd $DEPLOY_DIR/releases/$CURRENT_RELEASE
+            
+            echo "📦 Extracting deployment archive..."
+            tar xzf openrole-deploy.tar.gz
+            rm openrole-deploy.tar.gz
+            
+            # Create production env file
+            cat > .env.production << ENVEOF
+          NODE_ENV=production
+          NEXT_PUBLIC_API_URL=https://api.openrole.net
+          ENVEOF
+            
+            # Stop existing containers if any
+            if [ -L "$DEPLOY_DIR/current" ]; then
+              cd $DEPLOY_DIR/current
+              docker-compose -f docker-compose.traefik.yml down || true
+            fi
+            
+            # Update symlink
+            cd $DEPLOY_DIR
+            rm -f current
+            ln -sf releases/$CURRENT_RELEASE current
+            
+            # Build and start containers
+            cd current
+            echo "🐳 Building and starting containers..."
+            docker-compose -f docker-compose.traefik.yml up -d --build
+            
+            # Wait for containers
+            sleep 10
+            
+            # Show status
+            echo ""
+            echo "📊 Deployment status:"
+            docker ps | grep openrole || echo "No OpenRole containers found"
+            
+            # Cleanup old releases (keep last 5)
+            cd $DEPLOY_DIR/releases
+            ls -t | tail -n +6 | xargs -r rm -rf
+            
+            echo ""
+            echo "✅ Deployment complete!"
+          EOF
+
+      - name: Health check
+        run: |
+          sleep 15
+          
+          echo "🔍 Checking deployment..."
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "docker ps | grep openrole"
+          
+          echo ""
+          echo "🌐 Testing endpoints:"
+          curl -s -k -o /dev/null -w "Web: %{http_code}\n" https://openrole.net || true
+          curl -s -k -o /dev/null -w "API: %{http_code}\n" https://api.openrole.net/health || true
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa
+          rm -f openrole-deploy.tar.gz
