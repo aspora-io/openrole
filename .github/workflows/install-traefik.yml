@@ -1,0 +1,149 @@
+name: Install Traefik - OpenRole.net
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install-traefik:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Install and configure Traefik
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            
+            echo "🔧 Installing Traefik reverse proxy..."
+            
+            # Create Traefik directory
+            mkdir -p ~/traefik
+            cd ~/traefik
+            
+            # Create Traefik configuration
+            cat > traefik.yml << 'TRAEFIK_CONFIG'
+          api:
+            dashboard: false
+            insecure: false
+          
+          entryPoints:
+            web:
+              address: ":80"
+              http:
+                redirections:
+                  entrypoint:
+                    to: websecure
+                    scheme: https
+            websecure:
+              address: ":443"
+          
+          providers:
+            docker:
+              endpoint: "unix:///var/run/docker.sock"
+              exposedByDefault: false
+              network: traefik
+          
+          certificatesResolvers:
+            letsencrypt:
+              acme:
+                email: alan@aspora.io
+                storage: /acme.json
+                httpChallenge:
+                  entryPoint: web
+          TRAEFIK_CONFIG
+            
+            # Create docker-compose for Traefik
+            cat > docker-compose.yml << 'TRAEFIK_COMPOSE'
+          version: '3.8'
+          
+          services:
+            traefik:
+              image: traefik:v3.0
+              container_name: traefik
+              restart: unless-stopped
+              ports:
+                - "80:80"
+                - "443:443"
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock:ro
+                - ./traefik.yml:/traefik.yml:ro
+                - ./acme.json:/acme.json
+              networks:
+                - traefik
+              labels:
+                - "traefik.enable=true"
+          
+          networks:
+            traefik:
+              name: traefik
+              external: true
+          TRAEFIK_COMPOSE
+            
+            # Create ACME file with correct permissions
+            touch acme.json
+            chmod 600 acme.json
+            
+            # Ensure Traefik network exists
+            docker network create traefik 2>/dev/null || echo "Traefik network already exists"
+            
+            # Stop any existing Traefik container
+            docker stop traefik 2>/dev/null || true
+            docker rm traefik 2>/dev/null || true
+            
+            # Start Traefik
+            echo "Starting Traefik..."
+            docker-compose up -d
+            
+            # Wait for Traefik to start
+            sleep 10
+            
+            echo ""
+            echo "📊 Traefik status:"
+            docker ps | grep traefik
+            
+            echo ""
+            echo "🔍 Traefik logs:"
+            docker logs traefik --tail 10
+            
+            echo ""
+            echo "🔗 Network verification:"
+            docker network inspect traefik --format '{{range .Containers}}{{.Name}} {{end}}' | tr ' ' '\n' | grep -v '^$' || echo "No containers in Traefik network"
+            
+            echo ""
+            echo "✅ Traefik installation complete!"
+          EOF
+
+      - name: Test Traefik connectivity
+        run: |
+          sleep 30
+          echo "🌐 Testing Traefik setup..."
+          
+          echo "Testing HTTP redirect..."
+          HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://openrole.net || echo "000")
+          echo "HTTP Response: $HTTP_RESPONSE (should be 301/302 redirect)"
+          
+          echo ""
+          echo "Testing HTTPS with Traefik..."
+          HTTPS_RESPONSE=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 20 https://openrole.net || echo "000")
+          echo "HTTPS Response: $HTTPS_RESPONSE"
+          
+          if [ "$HTTPS_RESPONSE" = "200" ]; then
+            echo ""
+            echo "🎉 SUCCESS! OpenRole.net is now LIVE!"
+            echo "Getting page title..."
+            curl -s -k https://openrole.net | grep -o '<title>.*</title>' || echo "Could not extract title"
+          else
+            echo ""
+            echo "Status: $HTTPS_RESPONSE - Response sample:"
+            timeout 10 curl -s -k https://openrole.net | head -3 || echo "No response"
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
