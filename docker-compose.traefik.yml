@@ -5,14 +5,18 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
+    container_name: openrole-web
+    restart: unless-stopped
     networks:
       - traefik
+      - openrole-internal
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.openrole-web.rule=Host(`openrole.net`) || Host(`www.openrole.net`)"
       - "traefik.http.routers.openrole-web.entrypoints=websecure"
       - "traefik.http.routers.openrole-web.tls.certresolver=letsencrypt"
       - "traefik.http.services.openrole-web.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://api.openrole.net
@@ -21,17 +25,24 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
+    container_name: openrole-api
+    restart: unless-stopped
     networks:
       - traefik
+      - openrole-internal
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.openrole-api.rule=Host(`api.openrole.net`)"
       - "traefik.http.routers.openrole-api.entrypoints=websecure"
       - "traefik.http.routers.openrole-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.openrole-api.loadbalancer.server.port=3001"
+      - "traefik.docker.network=traefik"
     environment:
       - NODE_ENV=production
 
 networks:
   traefik:
     external: true
+  openrole-internal:
+    driver: bridge
+    name: openrole-network

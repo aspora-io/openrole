@@ -54,6 +54,10 @@ jobs:
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
             echo '🚀 Starting Docker deployment...'
             
+            # Check that Promptcade is still running (safety check)
+            echo 'Checking Promptcade status before deployment...'
+            curl -s https://promptcade.com/health || echo 'Promptcade health check failed'
+            
             # Create deployment directory
             mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
             cd ~/apps/openrole-${{ github.event.inputs.environment }}
@@ -70,11 +74,21 @@ jobs:
               git checkout ${{ github.event.inputs.branch }}
             fi
             
-            # Stop existing containers
-            docker-compose -f docker-compose.traefik.yml down || echo 'No containers to stop'
+            # Check for existing OpenRole containers and stop them specifically
+            echo 'Checking for existing OpenRole containers...'
+            docker ps | grep openrole || echo 'No existing OpenRole containers'
+            
+            # Stop only OpenRole containers to avoid affecting other services
+            docker stop openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to stop'
+            docker rm openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to remove'
             
             # Build and start new containers
+            echo 'Building and starting OpenRole containers...'
             docker-compose -f docker-compose.traefik.yml up -d --build
+            
+            # Wait for containers to be healthy
+            echo 'Waiting for containers to start...'
+            sleep 10
             
             echo '✅ Docker deployment completed!'
             echo 'Environment: ${{ github.event.inputs.environment }}'
