@@ -51,11 +51,10 @@ jobs:
           mkdir -p $DEPLOY_DIR/{releases,logs}
           cd $DEPLOY_DIR
           
-          # Clone repository
+          # Clone repository (using public URL)
           echo "📦 Cloning repository..."
-          git clone https://github.com/aspora-io/openrole.git releases/$RELEASE_DIR
+          git clone --depth 1 --branch ${{ github.event.inputs.branch }} https://github.com/aspora-io/openrole.git releases/$RELEASE_DIR
           cd releases/$RELEASE_DIR
-          git checkout ${{ github.event.inputs.branch }}
           
           # Create production env file
           cat > .env.production << EOF
