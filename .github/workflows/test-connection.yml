@@ -1,0 +1,44 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-connection:
+    runs-on: ubuntu-latest
+    name: Test SSH Connection to Server
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -o ConnectTimeout=10 ${{ secrets.USERNAME }}@${{ secrets.HOST }} "echo 'SSH connection successful!'"
+
+      - name: Test basic server info
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '=== Server Information ==='
+            whoami
+            pwd
+            uname -a
+            df -h
+            echo '=== Connection test completed ==='
+          "
+
+      - name: Cleanup SSH key
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa

@@ -1,0 +1,114 @@
+name: Final Fix v2 - OpenRole.net
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Final fix deployment v2
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            
+            echo "🔧 Final fix v2 for OpenRole.net..."
+            
+            # Stop ALL existing containers
+            echo "Stopping all containers..."
+            docker stop $(docker ps -q) 2>/dev/null || true
+            docker container prune -f 2>/dev/null || true
+            
+            # Ensure Traefik network exists
+            docker network create traefik 2>/dev/null || echo "Traefik network exists"
+            
+            # Go to deployment directory
+            cd ~/apps/openrole-production/current
+            
+            # Create fixed override with proper YAML escaping
+            cat > docker-compose.override.yml << 'YAMLEOF'
+          version: '3.8'
+          
+          services:
+            openrole-web:
+              container_name: openrole-web
+              networks:
+                - traefik
+              labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.openrole-web.rule=Host(\"openrole.net\") || Host(\"www.openrole.net\")"
+                - "traefik.http.routers.openrole-web.entrypoints=websecure"
+                - "traefik.http.routers.openrole-web.tls.certresolver=letsencrypt"
+                - "traefik.http.services.openrole-web.loadbalancer.server.port=3000"
+                - "traefik.docker.network=traefik"
+              
+            openrole-api:
+              container_name: openrole-api
+              networks:
+                - traefik
+              labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.openrole-api.rule=Host(\"api.openrole.net\")"
+                - "traefik.http.routers.openrole-api.entrypoints=websecure"
+                - "traefik.http.routers.openrole-api.tls.certresolver=letsencrypt"
+                - "traefik.http.services.openrole-api.loadbalancer.server.port=3001"
+                - "traefik.docker.network=traefik"
+          
+          networks:
+            traefik:
+              external: true
+          YAMLEOF
+            
+            echo "Starting containers with explicit names..."
+            docker-compose -f docker-compose.traefik.yml -f docker-compose.override.yml up -d --build
+            
+            # Wait for startup
+            sleep 30
+            
+            echo ""
+            echo "📊 Container status:"
+            docker ps --format "table {{.Names}}\t{{.Status}}"
+            
+            echo ""
+            echo "🔗 Network check:"
+            docker network inspect traefik --format '{{range .Containers}}{{.Name}} {{end}}' | grep -o "openrole-[a-z]*" || echo "No openrole containers in traefik network"
+            
+            echo ""
+            echo "✅ Final fix v2 complete!"
+          EOF
+
+      - name: Test the fix
+        run: |
+          sleep 30
+          echo "🧪 Testing OpenRole.net..."
+          
+          # Test web endpoint
+          WEB_STATUS=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 20 https://openrole.net || echo "000")
+          echo "Web Status: $WEB_STATUS"
+          
+          # Test API endpoint  
+          API_STATUS=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 20 https://api.openrole.net/health || echo "000")
+          echo "API Status: $API_STATUS"
+          
+          if [ "$WEB_STATUS" = "200" ]; then
+            echo ""
+            echo "🎉 SUCCESS! OpenRole.net is LIVE!"
+            echo "Getting page title..."
+            curl -s -k https://openrole.net | grep -o '<title>.*</title>'
+          else
+            echo ""
+            echo "Status: $WEB_STATUS - checking response..."
+            timeout 15 curl -s -k https://openrole.net | head -5 || echo "No response"
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/id_rsa

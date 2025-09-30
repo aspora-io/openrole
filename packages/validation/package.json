@@ -1,0 +1,35 @@
+{
+  "name": "@openrole/validation",
+  "version": "1.0.0",
+  "description": "Zod validation schemas for OpenRole CV & Profile Tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./profile": {
+      "types": "./dist/profile-schemas.d.ts",
+      "default": "./dist/profile-schemas.js"
+    },
+    "./cv": {
+      "types": "./dist/cv-schemas.d.ts",
+      "default": "./dist/cv-schemas.js"
+    }
+  }
+}

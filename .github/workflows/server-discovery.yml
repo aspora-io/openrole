@@ -1,0 +1,111 @@
+name: Server Discovery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  discover-server:
+    runs-on: ubuntu-latest
+    name: Discover existing sites and services
+    
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check existing websites and applications
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '🔍 === SERVER DISCOVERY REPORT ==='
+            echo ''
+            
+            echo '📁 === Home Directory Contents ==='
+            ls -la ~/
+            echo ''
+            
+            echo '🌐 === Web Server Directories ==='
+            # Check common web directories
+            for dir in /var/www /var/www/html /home/*/public_html /opt/www ~/www ~/public_html; do
+              if [ -d \"\$dir\" ]; then
+                echo \"Found web directory: \$dir\"
+                ls -la \"\$dir\" 2>/dev/null || echo \"No access to \$dir\"
+              fi
+            done
+            echo ''
+            
+            echo '⚙️  === Running Services ==='
+            systemctl list-units --type=service --state=running | grep -E '(nginx|apache|httpd|node|pm2|docker)' || echo 'No common web services found'
+            echo ''
+            
+            echo '🔌 === Listening Ports ==='
+            ss -tlnp | grep -E ':(80|443|3000|8000|8080|8443|9000)' || echo 'No common web ports in use'
+            echo ''
+            
+            echo '🐳 === Docker Containers ==='
+            docker ps 2>/dev/null || echo 'Docker not running or not accessible'
+            echo ''
+            
+            echo '📦 === Node.js Applications ==='
+            # Check for PM2 processes
+            pm2 list 2>/dev/null || echo 'PM2 not installed or no processes'
+            echo ''
+            
+            # Check for common app directories
+            echo '📂 === Common Application Directories ==='
+            for dir in ~/apps ~/sites ~/projects /opt/apps /var/apps; do
+              if [ -d \"\$dir\" ]; then
+                echo \"Found app directory: \$dir\"
+                ls -la \"\$dir\" 2>/dev/null
+              fi
+            done
+            echo ''
+            
+            echo '🔧 === Installed Software ==='
+            echo 'Node.js:' \$(node --version 2>/dev/null || echo 'Not installed')
+            echo 'NPM:' \$(npm --version 2>/dev/null || echo 'Not installed')
+            echo 'Docker:' \$(docker --version 2>/dev/null || echo 'Not installed')
+            echo 'Nginx:' \$(nginx -v 2>&1 | head -1 2>/dev/null || echo 'Not installed')
+            echo 'Apache:' \$(apache2 -v 2>&1 | head -1 2>/dev/null || echo 'Not installed')
+            echo 'PHP:' \$(php --version 2>/dev/null | head -1 || echo 'Not installed')
+            echo 'Python:' \$(python3 --version 2>/dev/null || echo 'Not installed')
+            echo ''
+            
+            echo '📋 === Nginx/Apache Sites ==='
+            # Check Nginx sites
+            if [ -d '/etc/nginx/sites-enabled' ]; then
+              echo 'Nginx sites-enabled:'
+              ls -la /etc/nginx/sites-enabled/ 2>/dev/null
+            fi
+            
+            # Check Apache sites
+            if [ -d '/etc/apache2/sites-enabled' ]; then
+              echo 'Apache sites-enabled:'
+              ls -la /etc/apache2/sites-enabled/ 2>/dev/null
+            fi
+            echo ''
+            
+            echo '🌍 === Domain/Host Information ==='
+            hostname
+            echo 'IP Address(es):'
+            ip addr show | grep 'inet ' | grep -v '127.0.0.1' || echo 'Unable to determine IP'
+            echo ''
+            
+            echo '💾 === Current Resource Usage ==='
+            echo 'Memory:'
+            free -h
+            echo 'CPU Load:'
+            uptime
+            echo 'Top processes:'
+            ps aux --sort=-%cpu | head -10
+            echo ''
+            
+            echo '🔍 === Discovery Complete ==='
+          "
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa

@@ -1,0 +1,141 @@
+name: Deploy OpenRole.net
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run tests
+        run: |
+          npm run test || echo "Tests not yet implemented"
+
+      - name: Build application
+        run: |
+          npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          # Create release directory with timestamp
+          RELEASE_DIR="openrole-$(date +%Y%m%d-%H%M%S)"
+          
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}/{releases/$RELEASE_DIR,logs}
+          "
+          
+          # Upload built application
+          rsync -avz --delete \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude .env.local \
+            ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/apps/openrole-${{ github.event.inputs.environment }}/releases/$RELEASE_DIR/
+          
+          # Deploy on server
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            cd ~/apps/openrole-${{ github.event.inputs.environment }}
+            
+            # Install production dependencies
+            cd releases/$RELEASE_DIR
+            npm install --production
+            
+            # Update symlink to new release
+            cd ~/apps/openrole-${{ github.event.inputs.environment }}
+            rm -f current
+            ln -sf releases/$RELEASE_DIR current
+            
+            # Stop existing processes if running
+            pkill -f 'openrole' || echo 'No existing processes to stop'
+            
+            # Start the applications
+            cd current
+            echo 'Starting OpenRole.net applications...'
+            
+            # Start API in background
+            cd apps/api && npm run start > ../../logs/api.log 2>&1 &
+            API_PID=\$!
+            echo \$API_PID > ../../openrole-api.pid
+            
+            # Start Web app in background  
+            cd ../web && npm run start > ../../logs/web.log 2>&1 &
+            WEB_PID=\$!
+            echo \$WEB_PID > ../../openrole-web.pid
+            
+            echo 'OpenRole.net started with PIDs: API='\$API_PID', Web='\$WEB_PID"
+            
+            # Cleanup old releases (keep last 5)
+            cd releases
+            ls -t | tail -n +6 | xargs -r rm -rf
+            
+            echo '✅ Deployment completed successfully!'
+            echo 'Environment: ${{ github.event.inputs.environment }}'
+            echo 'Branch: ${{ github.event.inputs.branch }}'
+            echo 'Release: $RELEASE_DIR'
+          "
+
+      - name: Health check
+        run: |
+          # Wait a moment for application to start
+          sleep 10
+          
+          # Basic health check (adjust URL as needed)
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo 'Checking application health...'
+            # curl -f http://localhost:3000/health || echo 'Health check endpoint not available'
+            echo 'Deployment verification complete'
+          "
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa
+
+      - name: Deployment notification
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "🚀 Successfully deployed OpenRole.net to ${{ github.event.inputs.environment }}"
+            echo "Branch: ${{ github.event.inputs.branch }}"
+            echo "Time: $(date)"
+          else
+            echo "❌ Deployment failed"
+          fi

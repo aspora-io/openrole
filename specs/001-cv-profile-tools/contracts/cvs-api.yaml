@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: CV & Profile Tools API - CVs
+  version: 1.0.0
+  description: CV upload, management, and generation endpoints
+
+servers:
+  - url: https://api.openrole.net/v1
+
+paths:
+  /cvs:
+    get:
+      summary: Get user's CVs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of user's CVs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CVDocument'
+
+    post:
+      summary: Upload new CV
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - label
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: CV file (PDF, DOC, DOCX)
+                label:
+                  type: string
+                  description: Display label for the CV
+                  maxLength: 100
+      responses:
+        '201':
+          description: CV uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '400':
+          description: Invalid file or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '413':
+          description: File too large (max 10MB)
+
+  /cvs/{cvId}:
+    get:
+      summary: Get CV details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: CV details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '404':
+          description: CV not found
+
+    put:
+      summary: Update CV metadata
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVUpdateRequest'
+      responses:
+        '200':
+          description: CV updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+
+    delete:
+      summary: Delete CV
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: CV deleted
+        '409':
+          description: Cannot delete CV used in active applications
+
+  /cvs/{cvId}/download:
+    get:
+      summary: Download CV file
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: CV file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/msword:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: CV not found
+
+  /cvs/generate:
+    post:
+      summary: Generate CV from profile data
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVGenerateRequest'
+      responses:
+        '201':
+          description: CV generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '400':
+          description: Insufficient profile data or invalid template
+
+  /cvs/templates:
+    get:
+      summary: Get available CV templates
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Available templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CVTemplate'
+
+  /cvs/{cvId}/tailor:
+    post:
+      summary: Generate tailored CV for specific job
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVTailorRequest'
+      responses:
+        '201':
+          description: Tailored CV generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CVDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        originalFileName:
+          type: string
+        label:
+          type: string
+        fileSize:
+          type: integer
+          description: File size in bytes
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - application/msword
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        isGenerated:
+          type: boolean
+          description: Whether CV was generated from profile
+        templateId:
+          type: string
+          nullable: true
+        version:
+          type: integer
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CVUpdateRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 100
+        isActive:
+          type: boolean
+
+    CVGenerateRequest:
+      type: object
+      required:
+        - templateId
+        - label
+      properties:
+        templateId:
+          type: string
+          description: Template to use for generation
+        label:
+          type: string
+          minLength: 1
+          maxLength: 100
+        includePhoto:
+          type: boolean
+          default: false
+        sections:
+          type: array
+          items:
+            type: string
+            enum: [personal, summary, experience, education, skills, portfolio, references]
+          description: Sections to include in generated CV
+
+    CVTailorRequest:
+      type: object
+      required:
+        - jobId
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          description: Job posting to tailor CV for
+        label:
+          type: string
+          maxLength: 100
+          description: Label for tailored CV (auto-generated if not provided)
+        emphasizeSkills:
+          type: array
+          items:
+            type: string
+          description: Skills to emphasize based on job requirements
+
+    CVTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [ats_safe, modern, classic, creative]
+        previewUrl:
+          type: string
+          format: uri
+        isATSFriendly:
+          type: boolean
+        supportedSections:
+          type: array
+          items:
+            type: string
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string

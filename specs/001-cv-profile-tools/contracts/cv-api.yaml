@@ -1,0 +1,1008 @@
+openapi: 3.0.3
+info:
+  title: OpenRole CV Management API
+  description: API contracts for CV upload, generation, and management
+  version: 1.0.0
+servers:
+  - url: https://api.openrole.net/v1
+    description: Production server
+  - url: http://localhost:3011/v1
+    description: Development server
+
+paths:
+  # CV Document Management
+  /cv:
+    get:
+      summary: Get all CV documents for authenticated user
+      description: Retrieve all CV documents belonging to the current user
+      operationId: getCVDocuments
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: CV documents retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cvDocuments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CVDocument'
+                  totalCount:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Upload a new CV document
+      description: Upload a CV file (PDF, DOC, DOCX) with metadata
+      operationId: uploadCV
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: CV file (PDF, DOC, DOCX, max 10MB)
+                label:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  description: Descriptive label for this CV version
+                  example: "Software Engineer CV"
+                isDefault:
+                  type: boolean
+                  description: Set this CV as the default
+                  default: false
+              required:
+                - file
+                - label
+      responses:
+        '201':
+          description: CV uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /cv/{cvId}:
+    get:
+      summary: Get CV document details
+      description: Retrieve metadata for a specific CV document
+      operationId: getCVDocument
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: CV document retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update CV document metadata
+      description: Update label, default status, and other metadata
+      operationId: updateCVDocument
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVUpdateRequest'
+      responses:
+        '200':
+          description: CV document updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CVDocument'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete CV document
+      description: Delete a CV document and its associated file
+      operationId: deleteCVDocument
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: CV document deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Cannot delete - CV is being used in active applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cv/{cvId}/download:
+    get:
+      summary: Download CV file
+      description: Download the actual CV file with access token validation
+      operationId: downloadCV
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: token
+          in: query
+          description: Access token for secure file download
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: CV file download
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/msword:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              description: Filename for download
+              schema:
+                type: string
+                example: 'attachment; filename="john-doe-cv.pdf"'
+            Content-Length:
+              description: File size in bytes
+              schema:
+                type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Invalid or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /cv/{cvId}/access-token:
+    post:
+      summary: Generate new access token
+      description: Generate a new access token for secure file downloads
+      operationId: generateAccessToken
+      tags: [CV Management]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cvId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiresInHours:
+                  type: integer
+                  minimum: 1
+                  maximum: 168
+                  default: 24
+                  description: Token expiration time in hours (max 7 days)
+      responses:
+        '200':
+          description: Access token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    format: uuid
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  downloadUrl:
+                    type: string
+                    format: uri
+                    example: "https://api.openrole.net/v1/cv/123e4567-e89b-12d3-a456-426614174000/download?token=987fcdeb-51d2-4567-b890-123456789012"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # CV Generation
+  /cv/generate:
+    post:
+      summary: Generate CV from profile
+      description: Generate a new CV document from profile data using a template
+      operationId: generateCV
+      tags: [CV Generation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVGenerationRequest'
+      responses:
+        '202':
+          description: CV generation started (async process)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cvId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [processing]
+                  estimatedCompletionTime:
+                    type: string
+                    format: date-time
+                  message:
+                    type: string
+                    example: "CV generation started. You will be notified when complete."
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /cv/templates:
+    get:
+      summary: Get available CV templates
+      description: Retrieve all available CV templates for generation
+      operationId: getCVTemplates
+      tags: [CV Generation]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: query
+          description: Filter templates by category
+          schema:
+            type: string
+            enum: [ats-safe, modern, classic, creative]
+        - name: includePreview
+          in: query
+          description: Include preview images in response
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: CV templates retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CVTemplate'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /cv/generate/preview:
+    post:
+      summary: Preview CV generation
+      description: Generate a preview of CV without saving as document
+      operationId: previewCVGeneration
+      tags: [CV Generation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CVGenerationRequest'
+      responses:
+        '200':
+          description: CV preview generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  previewHtml:
+                    type: string
+                    description: HTML preview of the generated CV
+                  previewUrl:
+                    type: string
+                    format: uri
+                    description: Temporary URL to view the preview
+                  expiresAt:
+                    type: string
+                    format: date-time
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  # Portfolio Management
+  /portfolio:
+    get:
+      summary: Get portfolio items
+      description: Retrieve all portfolio items for authenticated user
+      operationId: getPortfolioItems
+      tags: [Portfolio]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: query
+          description: Filter by portfolio item type
+          schema:
+            type: string
+            enum: [project, article, design, code, document, link]
+        - name: isPublic
+          in: query
+          description: Filter by public visibility
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Portfolio items retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portfolioItems:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PortfolioItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Add portfolio item
+      description: Add a new portfolio item (file upload or external link)
+      operationId: addPortfolioItem
+      tags: [Portfolio]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Portfolio file (optional, for file uploads)
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 1000
+                type:
+                  type: string
+                  enum: [project, article, design, code, document, link]
+                externalUrl:
+                  type: string
+                  format: uri
+                  description: External URL (for link type)
+                technologies:
+                  type: array
+                  items:
+                    type: string
+                  description: JSON array of technologies used
+                projectDate:
+                  type: string
+                  format: date
+                role:
+                  type: string
+                  maxLength: 200
+                  description: Your role in this project
+                isPublic:
+                  type: boolean
+                  default: true
+                sortOrder:
+                  type: integer
+              required:
+                - title
+                - description
+                - type
+      responses:
+        '201':
+          description: Portfolio item added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioItem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /portfolio/{portfolioId}:
+    get:
+      summary: Get portfolio item details
+      description: Retrieve details for a specific portfolio item
+      operationId: getPortfolioItem
+      tags: [Portfolio]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Portfolio item retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update portfolio item
+      description: Update portfolio item metadata
+      operationId: updatePortfolioItem
+      tags: [Portfolio]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortfolioItemUpdateRequest'
+      responses:
+        '200':
+          description: Portfolio item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioItem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete portfolio item
+      description: Delete a portfolio item and its associated file
+      operationId: deletePortfolioItem
+      tags: [Portfolio]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Portfolio item deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CVDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        profileId:
+          type: string
+          format: uuid
+        filename:
+          type: string
+          example: "john-doe-cv-v2.pdf"
+        originalFilename:
+          type: string
+          example: "John Doe - Software Engineer CV.pdf"
+        fileSize:
+          type: integer
+          description: File size in bytes
+          example: 1048576
+        mimeType:
+          type: string
+          enum: 
+            - application/pdf
+            - application/msword
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+          example: "application/pdf"
+        version:
+          type: integer
+          description: Auto-incremented version number
+          example: 2
+        label:
+          type: string
+          example: "Software Engineer CV"
+        isDefault:
+          type: boolean
+          example: true
+        generatedFromProfile:
+          type: boolean
+          description: True if generated from profile, false if uploaded
+          example: false
+        templateUsed:
+          type: string
+          nullable: true
+          example: "modern-template-v1"
+        generatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        accessToken:
+          type: string
+          format: uuid
+          description: Current access token for file download
+        tokenExpiresAt:
+          type: string
+          format: date-time
+        virusScanned:
+          type: boolean
+          example: true
+        scanResults:
+          type: string
+          description: JSON metadata from virus scan
+        status:
+          type: string
+          enum: [processing, active, archived, failed]
+          example: "active"
+        downloadCount:
+          type: integer
+          example: 15
+        lastAccessedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - filename
+        - originalFilename
+        - fileSize
+        - mimeType
+        - version
+        - label
+        - isDefault
+        - generatedFromProfile
+        - status
+
+    CVUpdateRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 100
+        isDefault:
+          type: boolean
+          description: Set this CV as the default (will unset others)
+
+    CVGenerationRequest:
+      type: object
+      properties:
+        templateId:
+          type: string
+          format: uuid
+          description: ID of the template to use
+        label:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Label for the generated CV
+        isDefault:
+          type: boolean
+          default: false
+          description: Set as default CV
+        sections:
+          type: object
+          description: Custom section configuration
+          properties:
+            includePersonalDetails:
+              type: boolean
+              default: true
+            includeWorkExperience:
+              type: boolean
+              default: true
+            includeEducation:
+              type: boolean
+              default: true
+            includeSkills:
+              type: boolean
+              default: true
+            includePortfolio:
+              type: boolean
+              default: false
+            customSections:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  content:
+                    type: string
+                  order:
+                    type: integer
+        customizations:
+          type: object
+          description: Template-specific customizations
+          properties:
+            primaryColor:
+              type: string
+              pattern: "^#[0-9A-Fa-f]{6}$"
+              example: "#2563eb"
+            fontSize:
+              type: string
+              enum: [small, medium, large]
+              default: "medium"
+            showPhoto:
+              type: boolean
+              default: false
+      required:
+        - templateId
+        - label
+
+    CVTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Modern Professional"
+        description:
+          type: string
+          example: "Clean, modern template suitable for tech professionals"
+        category:
+          type: string
+          enum: [ats-safe, modern, classic, creative]
+          example: "modern"
+        previewImage:
+          type: string
+          format: uri
+          description: URL to template preview image
+        isAccessible:
+          type: boolean
+          description: WCAG 2.1 AA compliant
+          example: true
+        supportsSections:
+          type: array
+          items:
+            type: string
+          example: ["personalDetails", "workExperience", "education", "skills", "portfolio"]
+        isActive:
+          type: boolean
+          example: true
+        isPremium:
+          type: boolean
+          example: false
+        usageCount:
+          type: integer
+          description: Number of times this template has been used
+          example: 1247
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PortfolioItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        profileId:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: "E-commerce Platform Redesign"
+        description:
+          type: string
+          example: "Complete redesign of checkout flow resulting in 25% conversion increase"
+        type:
+          type: string
+          enum: [project, article, design, code, document, link]
+          example: "project"
+        fileName:
+          type: string
+          nullable: true
+          example: "portfolio-ecommerce-case-study.pdf"
+        filePath:
+          type: string
+          nullable: true
+          description: Server file path (not exposed to client)
+        fileSize:
+          type: integer
+          nullable: true
+          example: 2048576
+        mimeType:
+          type: string
+          nullable: true
+          example: "application/pdf"
+        externalUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://github.com/johndoe/ecommerce-platform"
+        technologies:
+          type: array
+          items:
+            type: string
+          example: ["React", "TypeScript", "Stripe API", "PostgreSQL"]
+        projectDate:
+          type: string
+          format: date
+          example: "2023-06-15"
+        role:
+          type: string
+          example: "Lead Frontend Developer"
+        linkValidated:
+          type: boolean
+          description: Whether external link has been validated
+          example: true
+        lastValidationCheck:
+          type: string
+          format: date-time
+        validationStatus:
+          type: string
+          enum: [pending, valid, invalid, unreachable]
+          example: "valid"
+        sortOrder:
+          type: integer
+          example: 1
+        isPublic:
+          type: boolean
+          example: true
+        viewCount:
+          type: integer
+          example: 47
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PortfolioItemUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 1000
+        externalUrl:
+          type: string
+          format: uri
+        technologies:
+          type: array
+          items:
+            type: string
+        projectDate:
+          type: string
+          format: date
+        role:
+          type: string
+          maxLength: 200
+        isPublic:
+          type: boolean
+        sortOrder:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "File too large"
+        message:
+          type: string
+          example: "File size exceeds the maximum limit of 10MB"
+        code:
+          type: string
+          example: "FILE_TOO_LARGE"
+        timestamp:
+          type: string
+          format: date-time
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Validation failed"
+        message:
+          type: string
+          example: "The provided data is invalid"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "label"
+              message:
+                type: string
+                example: "Label is required"
+              code:
+                type: string
+                example: "REQUIRED"
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
