@@ -38,8 +38,8 @@ jobs:
         run: |
           echo "Repository contents:"
           ls -la
-          echo "Package.json exists:"
-          cat package.json
+          echo "Docker compose files:"
+          ls -la docker-compose*.yml
 
       - name: Setup SSH key
         run: |

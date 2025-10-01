@@ -1,0 +1,170 @@
+name: Safe Deploy OpenRole.net
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'master'
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Pre-deployment health check
+        run: |
+          echo "🔍 Checking existing services before deployment..."
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo 'Current container status:'
+            docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E '(promptcade|openrole|traefik)' || echo 'No relevant containers found'
+            
+            echo ''
+            echo 'Service availability:'
+            echo -n 'Promptcade.com: '
+            curl -s -o /dev/null -w '%{http_code}' https://promptcade.com || echo 'DOWN'
+            echo ''
+          "
+
+      - name: Deploy OpenRole safely
+        run: |
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            set -e
+            
+            echo '🚀 Starting safe OpenRole deployment...'
+            
+            # Navigate to deployment directory
+            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
+            cd ~/apps/openrole-${{ github.event.inputs.environment }}
+            
+            # Clone/update repository
+            if [ -d 'openrole' ]; then
+              cd openrole
+              git fetch origin
+              git checkout ${{ github.event.inputs.branch }}
+              git pull origin ${{ github.event.inputs.branch }}
+            else
+              git clone https://github.com/aspora-io/openrole.git
+              cd openrole
+              git checkout ${{ github.event.inputs.branch }}
+            fi
+            
+            # Create production environment file
+            cat > .env.production << 'EOF'
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=https://api.openrole.net
+API_URL=https://api.openrole.net
+DATABASE_URL=postgresql://openrole:password@openrole-db:5432/openrole
+REDIS_URL=redis://openrole-redis:6379
+EOF
+            
+            # Stop ONLY OpenRole containers (not other services)
+            echo 'Stopping existing OpenRole containers...'
+            OPENROLE_CONTAINERS=\$(docker ps -aq -f name=openrole)
+            if [ ! -z \"\$OPENROLE_CONTAINERS\" ]; then
+              docker stop \$OPENROLE_CONTAINERS
+              docker rm \$OPENROLE_CONTAINERS
+            fi
+            
+            # Build and deploy
+            echo 'Building and starting OpenRole containers...'
+            docker-compose -f docker-compose.traefik.yml up -d --build --remove-orphans
+            
+            echo '✅ Deployment command completed'
+          "
+
+      - name: Post-deployment verification
+        run: |
+          echo "⏳ Waiting 45 seconds for services to stabilize..."
+          sleep 45
+          
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+            echo '🔍 Post-deployment verification:'
+            echo ''
+            
+            echo 'Container status:'
+            docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E '(promptcade|openrole|traefik)' || echo 'No containers found'
+            
+            echo ''
+            echo 'Service health checks:'
+            
+            echo -n '✓ Promptcade.com: '
+            STATUS=\$(curl -s -o /dev/null -w '%{http_code}' https://promptcade.com)
+            if [ \"\$STATUS\" = \"200\" ] || [ \"\$STATUS\" = \"302\" ]; then
+              echo 'OK ('\$STATUS')'
+            else
+              echo 'FAILED ('\$STATUS')'
+            fi
+            
+            echo -n '✓ OpenRole.net: '
+            STATUS=\$(curl -s -o /dev/null -w '%{http_code}' https://openrole.net)
+            if [ \"\$STATUS\" = \"200\" ] || [ \"\$STATUS\" = \"302\" ]; then
+              echo 'OK ('\$STATUS')'
+            else
+              echo 'FAILED ('\$STATUS')'
+            fi
+            
+            echo -n '✓ API.OpenRole.net: '
+            STATUS=\$(curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/health)
+            if [ \"\$STATUS\" = \"200\" ]; then
+              echo 'OK ('\$STATUS')'
+            else
+              echo 'FAILED ('\$STATUS')'
+            fi
+            
+            echo -n '✓ CV Profile API: '
+            STATUS=\$(curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/api/profile/health)
+            if [ \"\$STATUS\" = \"200\" ]; then
+              echo 'OK ('\$STATUS') - CV & Profile Tools Active!'
+            else
+              echo 'Not yet available ('\$STATUS')'
+            fi
+            
+            echo ''
+            echo 'Recent container logs (if any errors):'
+            docker logs openrole-web 2>&1 | tail -5 || echo 'No web logs'
+            docker logs openrole-api 2>&1 | tail -5 || echo 'No API logs'
+          "
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ Successfully deployed OpenRole.net to ${{ github.event.inputs.environment }}"
+            echo "🌐 Check the following:"
+            echo "   - https://openrole.net (Main site)"
+            echo "   - https://api.openrole.net/health (API health)"
+            echo "   - https://api.openrole.net/api/profile/health (CV & Profile Tools)"
+            echo "   - https://promptcade.com (Should still be working)"
+          else
+            echo "❌ Deployment encountered issues"
+            echo "Please check the logs above for details"
+          fi
