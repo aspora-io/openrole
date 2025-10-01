@@ -2,5 +2,83 @@
 > @openrole/database@1.0.0 build /home/alan/business/openrole/packages/database
 > tsc
 
-error TS18003: No inputs were found in config file '/home/alan/business/openrole/packages/database/tsconfig.json'. Specified 'include' paths were '["src/**/*"]' and 'exclude' paths were '["node_modules","dist","**/*.test.ts"]'.
+src/index.ts(162,8): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/index.ts(167,8): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/candidate-profile.ts(31,8): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/models/candidate-profile.ts(32,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/candidate-profile.ts(33,56): error TS2307: Cannot find module 'drizzle-zod' or its corresponding type declarations.
+src/models/candidate-profile.ts(34,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/models/candidate-profile.ts(156,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/models/candidate-profile.ts(188,75): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/models/candidate-profile.ts(188,80): error TS7031: Binding element 'many' implicitly has an 'any' type.
+src/models/candidate-profile.ts(281,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/candidate-profile.ts(294,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/cv-document.ts(32,8): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/models/cv-document.ts(33,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/cv-document.ts(34,56): error TS2307: Cannot find module 'drizzle-zod' or its corresponding type declarations.
+src/models/cv-document.ts(35,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/models/cv-document.ts(159,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/models/education.ts(31,8): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/models/education.ts(32,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/education.ts(33,56): error TS2307: Cannot find module 'drizzle-zod' or its corresponding type declarations.
+src/models/education.ts(34,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/models/education.ts(93,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/models/education.ts(118,59): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/models/education.ts(179,14): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/models/education.ts(206,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/education.ts(229,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/education.ts(375,7): error TS2322: Type 'EducationLevelType | undefined' is not assignable to type 'EducationLevelType | "Not specified"'.
+  Type 'undefined' is not assignable to type 'EducationLevelType | "Not specified"'.
+src/models/education.ts(394,7): error TS2322: Type 'EducationLevelType | undefined' is not assignable to type 'EducationLevelType | "Not specified"'.
+  Type 'undefined' is not assignable to type 'EducationLevelType | "Not specified"'.
+src/models/portfolio-item.ts(32,8): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/models/portfolio-item.ts(33,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/portfolio-item.ts(34,56): error TS2307: Cannot find module 'drizzle-zod' or its corresponding type declarations.
+src/models/portfolio-item.ts(35,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/models/portfolio-item.ts(136,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/models/portfolio-item.ts(180,69): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/models/portfolio-item.ts(251,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/portfolio-item.ts(262,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/portfolio-item.ts(286,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/portfolio-item.ts(460,35): error TS7006: Parameter 'itemTech' implicitly has an 'any' type.
+src/models/portfolio-item.ts(558,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<PortfolioItemTypeEnum, number>'.
+src/models/portfolio-item.ts(561,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<ValidationStatusEnum, number>'.
+src/models/portfolio-item.ts(565,35): error TS7006: Parameter 'tech' implicitly has an 'any' type.
+src/models/work-experience.ts(31,8): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/models/work-experience.ts(32,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/models/work-experience.ts(33,56): error TS2307: Cannot find module 'drizzle-zod' or its corresponding type declarations.
+src/models/work-experience.ts(34,19): error TS2307: Cannot find module 'zod' or its corresponding type declarations.
+src/models/work-experience.ts(104,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/models/work-experience.ts(129,69): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/models/work-experience.ts(195,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/work-experience.ts(205,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/work-experience.ts(224,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/models/work-experience.ts(234,12): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/schema.ts(11,137): error TS2307: Cannot find module 'drizzle-orm/pg-core' or its corresponding type declarations.
+src/schema.ts(12,32): error TS2307: Cannot find module 'drizzle-orm' or its corresponding type declarations.
+src/schema.ts(49,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(83,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(123,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(153,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(179,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(192,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(209,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(228,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(244,5): error TS7006: Parameter 'table' implicitly has an 'any' type.
+src/schema.ts(258,59): error TS7031: Binding element 'many' implicitly has an 'any' type.
+src/schema.ts(265,51): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/schema.ts(265,56): error TS7031: Binding element 'many' implicitly has an 'any' type.
+src/schema.ts(277,49): error TS7031: Binding element 'one' implicitly has an 'any' type.
+src/schema.ts(277,54): error TS7031: Binding element 'many' implicitly has an 'any' type.
+src/schema.ts(291,65): error TS7031: Binding element 'one' implicitly has an 'any' type.
 npm ERR! code ELIFECYCLE
+npm ERR! errno 2
+npm ERR! @openrole/database@1.0.0 build: `tsc`
+npm ERR! Exit status 2
+npm ERR! 
+npm ERR! Failed at the @openrole/database@1.0.0 build script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+npm WARN Local package.json exists, but node_modules missing, did you mean to install?
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/alan/.npm/_logs/2025-10-01T11_53_12_130Z-debug.log

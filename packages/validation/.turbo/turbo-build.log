@@ -2,15 +2,3 @@
 > @openrole/validation@1.0.0 build /home/alan/business/openrole/packages/validation
 > tsc
 
-error TS18003: No inputs were found in config file '/home/alan/business/openrole/packages/validation/tsconfig.json'. Specified 'include' paths were '["src/**/*"]' and 'exclude' paths were '["node_modules","dist","**/*.test.ts"]'.
-npm ERR! code ELIFECYCLE
-npm ERR! errno 2
-npm ERR! @openrole/validation@1.0.0 build: `tsc`
-npm ERR! Exit status 2
-npm ERR! 
-npm ERR! Failed at the @openrole/validation@1.0.0 build script.
-npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
-npm WARN Local package.json exists, but node_modules missing, did you mean to install?
-
-npm ERR! A complete log of this run can be found in:
-npm ERR!     /home/alan/.npm/_logs/2025-09-30T16_50_24_071Z-debug.log
