@@ -3,8 +3,8 @@ version: '3.8'
 services:
   openrole-web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/web/Dockerfile
     container_name: openrole-web
     restart: unless-stopped
     networks:
@@ -25,8 +25,8 @@ services:
 
   openrole-api:
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/api/Dockerfile
     container_name: openrole-api
     restart: unless-stopped
     networks:
