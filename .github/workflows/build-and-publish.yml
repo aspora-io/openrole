@@ -27,24 +27,24 @@ jobs:
       - name: Build and push Web image
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/web
+          context: .
           file: ./apps/web/Dockerfile.simple
           push: true
           tags: |
-            ghcr.io/aspora-io/openrole-web:latest
-            ghcr.io/aspora-io/openrole-web:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/openrole-web:latest
+            ghcr.io/${{ github.repository_owner }}/openrole-web:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Build and push API image
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/api
+          context: .
           file: ./apps/api/Dockerfile.simple
           push: true
           tags: |
-            ghcr.io/aspora-io/openrole-api:latest
-            ghcr.io/aspora-io/openrole-api:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/openrole-api:latest
+            ghcr.io/${{ github.repository_owner }}/openrole-api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -53,14 +53,14 @@ jobs:
           echo "# OpenRole Docker Images Built Successfully! 🎉" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Images Published:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`ghcr.io/aspora-io/openrole-web:latest\`" >> $GITHUB_STEP_SUMMARY
-          echo "- \`ghcr.io/aspora-io/openrole-api:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/openrole-web:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/openrole-api:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## To Deploy on Your Server:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "# Pull the latest images" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/aspora-io/openrole-web:latest" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/aspora-io/openrole-api:latest" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository_owner }}/openrole-web:latest" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository_owner }}/openrole-api:latest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "# Run with docker-compose" >> $GITHUB_STEP_SUMMARY
           echo "docker-compose -f docker-compose.production.yml up -d" >> $GITHUB_STEP_SUMMARY
