@@ -6,7 +6,7 @@ on:
       environment:
         description: 'Deployment environment'
         required: true
-        default: 'staging'
+        default: 'production'
         type: choice
         options:
         - staging
@@ -14,7 +14,7 @@ on:
       branch:
         description: 'Branch to deploy'
         required: true
-        default: 'main'
+        default: 'master'
         type: string
 
 jobs:
@@ -28,35 +28,24 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Verify repository structure
-        run: |
-          echo "Repository contents:"
-          ls -la
-          echo "Docker compose files:"
-          ls -la docker-compose*.yml
-
       - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
       - name: Deploy to server
+        env:
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
         run: |
-          # Deploy using Docker on the server (simpler approach)
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-            echo '🚀 Starting Docker deployment...'
-            
-            # Check that Promptcade is still running (safety check)
-            echo 'Checking Promptcade status before deployment...'
-            curl -s https://promptcade.com/health || echo 'Promptcade health check failed'
+          ssh $SSH_USER@$SSH_HOST "
+            echo '🚀 Starting OpenRole deployment...'
             
             # Create deployment directory
             mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
@@ -69,51 +58,80 @@ jobs:
               git checkout ${{ github.event.inputs.branch }}
               git pull origin ${{ github.event.inputs.branch }}
             else
-              git clone https://github.com/aspora-io/openrole.git
+              git clone https://github.com/aspora-io/openrole.git openrole
               cd openrole
               git checkout ${{ github.event.inputs.branch }}
             fi
             
-            # Check for existing OpenRole containers and stop them specifically
-            echo 'Checking for existing OpenRole containers...'
-            docker ps | grep openrole || echo 'No existing OpenRole containers'
+            # Create environment file
+            cat > .env.production << 'EOF'
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=https://api.openrole.net
+API_URL=https://api.openrole.net
+DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole
+REDIS_URL=redis://openrole-redis:6379
+EOF
             
-            # Stop only OpenRole containers to avoid affecting other services
-            docker stop openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to stop'
-            docker rm openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to remove'
+            # Check Promptcade status before deployment
+            echo 'Checking other services...'
+            docker ps | grep -E '(promptcade|traefik)' || echo 'No conflicting services found'
             
-            # Build and start new containers
-            echo 'Building and starting OpenRole containers...'
-            docker-compose -f docker-compose.traefik.yml up -d --build
+            # Stop only OpenRole containers
+            echo 'Stopping existing OpenRole containers...'
+            docker stop openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
+            docker rm openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
             
-            # Wait for containers to be healthy
-            echo 'Waiting for containers to start...'
-            sleep 10
+            # Use the appropriate docker-compose file
+            if [ -f docker-compose.production.yml ]; then
+              echo 'Using production docker-compose with full stack...'
+              COMPOSE_FILE=docker-compose.production.yml
+            else
+              echo 'Using traefik docker-compose...'
+              COMPOSE_FILE=docker-compose.traefik.yml
+            fi
             
-            echo '✅ Docker deployment completed!'
-            echo 'Environment: ${{ github.event.inputs.environment }}'
-            echo 'Branch: ${{ github.event.inputs.branch }}'
+            # Build and start containers
+            echo 'Building and starting containers...'
+            docker-compose -f \$COMPOSE_FILE up -d --build
             
-            # Show container status
-            docker ps | grep openrole || echo 'OpenRole containers starting...'
+            # Wait for containers to start
+            sleep 15
+            
+            echo '✅ Deployment completed!'
+            docker ps | grep openrole
           "
 
       - name: Health check
+        env:
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
         run: |
-          # Wait for containers to start
-          echo "Waiting 30 seconds for containers to start..."
+          echo "Waiting 30 seconds for services to stabilize..."
           sleep 30
           
-          # Check if containers are running and test endpoints
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-            echo 'Checking container status...'
-            docker ps | grep openrole
+          ssh $SSH_USER@$SSH_HOST "
+            echo '🔍 Service health checks:'
             
-            echo 'Testing endpoints...'
-            curl -f https://openrole.net || echo 'Website not yet ready'
-            curl -f https://api.openrole.net/health || echo 'API health check not yet ready'
+            echo -n 'OpenRole Web: '
+            curl -s -o /dev/null -w '%{http_code}' https://openrole.net || echo 'DOWN'
+            echo ''
             
-            echo '✅ Deployment verification complete'
+            echo -n 'OpenRole API: '
+            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/health || echo 'DOWN'
+            echo ''
+            
+            echo -n 'CV Profile API: '
+            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/api/profile/health || echo 'DOWN'
+            echo ''
+            
+            echo -n 'Promptcade: '
+            curl -s -o /dev/null -w '%{http_code}' https://promptcade.com || echo 'DOWN'
+            echo ''
+            
+            echo 'Container logs (last 10 lines):'
+            docker logs openrole-web --tail 10 2>&1 || echo 'No web logs'
+            echo '---'
+            docker logs openrole-api --tail 10 2>&1 || echo 'No API logs'
           "
 
       - name: Cleanup
@@ -121,13 +139,27 @@ jobs:
         run: |
           rm -f ~/.ssh/id_rsa
 
-      - name: Deployment notification
+      - name: Summary
         if: always()
         run: |
           if [ ${{ job.status }} == 'success' ]; then
-            echo "🚀 Successfully deployed OpenRole.net to ${{ github.event.inputs.environment }}"
-            echo "Branch: ${{ github.event.inputs.branch }}"
-            echo "Time: $(date)"
+            echo "# ✅ Deployment Successful!"
+            echo ""
+            echo "**Environment:** ${{ github.event.inputs.environment }}"
+            echo "**Branch:** ${{ github.event.inputs.branch }}"
+            echo ""
+            echo "## 🌐 Access URLs:"
+            echo "- OpenRole.net: https://openrole.net"
+            echo "- API: https://api.openrole.net"
+            echo "- CV & Profile Tools: https://api.openrole.net/api/profile/health"
+            echo ""
+            echo "## CV & Profile Tools Features:"
+            echo "- ✅ Profile management with privacy controls"
+            echo "- ✅ CV generation with multiple templates"
+            echo "- ✅ Portfolio showcase with GitHub integration"
+            echo "- ✅ Advanced search and filtering"
+            echo "- ✅ GDPR compliant data export/deletion"
           else
-            echo "❌ Deployment failed"
+            echo "# ❌ Deployment Failed"
+            echo "Please check the logs above for details."
           fi
