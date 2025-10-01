@@ -22,14 +22,14 @@ jobs:
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
           
           # Deploy
-          ssh $USERNAME@$HOST "
-            echo '🚀 Deploying OpenRole CV & Profile Tools...'
+          ssh $USERNAME@$HOST << 'DEPLOY_EOF'
+            echo "🚀 Deploying OpenRole CV & Profile Tools..."
             
             # Create directory and clone
             mkdir -p ~/apps/openrole-production
             cd ~/apps/openrole-production
             
-            if [ -d 'openrole' ]; then
+            if [ -d "openrole" ]; then
               cd openrole
               git fetch origin
               git checkout master
@@ -40,14 +40,12 @@ jobs:
               git checkout master
             fi
             
-            # Environment file
-            cat > .env.production << 'EOF'
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=https://api.openrole.net
-API_URL=https://api.openrole.net
-DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole
-REDIS_URL=redis://openrole-redis:6379
-EOF
+            # Create environment file
+            echo "NODE_ENV=production" > .env.production
+            echo "NEXT_PUBLIC_API_URL=https://api.openrole.net" >> .env.production
+            echo "API_URL=https://api.openrole.net" >> .env.production
+            echo "DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole" >> .env.production
+            echo "REDIS_URL=redis://openrole-redis:6379" >> .env.production
             
             # Stop existing containers
             docker stop openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
@@ -62,9 +60,9 @@ EOF
             
             # Wait and check
             sleep 20
-            echo '✅ Deployment complete!'
+            echo "✅ Deployment complete!"
             docker ps | grep openrole
-          "
+          DEPLOY_EOF
           
           # Cleanup
           rm -f ~/.ssh/id_rsa
@@ -82,18 +80,18 @@ EOF
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
           
           # Health checks
-          ssh $USERNAME@$HOST "
-            echo '🔍 Health checks:'
-            echo -n 'OpenRole.net: '
-            curl -s -o /dev/null -w '%{http_code}' https://openrole.net
-            echo ''
-            echo -n 'API: '
-            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/health
-            echo ''
-            echo -n 'CV & Profile Tools: '
-            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/api/profile/health
-            echo ''
-          "
+          ssh $USERNAME@$HOST << 'VERIFY_EOF'
+            echo "🔍 Health checks:"
+            echo -n "OpenRole.net: "
+            curl -s -o /dev/null -w "%{http_code}" https://openrole.net
+            echo ""
+            echo -n "API: "
+            curl -s -o /dev/null -w "%{http_code}" https://api.openrole.net/health
+            echo ""
+            echo -n "CV & Profile Tools: "
+            curl -s -o /dev/null -w "%{http_code}" https://api.openrole.net/api/profile/health
+            echo ""
+          VERIFY_EOF
           
           # Cleanup
           rm -f ~/.ssh/id_rsa
