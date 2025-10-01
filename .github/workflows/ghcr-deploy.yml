@@ -50,6 +50,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Make images public
+        run: |
+          # Note: Images need to be made public via GitHub UI
+          echo "⚠️  IMPORTANT: Make images public at:"
+          echo "https://github.com/orgs/aspora-io/packages"
+          echo "Click on each package and change visibility to Public"
+          
       - name: Create deployment summary
         run: |
           echo "# ✅ Images Published to GHCR!" >> $GITHUB_STEP_SUMMARY

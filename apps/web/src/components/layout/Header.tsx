@@ -6,15 +6,12 @@ import { useRouter } from 'next/navigation';
 import { 
   Menu, 
   X, 
-  Search, 
-  Bell, 
-  User, 
-  Briefcase, 
-  FileText, 
-  Settings, 
+  Search,
+  FileText,
+  Building2,
+  User,
   LogOut,
-  Heart,
-  Building
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -27,89 +24,69 @@ export const Header: React.FC = () => {
   const handleLogout = async () => {
     await logout();
     setIsUserMenuOpen(false);
+    router.push('/');
   };
 
-  const candidateNavigation = [
-    { name: 'Find Jobs', href: '/jobs', icon: Search },
-    { name: 'My Applications', href: '/dashboard?tab=applications', icon: FileText },
-    { name: 'Saved Jobs', href: '/dashboard?tab=saved', icon: Heart },
-  ];
-
-  const employerNavigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
-    { name: 'Post Job', href: '/jobs/create', icon: FileText },
-    { name: 'Candidates', href: '/candidates', icon: User },
-  ];
-
-  const navigation = isAuthenticated 
-    ? (isCandidate ? candidateNavigation : employerNavigation)
-    : [
-        { name: 'Find Jobs', href: '/jobs', icon: Search },
-        { name: 'For Employers', href: '/employers', icon: Building },
-      ];
-
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white border-b border-gray-200">
+      <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">OR</span>
+              <div className="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-lg">O</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">
-                Open<span className="text-blue-600">Role</span>
-              </span>
+              <span className="text-xl font-bold text-gray-900">OpenRole</span>
             </Link>
-          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
+            {/* Main Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link
+                href="/jobs"
+                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+              >
+                Find Jobs
+              </Link>
+              <Link
+                href="/cv-upload"
+                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+              >
+                Upload CV
+              </Link>
+              <Link
+                href="/employers"
+                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+              >
+                Employers
+              </Link>
+              <Link
+                href="/career-advice"
+                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+              >
+                Career Advice
+              </Link>
+            </nav>
+          </div>
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                {/* Notifications */}
-                <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-
                 {/* User Menu */}
                 <div className="relative">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-gray-900 font-medium"
                   >
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {user?.firstName?.charAt(0) || 'U'}
-                      </span>
-                    </div>
-                    <span className="hidden sm:block text-sm font-medium text-gray-700">
-                      {user?.firstName}
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">
+                      {user?.firstName || 'Account'}
                     </span>
+                    <ChevronDown className="h-4 w-4" />
                   </button>
 
-                  {/* User Dropdown */}
+                  {/* Dropdown */}
                   {isUserMenuOpen && (
                     <>
                       <div
@@ -117,52 +94,100 @@ export const Header: React.FC = () => {
                         onClick={() => setIsUserMenuOpen(false)}
                       />
                       <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
-                        <div className="py-2">
-                          <div className="px-4 py-2 border-b border-gray-100">
+                        <div className="py-1">
+                          <div className="px-4 py-3 border-b border-gray-100">
                             <p className="text-sm font-medium text-gray-900">
                               {user?.firstName} {user?.lastName}
                             </p>
                             <p className="text-xs text-gray-500">{user?.email}</p>
-                            <span className={`inline-flex mt-1 px-2 py-1 text-xs font-medium rounded-full ${
-                              isCandidate ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {isCandidate ? 'Job Seeker' : 'Employer'}
-                            </span>
                           </div>
 
-                          <Link
-                            href="/dashboard"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            <User className="h-4 w-4 mr-3" />
-                            Dashboard
-                          </Link>
+                          {isCandidate && (
+                            <>
+                              <Link
+                                href="/dashboard"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                My Dashboard
+                              </Link>
+                              <Link
+                                href="/applications"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                My Applications
+                              </Link>
+                              <Link
+                                href="/saved-jobs"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Saved Jobs
+                              </Link>
+                              <Link
+                                href="/job-alerts"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Job Alerts
+                              </Link>
+                              <Link
+                                href="/cv-library"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                My CVs
+                              </Link>
+                            </>
+                          )}
+
+                          {isEmployer && (
+                            <>
+                              <Link
+                                href="/employer/dashboard"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Employer Dashboard
+                              </Link>
+                              <Link
+                                href="/employer/post-job"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Post a Job
+                              </Link>
+                              <Link
+                                href="/employer/jobs"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Manage Jobs
+                              </Link>
+                              <Link
+                                href="/employer/candidates"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                Browse CVs
+                              </Link>
+                            </>
+                          )}
 
                           <Link
                             href="/profile"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
-                            <User className="h-4 w-4 mr-3" />
-                            Profile
+                            Profile Settings
                           </Link>
 
-                          <Link
-                            href="/settings"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            <Settings className="h-4 w-4 mr-3" />
-                            Settings
-                          </Link>
-
-                          <div className="border-t border-gray-100 mt-2 pt-2">
+                          <div className="border-t border-gray-100">
                             <button
                               onClick={handleLogout}
-                              className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                             >
-                              <LogOut className="h-4 w-4 mr-3" />
                               Sign out
                             </button>
                           </div>
@@ -174,18 +199,17 @@ export const Header: React.FC = () => {
               </>
             ) : (
               <>
-                {/* Auth Buttons */}
                 <Link
                   href="/login"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                  className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium transition-colors"
                 >
-                  Get started
+                  Register
                 </Link>
               </>
             )}
@@ -193,7 +217,7 @@ export const Header: React.FC = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-400 hover:text-gray-600"
+              className="md:hidden p-2 text-gray-600 hover:text-gray-900"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -202,42 +226,56 @@ export const Header: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="space-y-2">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Icon className="h-5 w-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </Link>
-                );
-              })}
+          <div className="md:hidden py-4 border-t border-gray-100">
+            <nav className="space-y-2">
+              <Link
+                href="/jobs"
+                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Find Jobs
+              </Link>
+              <Link
+                href="/cv-upload"
+                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Upload CV
+              </Link>
+              <Link
+                href="/employers"
+                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Employers
+              </Link>
+              <Link
+                href="/career-advice"
+                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Career Advice
+              </Link>
 
               {!isAuthenticated && (
-                <div className="pt-4 border-t border-gray-200 space-y-2">
+                <div className="pt-4 border-t border-gray-100 space-y-2">
                   <Link
                     href="/login"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+                    className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign in
                   </Link>
                   <Link
                     href="/register"
-                    className="block px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-center"
+                    className="block px-3 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 font-medium text-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Get started
+                    Register
                   </Link>
                 </div>
               )}
-            </div>
+            </nav>
           </div>
         )}
       </div>
