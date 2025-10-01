@@ -71,12 +71,18 @@ jobs:
             docker ps | grep openrole || echo 'No existing OpenRole containers'
             
             # Stop only OpenRole containers to avoid affecting other services
-            docker stop openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to stop'
-            docker rm openrole-web openrole-api 2>/dev/null || echo 'No existing OpenRole containers to remove'
+            docker stop openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || echo 'No existing OpenRole containers to stop'
+            docker rm openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || echo 'No existing OpenRole containers to remove'
             
-            # Build and start new containers
+            # Build and start new containers with full stack
             echo 'Building and starting OpenRole containers...'
-            docker-compose -f docker-compose.traefik.yml up -d --build
+            if [ -f docker-compose.production.yml ]; then
+              echo 'Using production compose file with database and Redis...'
+              docker-compose -f docker-compose.production.yml up -d --build
+            else
+              echo 'Using basic Traefik compose file...'
+              docker-compose -f docker-compose.traefik.yml up -d --build
+            fi
             
             # Wait for containers to be healthy
             echo 'Waiting for containers to start...'
@@ -104,9 +110,10 @@ jobs:
             echo 'Testing endpoints...'
             curl -f https://openrole.net || echo 'Website not yet ready'
             curl -f https://api.openrole.net/health || echo 'API health check not yet ready'
+            curl -f https://api.openrole.net/api/profile/health || echo 'CV & Profile Tools API not yet ready'
             
             echo 'Checking Promptcade is still working...'
-            curl -s https://promptcade.com/health || echo 'Promptcade health check failed'
+            curl -s https://promptcade.com || echo 'Promptcade may need restoration'
             
             echo '✅ Deployment verification complete'
           "
