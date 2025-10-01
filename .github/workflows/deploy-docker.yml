@@ -43,7 +43,7 @@ jobs:
       - name: Deploy to server
         run: |
           # Deploy using Docker on the server
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+          ssh hyperdude@${{ secrets.HOST }} "
             echo '🚀 Starting OpenRole Docker deployment...'
             
             # Check that Promptcade is still running (safety check)
@@ -103,7 +103,7 @@ jobs:
           sleep 30
           
           # Check if containers are running and test endpoints
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+          ssh hyperdude@${{ secrets.HOST }} "
             echo 'Checking container status...'
             docker ps | grep openrole
             

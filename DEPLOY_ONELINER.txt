@@ -1,0 +1,11 @@
+OPENROLE DEPLOYMENT - COPY THIS ENTIRE COMMAND:
+
+ssh root@86.159.155.227 'cd /opt && rm -rf openrole-deploy && git clone https://github.com/aspora-io/openrole.git openrole-deploy && cd openrole-deploy && docker-compose -f docker-compose.simple.yml down 2>/dev/null; docker-compose -f docker-compose.simple.yml up -d --build && sleep 15 && echo "✅ Deployment complete!" && docker ps | grep -E "(openrole|nginx)"'
+
+OR IF YOU'RE ALREADY LOGGED INTO THE SERVER, RUN THIS:
+
+cd /opt && rm -rf openrole-deploy && git clone https://github.com/aspora-io/openrole.git openrole-deploy && cd openrole-deploy && docker-compose -f docker-compose.simple.yml down 2>/dev/null; docker-compose -f docker-compose.simple.yml up -d --build && sleep 15 && echo "✅ Deployment complete!" && docker ps | grep -E "(openrole|nginx)"
+
+AFTER DEPLOYMENT, ACCESS YOUR SITE AT:
+- http://86.159.155.227
+- https://openrole.net (if DNS is configured)
