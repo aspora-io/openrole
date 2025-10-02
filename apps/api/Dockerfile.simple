@@ -2,8 +2,10 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package.json
+# Copy package.json and tsconfig if exists
 COPY package.json ./
+COPY tsconfig.json* ./
+COPY tsconfig.production.json* ./
 
 # Install dependencies (ignore workspace errors)
 RUN npm install --force || npm install --legacy-peer-deps || true
@@ -16,10 +18,13 @@ RUN sed -i 's/"@openrole\/[^"]*": "workspace:\*"//g' package.json && \
     sed -i 's/,,/,/g' package.json && \
     sed -i 's/,}/}/g' package.json
 
-# Try to build
-RUN npm run build || echo "Build skipped - will run directly"
+# Install TypeScript globally if not included
+RUN npm install -g typescript
+
+# Build the TypeScript code with production config
+RUN npm run build || (npx tsc -p tsconfig.production.json && mkdir -p dist && cp package.json dist/)
 
 EXPOSE 3001
 
-# Start the app
-CMD ["node", "src/index.ts"]
+# Start the compiled JavaScript app
+CMD ["node", "dist/index.js"]
