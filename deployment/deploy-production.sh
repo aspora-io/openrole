@@ -2,7 +2,7 @@
 
 # OpenRole Production Deployment
 SERVER_IP="145.223.75.73"
-SERVER_USER="alanops"
+SERVER_USER="hyperdude"
 
 echo "🚀 Deploying OpenRole to production..."
 echo "Server: $SERVER_USER@$SERVER_IP"

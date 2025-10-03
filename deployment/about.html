@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16 gap-4">
+                <a href="/" class="flex items-center space-x-2 flex-shrink-0">
+                    <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">O</span>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900 hidden sm:inline">OpenRole</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
+                    <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
+                    <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
+                    <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
+                    <a href="/about" class="text-teal-600 font-medium">About</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
+                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-teal-600 to-teal-700 text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">About OpenRole</h1>
+            <p class="text-xl md:text-2xl text-teal-100 max-w-3xl mx-auto">
+                We're revolutionizing the job market by eliminating ghost jobs and requiring salary transparency from every employer.
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Our Mission</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Verified Employers</h3>
+                        <p class="text-gray-600">Every employer is verified through Companies House data. No fake companies, no scams - just legitimate opportunities.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Salary Transparency</h3>
+                        <p class="text-gray-600">All job postings must include salary ranges. No more wasting time on applications only to find the pay doesn't match your expectations.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">No Ghost Jobs</h3>
+                        <p class="text-gray-600">We actively monitor and remove inactive listings. Every job on our platform represents a real opportunity with active hiring.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Our Story</h2>
+                <div class="prose prose-lg max-w-none text-gray-600">
+                    <p class="text-lg leading-relaxed mb-6">
+                        OpenRole was born out of frustration with the current state of job hunting. Too many job seekers waste countless hours applying for positions that don't exist, or discovering after multiple interview rounds that the salary doesn't meet their basic needs.
+                    </p>
+                    <p class="text-lg leading-relaxed mb-6">
+                        We believe that transparency is the foundation of a fair job market. By requiring all employers to display salary ranges and verifying their legitimacy through official government data, we're creating a platform where both job seekers and employers can make informed decisions.
+                    </p>
+                    <p class="text-lg leading-relaxed">
+                        Our platform currently features <strong>345 verified companies</strong> from the UK's Companies House registry, offering <strong>over 125 active job opportunities</strong> across various industries. Every employer has been validated, and every job posting includes transparent salary information.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Our Values</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">🎯 Transparency First</h3>
+                        <p class="text-gray-600">We believe job seekers deserve to know what they're applying for - including salary, benefits, and company details - before investing their time.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">🔍 Quality Over Quantity</h3>
+                        <p class="text-gray-600">Rather than flooding our platform with thousands of questionable listings, we focus on providing fewer, higher-quality opportunities from verified employers.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">⚡ Efficiency Matters</h3>
+                        <p class="text-gray-600">Job hunting should be efficient. Our platform eliminates time-wasting applications by ensuring every listing represents a genuine opportunity.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">🤝 Fair for Everyone</h3>
+                        <p class="text-gray-600">We create a level playing field where employers compete on merit and compensation, not on hiding information or creating false urgency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-teal-600 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-12">OpenRole by the Numbers</h2>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="text-4xl font-bold mb-2">345</div>
+                        <div class="text-teal-100">Verified Companies</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">125+</div>
+                        <div class="text-teal-100">Active Jobs</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">100%</div>
+                        <div class="text-teal-100">Salary Transparency</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">0</div>
+                        <div class="text-teal-100">Ghost Jobs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Built for Job Seekers</h2>
+                <p class="text-lg text-gray-600 mb-12">
+                    OpenRole is developed by a team that understands the frustrations of modern job hunting. We've experienced the disappointment of ghost jobs and hidden salaries firsthand, which drives our commitment to creating a better way.
+                </p>
+                <div class="bg-gray-50 p-8 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Our Commitment</h3>
+                    <p class="text-gray-600">
+                        We're committed to maintaining the highest standards of transparency and authenticity. Every feature we build and every policy we implement is designed with one goal in mind: making job hunting fair, efficient, and transparent for everyone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Ready to Find Your Perfect Role?</h2>
+            <p class="text-xl text-gray-600 mb-8">Join thousands of job seekers who are already benefiting from transparent, verified job opportunities.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/register" class="bg-teal-600 text-white px-8 py-3 rounded-lg hover:bg-teal-700 font-medium text-lg">Get Started Today</a>
+                <a href="/jobs" class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 font-medium text-lg">Browse Jobs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/about" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="/terms" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-white">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
