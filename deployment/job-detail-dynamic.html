@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/jobs" class="text-gray-600 hover:text-teal-600">Find Jobs</a>
+                        <a href="/employers" class="text-gray-600 hover:text-teal-600">For Employers</a>
+                        <a href="/cv-upload" class="text-gray-600 hover:text-teal-600">Upload CV</a>
+                        <a href="/career-advice" class="text-gray-600 hover:text-teal-600">Career Advice</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-600 hover:text-teal-600">Login</a>
+                    <a href="/register" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Job Details Container -->
+    <div id="job-container" class="py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center py-16">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+                <p class="text-gray-600 mt-4">Loading job details...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 OpenRole. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('id');
+
+        async function loadJobDetails() {
+            if (!jobId) {
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            No job ID specified. <a href="/jobs" class="underline">Browse all jobs</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/jobs/${jobId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Job not found');
+                }
+                
+                const job = await response.json();
+                
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <!-- Breadcrumb -->
+                        <nav class="text-sm mb-6">
+                            <a href="/" class="text-gray-500 hover:text-teal-600">Home</a>
+                            <span class="mx-2 text-gray-500">/</span>
+                            <a href="/jobs" class="text-gray-500 hover:text-teal-600">Jobs</a>
+                            <span class="mx-2 text-gray-500">/</span>
+                            <span class="text-gray-700">${job.title || 'Job Details'}</span>
+                        </nav>
+
+                        <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+                            <!-- Main Content -->
+                            <div class="lg:col-span-2 mb-8 lg:mb-0">
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-4">${job.title || 'Job Title'}</h1>
+                                    
+                                    <div class="flex flex-wrap gap-4 mb-6 text-gray-600">
+                                        <div class="flex items-center">
+                                            <span class="mr-2">🏢</span>
+                                            <span>${job.company_name || job.company || 'Company Name'}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">📍</span>
+                                            <span>${job.location_general || job.location || 'Location'}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">💼</span>
+                                            <span>${job.employment_type || job.type || 'Full-time'}</span>
+                                        </div>
+                                        ${job.remote_type && job.remote_type !== 'office' ? `
+                                        <div class="flex items-center">
+                                            <span class="mr-2">🏠</span>
+                                            <span>${job.remote_type}</span>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Salary</h2>
+                                        <div class="text-2xl font-bold text-green-600">
+                                            £${job.salary_min ? job.salary_min.toLocaleString() : 'N/A'} - £${job.salary_max ? job.salary_max.toLocaleString() : 'N/A'}
+                                            <span class="text-sm font-normal text-gray-600">per year</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Job Description</h2>
+                                        <div class="prose max-w-none text-gray-700 whitespace-pre-wrap">${job.description || 'No description available.'}</div>
+                                    </div>
+
+                                    ${job.requirements ? `
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Requirements</h2>
+                                        <div class="prose max-w-none text-gray-700">${job.requirements}</div>
+                                    </div>
+                                    ` : ''}
+
+                                    ${job.benefits ? `
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Benefits</h2>
+                                        <div class="prose max-w-none text-gray-700">${job.benefits}</div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-lg shadow p-6 mb-6 sticky top-20">
+                                    <h3 class="text-lg font-semibold mb-4">Apply for this job</h3>
+                                    <div id="apply-section">
+                                        <!-- Content will be dynamically updated based on auth status -->
+                                    </div>
+                                    
+                                    <div class="border-t pt-4 mt-4">
+                                        <button onclick="saveJob('${job.id}')" class="w-full px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                            💾 Save Job
+                                        </button>
+                                    </div>
+                                </div>
+
+                                ${job.company_description || job.website ? `
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h3 class="text-lg font-semibold mb-4">About ${job.company_name || job.company || 'the Company'}</h3>
+                                    ${job.company_description ? `<p class="text-gray-600 mb-4">${job.company_description}</p>` : ''}
+                                    ${job.website ? `<a href="${job.website}" target="_blank" class="text-teal-600 hover:underline">Visit company website →</a>` : ''}
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Update page title
+                document.title = `${job.title} - ${job.company_name || job.company} - OpenRole`;
+                
+                // Update apply section
+                updateApplySection(jobId);
+                
+            } catch (error) {
+                console.error('Error loading job:', error);
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            Error loading job details. <a href="/jobs" class="underline">Browse all jobs</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function saveJob(jobId) {
+            alert('Please login or register to save jobs');
+            window.location.href = '/login';
+        }
+
+        // Update apply section based on auth
+        function updateApplySection(jobId) {
+            const applySection = document.getElementById('apply-section');
+            const user = getUser();
+            
+            if (user) {
+                // Check if already applied (using localStorage for demo)
+                const applications = JSON.parse(localStorage.getItem('job_applications') || '[]');
+                const hasApplied = applications.some(app => app.job_id === jobId);
+                
+                if (hasApplied) {
+                    applySection.innerHTML = `
+                        <div class="text-center py-4">
+                            <div class="text-green-600 mb-2">
+                                <svg class="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <p class="font-medium text-gray-900">You've applied for this job</p>
+                            <p class="text-sm text-gray-600 mt-1">Applied on ${new Date(applications.find(a => a.job_id === jobId).applied_at).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                } else {
+                    applySection.innerHTML = `
+                        <button onclick="applyForJob('${jobId}')" class="w-full px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors mb-3">
+                            Apply Now
+                        </button>
+                        <p class="text-sm text-gray-600 text-center">Make sure your CV is up to date</p>
+                    `;
+                }
+            } else {
+                applySection.innerHTML = `
+                    <a href="/register?redirect=/job-detail?id=${jobId}" class="block w-full text-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors mb-3">
+                        Register to Apply
+                    </a>
+                    <p class="text-sm text-gray-600 text-center">Already have an account? <a href="/login?redirect=/job-detail?id=${jobId}" class="text-teal-600 hover:underline">Login</a></p>
+                `;
+            }
+        }
+
+        // Apply for job function
+        async function applyForJob(jobId) {
+            const user = getUser();
+            if (!user) {
+                window.location.href = `/login?redirect=/job-detail?id=${jobId}`;
+                return;
+            }
+
+            // Check if user has uploaded CV
+            const userCVs = JSON.parse(localStorage.getItem('user_cvs') || '[]');
+            if (userCVs.length === 0) {
+                if (confirm('You need to upload a CV before applying. Would you like to upload one now?')) {
+                    window.location.href = '/cv-upload';
+                }
+                return;
+            }
+
+            // Simulate application submission
+            if (confirm('Apply for this position with your uploaded CV?')) {
+                // Save application
+                const applications = JSON.parse(localStorage.getItem('job_applications') || '[]');
+                applications.push({
+                    job_id: jobId,
+                    user_id: user.id,
+                    applied_at: new Date().toISOString(),
+                    status: 'submitted'
+                });
+                localStorage.setItem('job_applications', JSON.stringify(applications));
+                
+                // Update UI
+                updateApplySection(jobId);
+                
+                // Show success message
+                alert('Application submitted successfully! The employer will review your application and contact you if interested.');
+            }
+        }
+
+        // Load job details when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobDetails();
+            updateNavigation();
+        });
+    </script>
+</body>
+</html>

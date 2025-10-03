@@ -1,0 +1,25 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package.json
+COPY package.json ./
+
+# Install dependencies (ignore workspace errors)
+RUN npm install --force || npm install --legacy-peer-deps || true
+
+# Copy all app files
+COPY . .
+
+# Remove workspace references from package.json
+RUN sed -i 's/"@openrole\/[^"]*": "workspace:\*"//g' package.json && \
+    sed -i 's/,,/,/g' package.json && \
+    sed -i 's/,}/}/g' package.json
+
+# Try to build (may skip if dependencies fail)
+RUN npm run build || echo "Build skipped - will run in dev mode"
+
+EXPOSE 3000
+
+# Start the app (fallback to dev if build failed)
+CMD ["sh", "-c", "npm run start || npm run dev"]

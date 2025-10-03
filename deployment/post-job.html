@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                <div class="text-gray-600">
+                    Already have an account? 
+                    <a href="/employer-login" class="text-teal-600 hover:text-teal-700 font-medium">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="bg-teal-600 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl font-bold mb-2">Post Your Job Opening</h1>
+            <p class="text-lg">Reach thousands of qualified candidates with transparent salary information</p>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Ready to Find Your Next Great Hire?</h2>
+                    <p class="text-gray-600 mb-6">To post a job, you'll need to create an employer account first. It only takes a minute!</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- New Employer -->
+                    <div class="text-center">
+                        <div class="text-5xl mb-4">🆕</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">New to OpenRole?</h3>
+                        <p class="text-gray-600 mb-6">Create your employer account and start posting jobs immediately</p>
+                        <a href="/register" class="inline-block px-6 py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700 transition-colors">
+                            Create Employer Account
+                        </a>
+                    </div>
+
+                    <!-- Existing Employer -->
+                    <div class="text-center">
+                        <div class="text-5xl mb-4">🏢</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Already Registered?</h3>
+                        <p class="text-gray-600 mb-6">Sign in to your employer dashboard to post and manage jobs</p>
+                        <a href="/employer-login" class="inline-block px-6 py-3 border-2 border-teal-600 text-teal-600 font-semibold rounded hover:bg-teal-50 transition-colors">
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Benefits -->
+                <div class="mt-12 pt-8 border-t">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">What You Get</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl mb-3">⏱️</div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Quick Setup</h4>
+                            <p class="text-sm text-gray-600">Post your job in under 5 minutes with our simple form</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-3">🎯</div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Quality Matches</h4>
+                            <p class="text-sm text-gray-600">Get applications from pre-screened, qualified candidates</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-3">📊</div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Track Performance</h4>
+                            <p class="text-sm text-gray-600">Monitor views, applications, and manage candidates</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Preview -->
+            <div class="mt-8 text-center">
+                <p class="text-gray-600 mb-4">Want to see our pricing first?</p>
+                <a href="/employers#pricing" class="text-teal-600 hover:text-teal-700 font-medium">
+                    View Pricing Plans →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-white">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  openrole-web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.simple
+    container_name: openrole-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.openrole.net
+    networks:
+      - openrole-net
+
+  openrole-api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.simple
+    container_name: openrole-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@openrole-db:5432/openrole
+      - REDIS_URL=redis://openrole-redis:6379
+    networks:
+      - openrole-net
+    depends_on:
+      - openrole-db
+      - openrole-redis
+
+  openrole-db:
+    image: postgres:16-alpine
+    container_name: openrole-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=openrole
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - openrole-net
+
+  openrole-redis:
+    image: redis:7-alpine
+    container_name: openrole-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - openrole-net
+
+  # Simple nginx to serve the frontend
+  openrole-nginx:
+    image: nginx:alpine
+    container_name: openrole-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-simple.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - openrole-net
+    depends_on:
+      - openrole-web
+      - openrole-api
+
+networks:
+  openrole-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:

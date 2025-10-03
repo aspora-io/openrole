@@ -25,7 +25,7 @@ git clone https://github.com/aspora-io/openrole.git releases/$RELEASE_DIR || {
 cd releases/$RELEASE_DIR
 
 # Checkout the correct branch
-git checkout 001-cv-profile-tools
+git checkout master
 
 # Copy the fixed Dockerfiles if needed
 echo "🔧 Preparing Docker configuration..."

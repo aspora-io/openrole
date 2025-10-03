@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Advice - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
+                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
+                        <a href="/career-advice" class="text-teal-600 font-medium">Career Advice</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
+                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-gray-900 text-center mb-4">Career Advice Hub</h1>
+            <p class="text-xl text-gray-600 text-center max-w-3xl mx-auto">
+                Expert guidance to help you navigate your career journey, from writing the perfect CV to acing your interviews
+            </p>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="py-8 bg-teal-50">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                <a href="#cv-tips" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="text-3xl mb-2">📝</div>
+                    <h3 class="font-semibold text-gray-800">CV Writing</h3>
+                </a>
+                <a href="#interview-prep" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="text-3xl mb-2">🎯</div>
+                    <h3 class="font-semibold text-gray-800">Interview Prep</h3>
+                </a>
+                <a href="#salary-guide" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="text-3xl mb-2">💰</div>
+                    <h3 class="font-semibold text-gray-800">Salary Guide</h3>
+                </a>
+                <a href="#career-growth" class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="text-3xl mb-2">📈</div>
+                    <h3 class="font-semibold text-gray-800">Career Growth</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Articles -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Articles</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- Article 1 -->
+                <article class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
+                        <span class="text-6xl">📝</span>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-sm text-teal-600 font-medium">CV WRITING</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3">
+                            10 CV Mistakes That Could Cost You The Job
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Avoid these common CV pitfalls that recruiters see every day. Learn how to make your CV stand out for all the right reasons.
+                        </p>
+                        <a href="#" class="text-teal-600 font-medium hover:text-teal-700">Read more →</a>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                        <span class="text-6xl">🎤</span>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-sm text-teal-600 font-medium">INTERVIEWS</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3">
+                            How to Answer "Tell Me About Yourself"
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Master the most common interview question with our proven framework. Make a great first impression every time.
+                        </p>
+                        <a href="#" class="text-teal-600 font-medium hover:text-teal-700">Read more →</a>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <span class="text-6xl">💷</span>
+                    </div>
+                    <div class="p-6">
+                        <span class="text-sm text-teal-600 font-medium">NEGOTIATION</span>
+                        <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3">
+                            Salary Negotiation: A Step-by-Step Guide
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Learn how to negotiate your salary with confidence. Research, timing, and tactics to get the compensation you deserve.
+                        </p>
+                        <a href="#" class="text-teal-600 font-medium hover:text-teal-700">Read more →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CV Tips Section -->
+    <section id="cv-tips" class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">CV Writing Tips</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Essential CV Components</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <div>
+                                <strong>Contact Information:</strong> Name, phone, email, LinkedIn profile, location (city only)
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <div>
+                                <strong>Professional Summary:</strong> 2-3 lines highlighting your key skills and experience
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <div>
+                                <strong>Work Experience:</strong> Recent roles first, with achievements not just duties
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <div>
+                                <strong>Education:</strong> Degrees, certifications, and relevant training
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <div>
+                                <strong>Skills:</strong> Technical and soft skills relevant to the role
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">CV Do's and Don'ts</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-green-600 mb-2">✅ DO:</h4>
+                            <ul class="text-gray-600 space-y-1 text-sm">
+                                <li>• Tailor your CV for each application</li>
+                                <li>• Use action verbs and quantify achievements</li>
+                                <li>• Keep it concise (2 pages max for most roles)</li>
+                                <li>• Proofread for spelling and grammar</li>
+                                <li>• Use a clean, professional format</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-red-600 mb-2">❌ DON'T:</h4>
+                            <ul class="text-gray-600 space-y-1 text-sm">
+                                <li>• Include a photo (unless specifically requested)</li>
+                                <li>• List irrelevant hobbies</li>
+                                <li>• Use unprofessional email addresses</li>
+                                <li>• Include personal details (age, marital status)</li>
+                                <li>• Lie or exaggerate your experience</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interview Prep Section -->
+    <section id="interview-prep" class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Interview Preparation</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-6">Common Interview Questions</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-teal-500 pl-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">"Why do you want to work here?"</h4>
+                            <p class="text-gray-600">Research the company's values, recent news, and culture. Align your answer with their mission and explain how you can contribute.</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-teal-500 pl-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">"What are your strengths and weaknesses?"</h4>
+                            <p class="text-gray-600">Choose strengths relevant to the role. For weaknesses, mention something genuine but show how you're working to improve it.</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-teal-500 pl-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">"Where do you see yourself in 5 years?"</h4>
+                            <p class="text-gray-600">Show ambition while being realistic. Focus on skills you want to develop and how you plan to grow within the company.</p>
+                        </div>
+
+                        <div class="border-l-4 border-teal-500 pl-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">"Why are you leaving your current job?"</h4>
+                            <p class="text-gray-600">Stay positive. Focus on what you're looking for in your next role rather than what's wrong with your current situation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STAR Method -->
+                <div class="bg-teal-50 rounded-lg p-8">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">The STAR Method</h3>
+                    <p class="text-gray-700 mb-6">Use this framework to structure your answers to behavioral questions:</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-teal-700">S - Situation</h4>
+                            <p class="text-gray-600">Set the context for your story</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-teal-700">T - Task</h4>
+                            <p class="text-gray-600">Describe what needed to be done</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-teal-700">A - Action</h4>
+                            <p class="text-gray-600">Explain what you did</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-teal-700">R - Result</h4>
+                            <p class="text-gray-600">Share the outcome and what you learned</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Salary Guide Section -->
+    <section id="salary-guide" class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Salary Guide 2024</h2>
+            
+            <div class="max-w-5xl mx-auto">
+                <p class="text-lg text-gray-600 mb-8">Understanding market rates helps you negotiate confidently. Here are average salary ranges for popular roles in the UK:</p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Technology Salaries -->
+                    <div class="bg-white rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Technology</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Junior Developer</span>
+                                <span class="font-medium text-green-600">£25,000 - £35,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Mid-level Developer</span>
+                                <span class="font-medium text-green-600">£40,000 - £60,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Senior Developer</span>
+                                <span class="font-medium text-green-600">£60,000 - £90,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">DevOps Engineer</span>
+                                <span class="font-medium text-green-600">£50,000 - £80,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-gray-700">Data Scientist</span>
+                                <span class="font-medium text-green-600">£45,000 - £75,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Marketing Salaries -->
+                    <div class="bg-white rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Marketing</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Marketing Assistant</span>
+                                <span class="font-medium text-green-600">£20,000 - £25,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Marketing Executive</span>
+                                <span class="font-medium text-green-600">£25,000 - £35,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Marketing Manager</span>
+                                <span class="font-medium text-green-600">£35,000 - £55,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Digital Marketing Manager</span>
+                                <span class="font-medium text-green-600">£40,000 - £60,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-gray-700">Marketing Director</span>
+                                <span class="font-medium text-green-600">£70,000 - £120,000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Finance Salaries -->
+                    <div class="bg-white rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Finance</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Accounts Assistant</span>
+                                <span class="font-medium text-green-600">£20,000 - £28,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Management Accountant</span>
+                                <span class="font-medium text-green-600">£35,000 - £50,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Financial Analyst</span>
+                                <span class="font-medium text-green-600">£40,000 - £60,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Finance Manager</span>
+                                <span class="font-medium text-green-600">£50,000 - £75,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-gray-700">CFO</span>
+                                <span class="font-medium text-green-600">£100,000 - £250,000+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sales Salaries -->
+                    <div class="bg-white rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Sales</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Sales Assistant</span>
+                                <span class="font-medium text-green-600">£18,000 - £24,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Sales Executive</span>
+                                <span class="font-medium text-green-600">£25,000 - £40,000 + comm</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Account Manager</span>
+                                <span class="font-medium text-green-600">£35,000 - £55,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-700">Sales Manager</span>
+                                <span class="font-medium text-green-600">£45,000 - £70,000 + comm</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-gray-700">Sales Director</span>
+                                <span class="font-medium text-green-600">£80,000 - £150,000 + comm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 bg-teal-50 rounded-lg">
+                    <p class="text-gray-700"><strong>Note:</strong> Salaries vary based on location, company size, industry, and individual experience. London-based roles typically offer 10-30% higher salaries than the UK average.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Growth Section -->
+    <section id="career-growth" class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Career Growth Strategies</h2>
+            
+            <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+                <!-- Skill Development -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🎓</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Continuous Learning</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Take online courses and certifications</li>
+                        <li>• Attend industry conferences and workshops</li>
+                        <li>• Join professional associations</li>
+                        <li>• Read industry publications and blogs</li>
+                        <li>• Learn new technologies and tools</li>
+                    </ul>
+                </div>
+
+                <!-- Networking -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🤝</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Build Your Network</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Optimize your LinkedIn profile</li>
+                        <li>• Attend networking events</li>
+                        <li>• Join professional groups</li>
+                        <li>• Seek mentorship opportunities</li>
+                        <li>• Maintain relationships with colleagues</li>
+                    </ul>
+                </div>
+
+                <!-- Personal Branding -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🌟</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Personal Branding</h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Share your expertise online</li>
+                        <li>• Write articles or blog posts</li>
+                        <li>• Speak at events or webinars</li>
+                        <li>• Contribute to open source projects</li>
+                        <li>• Build a portfolio of your work</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section class="py-12 bg-teal-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Stay Updated with Career Tips</h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto">
+                Get weekly career advice, job search tips, and exclusive opportunities delivered to your inbox
+            </p>
+            <form class="max-w-md mx-auto flex gap-4">
+                <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-white">
+                <button type="submit" class="bg-white text-teal-600 px-6 py-3 rounded font-semibold hover:bg-gray-100 transition-colors">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>&copy; 2024 OpenRole. All rights reserved.</p>
+                <p class="mt-2 text-sm">Your trusted partner in career success</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

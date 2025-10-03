@@ -1,0 +1,37 @@
+name: Manual Deploy Instructions
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy-instructions:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Create deployment instructions
+        run: |
+          echo "# 🚀 OpenRole Deployment Instructions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Quick Deploy Command (SSH into server first):" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "cd /opt && rm -rf openrole && git clone https://github.com/aspora-io/openrole.git && cd openrole && docker-compose -f docker-compose.simple.yml up -d --build" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## SSH Command:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "ssh hyperdude@86.159.155.227" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Access Points:" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: https://openrole.net" >> $GITHUB_STEP_SUMMARY
+          echo "- API: https://api.openrole.net" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Features Deployed:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Complete React/Next.js frontend" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Authentication system" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Job search with filters" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ User dashboards" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ API backend" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Login - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16 gap-4">
+                <a href="/" class="flex items-center space-x-2 flex-shrink-0">
+                    <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">O</span>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900 hidden sm:inline">OpenRole</span>
+                </a>
+                <div class="text-gray-600 text-right text-sm sm:text-base">
+                    <span class="hidden sm:inline">New employer? </span>
+                    <a href="/register" class="text-teal-600 hover:text-teal-700 font-medium whitespace-nowrap">Create account</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full">
+            <!-- Login Box -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🏢</div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Employer Portal</h1>
+                    <p class="text-gray-600">Sign in to manage your job postings</p>
+                </div>
+
+                <!-- Login Form -->
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Email</label>
+                        <input 
+                            type="email" 
+                            placeholder="admin@company.com" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <a href="/forgot-password" class="text-sm text-teal-600 hover:text-teal-700">Forgot password?</a>
+                        </div>
+                        <input 
+                            type="password" 
+                            placeholder="Enter your password" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember-employer" class="mr-2 w-4 h-4 text-teal-600 rounded">
+                        <label for="remember-employer" class="text-sm text-gray-700">Remember me</label>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700 transition-colors">
+                        Sign In to Employer Portal
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="mt-8 pt-6 border-t text-center">
+                    <p class="text-sm text-gray-600 mb-4">Looking for candidate login?</p>
+                    <a href="/login" class="text-teal-600 hover:text-teal-700 font-medium">
+                        Go to Job Seeker Login →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="mt-8 text-center">
+                <h3 class="font-semibold text-gray-800 mb-4">Why post with OpenRole?</h3>
+                <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <div class="text-2xl mb-2">✅</div>
+                        <p class="text-gray-600">Verified candidates</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">📊</div>
+                        <p class="text-gray-600">Analytics dashboard</p>
+                    </div>
+                    <div>
+                        <div class="text-2xl mb-2">🚀</div>
+                        <p class="text-gray-600">Fast hiring</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-auto">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved.</p>
+                <p class="mt-2">
+                    <a href="/" class="hover:text-white">Home</a> | 
+                    <a href="/employers" class="hover:text-white">For Employers</a> | 
+                    <a href="/jobs" class="hover:text-white">Jobs</a> | 
+                    <a href="#" class="hover:text-white">Support</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

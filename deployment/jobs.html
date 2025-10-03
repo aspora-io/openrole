@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/jobs" class="text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/employers" class="text-gray-600 hover:text-teal-600">For Employers</a>
+                        <a href="/cv-upload" class="text-gray-600 hover:text-teal-600">Upload CV</a>
+                        <a href="/career-advice" class="text-gray-600 hover:text-teal-600">Career Advice</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-600 hover:text-teal-600">Login</a>
+                    <a href="/register" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Section -->
+    <section class="bg-white py-8 shadow-sm">
+        <div class="container mx-auto px-4">
+            <form id="search-form" class="flex flex-wrap md:flex-nowrap gap-4 max-w-4xl mx-auto">
+                <input type="text" id="search-query" name="q" placeholder="Job title, skills, or company" 
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+                <input type="text" id="search-location" name="location" placeholder="City or postcode" 
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+                <button type="submit" class="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">
+                    Search
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="py-8">
+        <div class="container mx-auto px-4">
+            <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+                <!-- Filters Sidebar -->
+                <aside class="lg:col-span-1 mb-8 lg:mb-0">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="font-semibold text-lg mb-4">Filter Jobs</h3>
+                        
+                        <!-- Salary Range -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-2">Salary Range</h4>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="0-30000">
+                                £0 - £30,000
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="30000-50000">
+                                £30,000 - £50,000
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="50000-70000">
+                                £50,000 - £70,000
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="70000+">
+                                £70,000+
+                            </label>
+                        </div>
+
+                        <!-- Job Type -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-2">Job Type</h4>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="full-time">
+                                Full-time
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="part-time">
+                                Part-time
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="contract">
+                                Contract
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="temporary">
+                                Temporary
+                            </label>
+                        </div>
+
+                        <!-- Remote Options -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-2">Remote Options</h4>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="remote">
+                                Remote Only
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="hybrid">
+                                Hybrid
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="office">
+                                Office Based
+                            </label>
+                        </div>
+
+                        <!-- Experience Level -->
+                        <div>
+                            <h4 class="font-medium mb-2">Experience Level</h4>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="entry">
+                                Entry Level
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="mid">
+                                Mid Level
+                            </label>
+                            <label class="flex items-center mb-2">
+                                <input type="checkbox" class="mr-2" value="senior">
+                                Senior Level
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="executive">
+                                Executive
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Jobs List -->
+                <div class="lg:col-span-3">
+                    <!-- Results Header -->
+                    <div class="bg-white rounded-lg shadow p-4 mb-6 flex items-center justify-between">
+                        <h2 class="text-xl font-semibold" id="results-count">Loading jobs...</h2>
+                        <select class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+                            <option>Most Recent</option>
+                            <option>Salary: High to Low</option>
+                            <option>Salary: Low to High</option>
+                        </select>
+                    </div>
+
+                    <!-- Job Cards Container -->
+                    <div id="jobs-container" class="space-y-4">
+                        <!-- Jobs will be loaded here -->
+                        <div class="text-center py-8">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                            <p class="text-gray-600 mt-2">Loading jobs...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination" class="mt-8 flex justify-center space-x-2">
+                        <!-- Pagination will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">OpenRole</h3>
+                    <p class="text-sm">The job board that puts transparency first.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/post-job" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers" class="hover:text-white">Why OpenRole</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="/terms" class="hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2025 OpenRole. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        let currentPage = 1;
+        let searchQuery = '';
+        let locationQuery = '';
+
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        searchQuery = urlParams.get('q') || '';
+        locationQuery = urlParams.get('location') || '';
+        currentPage = parseInt(urlParams.get('page')) || 1;
+
+        // Set initial form values
+        if (searchQuery) document.getElementById('search-query').value = searchQuery;
+        if (locationQuery) document.getElementById('search-location').value = locationQuery;
+
+        async function loadJobsPage(page = 1) {
+            try {
+                let url = `/api/jobs?page=${page}`;
+                if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`;
+                if (locationQuery) url += `&location=${encodeURIComponent(locationQuery)}`;
+
+                const response = await fetch(`${API_BASE_URL}${url}`);
+                const data = await response.json();
+                
+                // Update results count
+                document.getElementById('results-count').textContent = `${data.total} jobs found`;
+                
+                // Update jobs container
+                const container = document.getElementById('jobs-container');
+                if (data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(job => `
+                        <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <a href="/job-detail?id=${job.id}" class="group">
+                                        <h2 class="text-xl font-semibold text-gray-900 group-hover:text-teal-600">
+                                            ${job.title}
+                                        </h2>
+                                    </a>
+                                    <div class="flex items-center gap-4 mt-2 text-gray-600">
+                                        <span>🏢 ${job.company}</span>
+                                        <span>📍 ${job.location}</span>
+                                        <span>💼 ${job.type}</span>
+                                        ${job.remote_type !== 'office' ? `<span>🏠 ${job.remote_type}</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-semibold text-green-600">
+                                        £${(job.salary_min/1000).toFixed(0)}k - £${(job.salary_max/1000).toFixed(0)}k
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        ${new Date(job.posted_date).toLocaleDateString('en-GB')}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mt-4">${job.description.substring(0, 200)}...</p>
+                            <div class="mt-4">
+                                <a href="/job-detail?id=${job.id}" 
+                                   class="inline-block px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray-600 py-8">No jobs found matching your criteria.</p>';
+                }
+                
+                // Update pagination
+                updatePagination(data.page, data.total_pages);
+                
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobs-container').innerHTML = 
+                    '<p class="text-center text-gray-600 py-8">Error loading jobs. Please try again later.</p>';
+            }
+        }
+
+        function updatePagination(currentPage, totalPages) {
+            const paginationEl = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                html += `<button onclick="changePage(${currentPage - 1})" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Previous</button>`;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const isActive = i === currentPage;
+                html += `<button onclick="changePage(${i})" 
+                         class="px-4 py-2 ${isActive ? 'bg-teal-600 text-white' : 'border border-gray-300 hover:bg-gray-100'} rounded">
+                         ${i}
+                     </button>`;
+            }
+            
+            if (totalPages > 5) {
+                html += `<span class="px-2">...</span>`;
+                html += `<button onclick="changePage(${totalPages})" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">${totalPages}</button>`;
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                html += `<button onclick="changePage(${currentPage + 1})" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Next</button>`;
+            }
+            
+            paginationEl.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            const params = new URLSearchParams(window.location.search);
+            params.set('page', page);
+            window.history.pushState({}, '', `${window.location.pathname}?${params}`);
+            loadJobsPage(page);
+            window.scrollTo(0, 0);
+        }
+
+        // Handle search form submission
+        document.getElementById('search-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            searchQuery = document.getElementById('search-query').value;
+            locationQuery = document.getElementById('search-location').value;
+            
+            const params = new URLSearchParams();
+            if (searchQuery) params.set('q', searchQuery);
+            if (locationQuery) params.set('location', locationQuery);
+            
+            window.history.pushState({}, '', `/jobs${params.toString() ? '?' + params.toString() : ''}`);
+            loadJobsPage(1);
+        });
+
+        // Load jobs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobsPage(currentPage);
+        });
+    </script>
+</body>
+</html>

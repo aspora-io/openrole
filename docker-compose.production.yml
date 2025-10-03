@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  openrole-web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    container_name: openrole-web
+    restart: unless-stopped
+    networks:
+      - traefik
+      - openrole-internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openrole-web.rule=Host(`openrole.net`) || Host(`www.openrole.net`)"
+      - "traefik.http.routers.openrole-web.entrypoints=websecure"
+      - "traefik.http.routers.openrole-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.openrole-web.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://api.openrole.net
+    depends_on:
+      - openrole-api
+
+  openrole-api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    container_name: openrole-api
+    restart: unless-stopped
+    networks:
+      - traefik
+      - openrole-internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openrole-api.rule=Host(`api.openrole.net`)"
+      - "traefik.http.routers.openrole-api.entrypoints=websecure"
+      - "traefik.http.routers.openrole-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.openrole-api.loadbalancer.server.port=3001"
+      - "traefik.docker.network=traefik"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole
+      - REDIS_URL=redis://openrole-redis:6379
+    depends_on:
+      - openrole-db
+      - openrole-redis
+
+  openrole-db:
+    image: postgres:16-alpine
+    container_name: openrole-db
+    restart: unless-stopped
+    networks:
+      - openrole-internal
+    environment:
+      - POSTGRES_USER=openrole
+      - POSTGRES_PASSWORD=openrole2024
+      - POSTGRES_DB=openrole
+    volumes:
+      - openrole-postgres-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"  # Expose on localhost only, different port to avoid conflicts
+
+  openrole-redis:
+    image: redis:7-alpine
+    container_name: openrole-redis
+    restart: unless-stopped
+    networks:
+      - openrole-internal
+    volumes:
+      - openrole-redis-data:/data
+    command: redis-server --appendonly yes
+
+networks:
+  traefik:
+    external: true
+  openrole-internal:
+    driver: bridge
+    name: openrole-network
+
+volumes:
+  openrole-postgres-data:
+  openrole-redis-data:

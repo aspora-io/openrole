@@ -1,0 +1,62 @@
+name: Build and Deploy (Docker Hub)
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build images locally
+        run: |
+          echo "🔨 Building Docker images..."
+          docker-compose -f docker-compose.simple.yml build
+          
+      - name: Save deployment script
+        run: |
+          cat > deploy-to-server.sh << 'DEPLOY'
+          #!/bin/bash
+          # Run this on your server:
+          
+          cd /opt
+          rm -rf openrole-deploy
+          git clone https://github.com/aspora-io/openrole.git openrole-deploy
+          cd openrole-deploy
+          
+          # Stop old containers
+          docker-compose -f docker-compose.simple.yml down
+          
+          # Build and start new containers
+          docker-compose -f docker-compose.simple.yml up -d --build
+          
+          # Show status
+          sleep 10
+          docker ps | grep openrole
+          
+          echo "✅ Deployment complete!"
+          echo "Access at: https://openrole.net"
+          DEPLOY
+          
+          chmod +x deploy-to-server.sh
+          
+      - name: Create deployment summary
+        run: |
+          echo "# 🚀 OpenRole Ready to Deploy!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Quick Deploy Command:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "ssh hyperdude@86.159.155.227 'cd /opt && rm -rf openrole && git clone https://github.com/aspora-io/openrole.git && cd openrole && docker-compose -f docker-compose.simple.yml up -d --build'" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## What's Included:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Complete React/Next.js frontend" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Login & Registration system" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Advanced job search" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ User dashboards" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ PostgreSQL + Redis" >> $GITHUB_STEP_SUMMARY

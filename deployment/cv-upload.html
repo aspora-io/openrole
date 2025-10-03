@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your CV - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/cv-upload" class="text-teal-600 font-medium">Upload CV</a>
+                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
+                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
+                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Back Navigation -->
+    <section class="bg-white border-b">
+        <div class="container mx-auto px-4 py-3">
+            <a href="/" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                <span>←</span> Back to home
+            </a>
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-gray-900 text-center mb-4">Upload Your CV</h1>
+            <p class="text-xl text-gray-600 text-center max-w-3xl mx-auto">
+                Let employers find you. Upload your CV and get matched with relevant opportunities
+            </p>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-8 bg-teal-50">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Get Discovered</h3>
+                    <p class="text-gray-600 text-sm">Employers actively search our CV database for candidates like you</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🔔</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Job Alerts</h3>
+                    <p class="text-gray-600 text-sm">Receive notifications when jobs match your skills and preferences</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🔒</div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Privacy Control</h3>
+                    <p class="text-gray-600 text-sm">Choose who can see your CV with our privacy settings</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Upload Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <!-- Upload Form -->
+                <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Upload Your CV</h2>
+                    
+                    <form class="space-y-6">
+                        <!-- File Upload Area -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-teal-400 transition-colors">
+                            <div class="text-5xl text-gray-400 mb-4">📄</div>
+                            <p class="text-gray-600 mb-2">Drag and drop your CV here, or click to browse</p>
+                            <p class="text-sm text-gray-500 mb-4">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                            <input type="file" class="hidden" id="cv-upload" accept=".pdf,.doc,.docx">
+                            <label for="cv-upload" class="inline-block px-6 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 cursor-pointer">
+                                Choose File
+                            </label>
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                    <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Location *</label>
+                                    <input type="text" placeholder="City, Country" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Summary -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Professional Summary</label>
+                            <textarea rows="4" placeholder="Brief summary of your experience and career goals..." class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                        </div>
+
+                        <!-- Job Preferences -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Job Preferences</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Desired Job Title</label>
+                                    <input type="text" placeholder="e.g. Software Developer, Marketing Manager" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                </div>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Salary Expectation</label>
+                                        <input type="number" placeholder="£" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Job Type</label>
+                                        <select class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                            <option>Any</option>
+                                            <option>Permanent</option>
+                                            <option>Contract</option>
+                                            <option>Part Time</option>
+                                            <option>Temporary</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" class="mr-2 w-4 h-4 text-teal-600 rounded">
+                                        <span class="text-gray-700">Open to remote opportunities</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" class="mr-2 w-4 h-4 text-teal-600 rounded">
+                                        <span class="text-gray-700">Willing to relocate</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Privacy Settings</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-start cursor-pointer">
+                                    <input type="radio" name="privacy" checked class="mt-1 mr-3 w-4 h-4 text-teal-600">
+                                    <div>
+                                        <p class="font-medium text-gray-700">Public</p>
+                                        <p class="text-sm text-gray-500">Your CV is visible to all employers</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-start cursor-pointer">
+                                    <input type="radio" name="privacy" class="mt-1 mr-3 w-4 h-4 text-teal-600">
+                                    <div>
+                                        <p class="font-medium text-gray-700">Semi-Private</p>
+                                        <p class="text-sm text-gray-500">Hide your CV from specific companies</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-start cursor-pointer">
+                                    <input type="radio" name="privacy" class="mt-1 mr-3 w-4 h-4 text-teal-600">
+                                    <div>
+                                        <p class="font-medium text-gray-700">Private</p>
+                                        <p class="text-sm text-gray-500">Only visible when you apply to jobs</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Terms -->
+                        <div>
+                            <label class="flex items-start cursor-pointer">
+                                <input type="checkbox" class="mt-1 mr-3 w-4 h-4 text-teal-600 rounded" required>
+                                <span class="text-sm text-gray-600">
+                                    I agree to the Terms of Service and Privacy Policy. I consent to OpenRole storing my CV and sharing it with potential employers.
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700 transition-colors">
+                            Upload CV & Create Profile
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Benefits After Upload -->
+                <div class="bg-gray-100 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">What happens after you upload?</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <p class="text-gray-700">Your CV is instantly searchable by thousands of employers</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <p class="text-gray-700">We'll match you with relevant job opportunities</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <p class="text-gray-700">Track who views your CV and manage applications</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-600 mr-2">✓</span>
+                            <p class="text-gray-700">Update your CV anytime from your dashboard</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h2>
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Is uploading my CV free?</h3>
+                    <p class="text-gray-600">Yes, uploading your CV and creating a profile is completely free for job seekers.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">How do I update my CV later?</h3>
+                    <p class="text-gray-600">You can update your CV anytime from your dashboard after logging in.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Can I hide my CV from my current employer?</h3>
+                    <p class="text-gray-600">Yes, our semi-private option allows you to block specific companies from viewing your CV.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-900 mb-2">What file formats are supported?</h3>
+                    <p class="text-gray-600">We accept PDF, DOC, and DOCX files up to 5MB in size.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-white">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

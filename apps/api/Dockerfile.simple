@@ -1,0 +1,30 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package.json and tsconfig if exists
+COPY package.json ./
+COPY tsconfig.json* ./
+COPY tsconfig.production.json* ./
+
+# Install dependencies (ignore workspace errors)
+RUN npm install --force || npm install --legacy-peer-deps || true
+
+# Copy all app files
+COPY . .
+
+# Remove workspace references
+RUN sed -i 's/"@openrole\/[^"]*": "workspace:\*"//g' package.json && \
+    sed -i 's/,,/,/g' package.json && \
+    sed -i 's/,}/}/g' package.json
+
+# Install TypeScript globally if not included
+RUN npm install -g typescript
+
+# Build the TypeScript code with production config
+RUN npm run build || (npx tsc -p tsconfig.production.json && mkdir -p dist && cp package.json dist/)
+
+EXPOSE 3001
+
+# Start the compiled JavaScript app
+CMD ["node", "dist/index.js"]

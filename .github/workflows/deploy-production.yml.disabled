@@ -1,0 +1,100 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Deploy via SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+          
+          # Deploy
+          ssh $USERNAME@$HOST << 'DEPLOY_EOF'
+            echo "🚀 Deploying OpenRole CV & Profile Tools..."
+            
+            # Create directory and clone
+            mkdir -p ~/apps/openrole-production
+            cd ~/apps/openrole-production
+            
+            if [ -d "openrole" ]; then
+              cd openrole
+              git fetch origin
+              git checkout master
+              git pull origin master
+            else
+              git clone https://github.com/aspora-io/openrole.git openrole
+              cd openrole
+              git checkout master
+            fi
+            
+            # Create environment file
+            echo "NODE_ENV=production" > .env.production
+            echo "NEXT_PUBLIC_API_URL=https://api.openrole.net" >> .env.production
+            echo "API_URL=https://api.openrole.net" >> .env.production
+            echo "DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole" >> .env.production
+            echo "REDIS_URL=redis://openrole-redis:6379" >> .env.production
+            
+            # Stop existing containers
+            docker stop openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
+            docker rm openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
+            
+            # Deploy with production compose
+            if [ -f docker-compose.production.yml ]; then
+              docker-compose -f docker-compose.production.yml up -d --build
+            else
+              docker-compose -f docker-compose.traefik.yml up -d --build
+            fi
+            
+            # Wait and check
+            sleep 20
+            echo "✅ Deployment complete!"
+            docker ps | grep openrole
+          DEPLOY_EOF
+          
+          # Cleanup
+          rm -f ~/.ssh/id_rsa
+
+      - name: Verify deployment
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          # Setup SSH again for verification
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+          
+          # Health checks
+          ssh $USERNAME@$HOST << 'VERIFY_EOF'
+            echo "🔍 Health checks:"
+            echo -n "OpenRole.net: "
+            curl -s -o /dev/null -w "%{http_code}" https://openrole.net
+            echo ""
+            echo -n "API: "
+            curl -s -o /dev/null -w "%{http_code}" https://api.openrole.net/health
+            echo ""
+            echo -n "CV & Profile Tools: "
+            curl -s -o /dev/null -w "%{http_code}" https://api.openrole.net/api/profile/health
+            echo ""
+          VERIFY_EOF
+          
+          # Cleanup
+          rm -f ~/.ssh/id_rsa
+          
+          echo "✅ CV & Profile Tools deployment successful!"
+          echo "🌐 Access at: https://openrole.net"

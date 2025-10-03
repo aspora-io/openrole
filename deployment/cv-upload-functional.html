@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CV - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/jobs" class="text-gray-600 hover:text-teal-600">Find Jobs</a>
+                        <a href="/employers" class="text-gray-600 hover:text-teal-600">For Employers</a>
+                        <a href="/cv-upload" class="text-teal-600 font-medium">Upload CV</a>
+                        <a href="/career-advice" class="text-gray-600 hover:text-teal-600">Career Advice</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 auth-links">
+                    <a href="/login" class="text-gray-600 hover:text-teal-600">Login</a>
+                    <a href="/register" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-12">
+        <div class="container mx-auto px-4">
+            <!-- Not Logged In State -->
+            <div id="login-required" class="max-w-2xl mx-auto text-center py-16">
+                <div class="bg-white rounded-lg shadow p-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Upload Your CV</h1>
+                    <p class="text-gray-600 mb-8">Please log in or create an account to upload your CV and apply for jobs.</p>
+                    <div class="flex gap-4 justify-center">
+                        <a href="/login?redirect=/cv-upload" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
+                            Login
+                        </a>
+                        <a href="/register" class="px-6 py-3 border border-teal-600 text-teal-600 hover:bg-teal-50 font-semibold rounded transition-colors">
+                            Create Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logged In State -->
+            <div id="cv-upload-section" class="hidden max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Manage Your CVs</h1>
+
+                <!-- Upload Form -->
+                <div class="bg-white rounded-lg shadow p-6 mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Upload New CV</h2>
+                    
+                    <!-- Success/Error Messages -->
+                    <div id="upload-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        CV uploaded successfully!
+                    </div>
+                    <div id="upload-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <span id="error-message">Upload failed. Please try again.</span>
+                    </div>
+
+                    <form id="cv-upload-form" class="space-y-4">
+                        <!-- File Upload Area -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                            <input type="file" id="cv-file" name="cv" accept=".pdf,.doc,.docx,.txt" class="hidden">
+                            <div id="drop-zone">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <p class="text-gray-600 mb-2">Drop your CV here or click to browse</p>
+                                <p class="text-sm text-gray-500">PDF, DOC, DOCX or TXT (max 5MB)</p>
+                                <button type="button" onclick="document.getElementById('cv-file').click()" 
+                                        class="mt-4 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">
+                                    Choose File
+                                </button>
+                            </div>
+                            <div id="file-selected" class="hidden">
+                                <p class="text-gray-700 font-medium mb-2">Selected file: <span id="file-name"></span></p>
+                                <button type="button" onclick="clearFile()" class="text-red-600 hover:text-red-700">Remove</button>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Privacy Level</label>
+                            <select name="privacy_level" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="private">Private - Only visible to you</option>
+                                <option value="semi-private">Semi-Private - Visible to employers when you apply</option>
+                                <option value="public">Public - Searchable by all employers</option>
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description (optional)</label>
+                            <textarea name="description" rows="3" 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                      placeholder="e.g., Latest CV with updated experience"></textarea>
+                        </div>
+
+                        <button type="submit" id="upload-button" class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
+                            Upload CV
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Existing CVs -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Your CVs</h2>
+                    <div id="cv-list" class="space-y-4">
+                        <!-- CVs will be loaded here -->
+                        <p class="text-gray-500 text-center py-8">No CVs uploaded yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 OpenRole. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        // Check authentication status
+        if (!isLoggedIn()) {
+            document.getElementById('login-required').classList.remove('hidden');
+        } else {
+            document.getElementById('cv-upload-section').classList.remove('hidden');
+            updateNavigation();
+            loadCVs();
+        }
+
+        // File upload handling
+        const fileInput = document.getElementById('cv-file');
+        const dropZone = document.getElementById('drop-zone');
+        const fileSelected = document.getElementById('file-selected');
+        const fileName = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-gray-50');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-gray-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-gray-50');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        });
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+                dropZone.classList.add('hidden');
+                fileSelected.classList.remove('hidden');
+            }
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            dropZone.classList.remove('hidden');
+            fileSelected.classList.add('hidden');
+        }
+
+        // Form submission
+        document.getElementById('cv-upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('cv', file);
+            formData.append('privacy_level', e.target.privacy_level.value);
+            formData.append('description', e.target.description.value);
+
+            const uploadButton = document.getElementById('upload-button');
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Uploading...';
+
+            // Hide messages
+            document.getElementById('upload-success').classList.add('hidden');
+            document.getElementById('upload-error').classList.add('hidden');
+
+            try {
+                // Note: In production, this would actually upload to the API
+                // For now, we'll simulate success
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Simulate success
+                document.getElementById('upload-success').classList.remove('hidden');
+                e.target.reset();
+                clearFile();
+                
+                // Add to CV list
+                addCVToList({
+                    id: Date.now(),
+                    filename: file.name,
+                    file_size: file.size,
+                    privacy_level: formData.get('privacy_level'),
+                    uploaded_at: new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                document.getElementById('error-message').textContent = 'Upload failed. Please try again.';
+                document.getElementById('upload-error').classList.remove('hidden');
+            } finally {
+                uploadButton.disabled = false;
+                uploadButton.textContent = 'Upload CV';
+            }
+        });
+
+        // Load existing CVs
+        async function loadCVs() {
+            try {
+                // In production, this would fetch from API
+                // For demo, we'll check localStorage
+                const savedCVs = JSON.parse(localStorage.getItem('user_cvs') || '[]');
+                const cvList = document.getElementById('cv-list');
+                
+                if (savedCVs.length === 0) {
+                    cvList.innerHTML = '<p class="text-gray-500 text-center py-8">No CVs uploaded yet</p>';
+                } else {
+                    cvList.innerHTML = savedCVs.map(cv => createCVItem(cv)).join('');
+                }
+            } catch (error) {
+                console.error('Error loading CVs:', error);
+            }
+        }
+
+        function addCVToList(cv) {
+            const savedCVs = JSON.parse(localStorage.getItem('user_cvs') || '[]');
+            savedCVs.unshift(cv);
+            localStorage.setItem('user_cvs', JSON.stringify(savedCVs));
+            loadCVs();
+        }
+
+        function createCVItem(cv) {
+            const uploadDate = new Date(cv.uploaded_at).toLocaleDateString();
+            const fileSize = (cv.file_size / 1024).toFixed(1) + ' KB';
+            
+            return `
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">${cv.filename}</h3>
+                        <p class="text-sm text-gray-500">${fileSize} • Uploaded ${uploadDate} • ${cv.privacy_level}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="deleteCV(${cv.id})" class="text-red-600 hover:text-red-700">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function deleteCV(cvId) {
+            if (confirm('Are you sure you want to delete this CV?')) {
+                const savedCVs = JSON.parse(localStorage.getItem('user_cvs') || '[]');
+                const updated = savedCVs.filter(cv => cv.id !== cvId);
+                localStorage.setItem('user_cvs', JSON.stringify(updated));
+                loadCVs();
+                
+                // Show success message
+                const successMsg = document.getElementById('upload-success');
+                successMsg.textContent = 'CV deleted successfully';
+                successMsg.classList.remove('hidden');
+                setTimeout(() => successMsg.classList.add('hidden'), 3000);
+            }
+        }
+    </script>
+</body>
+</html>

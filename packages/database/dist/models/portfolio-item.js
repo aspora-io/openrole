@@ -678,34 +678,38 @@ export const portfolioQueries = {
     /**
      * Common select fields for public portfolio items
      */
-    publicSelectFields: {
-        id: portfolioItems.id,
-        profileId: portfolioItems.profileId,
-        title: portfolioItems.title,
-        description: portfolioItems.description,
-        type: portfolioItems.type,
-        externalUrl: portfolioItems.externalUrl,
-        technologies: portfolioItems.technologies,
-        projectDate: portfolioItems.projectDate,
-        role: portfolioItems.role,
-        sortOrder: portfolioItems.sortOrder,
-        viewCount: portfolioItems.viewCount,
-        createdAt: portfolioItems.createdAt,
-        updatedAt: portfolioItems.updatedAt,
+    get publicSelectFields() {
+        return {
+            id: portfolioItems.id,
+            profileId: portfolioItems.profileId,
+            title: portfolioItems.title,
+            description: portfolioItems.description,
+            type: portfolioItems.type,
+            externalUrl: portfolioItems.externalUrl,
+            technologies: portfolioItems.technologies,
+            projectDate: portfolioItems.projectDate,
+            role: portfolioItems.role,
+            sortOrder: portfolioItems.sortOrder,
+            viewCount: portfolioItems.viewCount,
+            createdAt: portfolioItems.createdAt,
+            updatedAt: portfolioItems.updatedAt,
+        };
     },
     /**
      * Fields for portfolio management (includes private data)
      */
-    managementSelectFields: {
-        ...portfolioQueries.publicSelectFields,
-        fileName: portfolioItems.fileName,
-        filePath: portfolioItems.filePath,
-        fileSize: portfolioItems.fileSize,
-        mimeType: portfolioItems.mimeType,
-        linkValidated: portfolioItems.linkValidated,
-        lastValidationCheck: portfolioItems.lastValidationCheck,
-        validationStatus: portfolioItems.validationStatus,
-        isPublic: portfolioItems.isPublic,
+    get managementSelectFields() {
+        return {
+            ...this.publicSelectFields,
+            fileName: portfolioItems.fileName,
+            filePath: portfolioItems.filePath,
+            fileSize: portfolioItems.fileSize,
+            mimeType: portfolioItems.mimeType,
+            linkValidated: portfolioItems.linkValidated,
+            lastValidationCheck: portfolioItems.lastValidationCheck,
+            validationStatus: portfolioItems.validationStatus,
+            isPublic: portfolioItems.isPublic,
+        };
     },
 };
 /**

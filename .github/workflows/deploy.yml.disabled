@@ -1,0 +1,165 @@
+name: Deploy OpenRole.net
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'master'
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        env:
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST "
+            echo '🚀 Starting OpenRole deployment...'
+            
+            # Create deployment directory
+            mkdir -p ~/apps/openrole-${{ github.event.inputs.environment }}
+            cd ~/apps/openrole-${{ github.event.inputs.environment }}
+            
+            # Clone/update repository
+            if [ -d 'openrole' ]; then
+              cd openrole
+              git fetch origin
+              git checkout ${{ github.event.inputs.branch }}
+              git pull origin ${{ github.event.inputs.branch }}
+            else
+              git clone https://github.com/aspora-io/openrole.git openrole
+              cd openrole
+              git checkout ${{ github.event.inputs.branch }}
+            fi
+            
+            # Create environment file
+            cat > .env.production << 'EOF'
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=https://api.openrole.net
+API_URL=https://api.openrole.net
+DATABASE_URL=postgresql://openrole:openrole2024@openrole-db:5432/openrole
+REDIS_URL=redis://openrole-redis:6379
+EOF
+            
+            # Check Promptcade status before deployment
+            echo 'Checking other services...'
+            docker ps | grep -E '(promptcade|traefik)' || echo 'No conflicting services found'
+            
+            # Stop only OpenRole containers
+            echo 'Stopping existing OpenRole containers...'
+            docker stop openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
+            docker rm openrole-web openrole-api openrole-db openrole-redis 2>/dev/null || true
+            
+            # Use the appropriate docker-compose file
+            if [ -f docker-compose.production.yml ]; then
+              echo 'Using production docker-compose with full stack...'
+              COMPOSE_FILE=docker-compose.production.yml
+            else
+              echo 'Using traefik docker-compose...'
+              COMPOSE_FILE=docker-compose.traefik.yml
+            fi
+            
+            # Build and start containers
+            echo 'Building and starting containers...'
+            docker-compose -f \$COMPOSE_FILE up -d --build
+            
+            # Wait for containers to start
+            sleep 15
+            
+            echo '✅ Deployment completed!'
+            docker ps | grep openrole
+          "
+
+      - name: Health check
+        env:
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_USER: ${{ secrets.USERNAME }}
+        run: |
+          echo "Waiting 30 seconds for services to stabilize..."
+          sleep 30
+          
+          ssh $SSH_USER@$SSH_HOST "
+            echo '🔍 Service health checks:'
+            
+            echo -n 'OpenRole Web: '
+            curl -s -o /dev/null -w '%{http_code}' https://openrole.net || echo 'DOWN'
+            echo ''
+            
+            echo -n 'OpenRole API: '
+            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/health || echo 'DOWN'
+            echo ''
+            
+            echo -n 'CV Profile API: '
+            curl -s -o /dev/null -w '%{http_code}' https://api.openrole.net/api/profile/health || echo 'DOWN'
+            echo ''
+            
+            echo -n 'Promptcade: '
+            curl -s -o /dev/null -w '%{http_code}' https://promptcade.com || echo 'DOWN'
+            echo ''
+            
+            echo 'Container logs (last 10 lines):'
+            docker logs openrole-web --tail 10 2>&1 || echo 'No web logs'
+            echo '---'
+            docker logs openrole-api --tail 10 2>&1 || echo 'No API logs'
+          "
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/id_rsa
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "# ✅ Deployment Successful!"
+            echo ""
+            echo "**Environment:** ${{ github.event.inputs.environment }}"
+            echo "**Branch:** ${{ github.event.inputs.branch }}"
+            echo ""
+            echo "## 🌐 Access URLs:"
+            echo "- OpenRole.net: https://openrole.net"
+            echo "- API: https://api.openrole.net"
+            echo "- CV & Profile Tools: https://api.openrole.net/api/profile/health"
+            echo ""
+            echo "## CV & Profile Tools Features:"
+            echo "- ✅ Profile management with privacy controls"
+            echo "- ✅ CV generation with multiple templates"
+            echo "- ✅ Portfolio showcase with GitHub integration"
+            echo "- ✅ Advanced search and filtering"
+            echo "- ✅ GDPR compliant data export/deletion"
+          else
+            echo "# ❌ Deployment Failed"
+            echo "Please check the logs above for details."
+          fi

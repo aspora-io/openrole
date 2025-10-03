@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employers - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
+                        <a href="/employers" class="text-teal-600 font-medium">Employers</a>
+                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/employer-login" class="text-gray-700 hover:text-teal-600 font-medium">Employer Login</a>
+                    <a href="/post-job" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Post a Job</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-teal-600 to-teal-700 text-white">
+        <div class="container mx-auto px-4 py-16">
+            <h1 class="text-5xl font-bold mb-4 text-center">Find Your Next Great Hire</h1>
+            <p class="text-xl text-center mb-8 max-w-3xl mx-auto">
+                Join thousands of companies using OpenRole to connect with top talent. 
+                Transparent, verified, and effective recruitment.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="/post-job" class="px-8 py-3 bg-white text-teal-600 font-semibold rounded hover:bg-gray-100 transition-colors">
+                    Post a Job
+                </a>
+                <a href="#pricing" class="px-8 py-3 border-2 border-white text-white font-semibold rounded hover:bg-white hover:text-teal-600 transition-colors">
+                    View Pricing
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-8 bg-white shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-teal-600">500,000+</div>
+                    <p class="text-gray-600">Active Job Seekers</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-teal-600">15,000+</div>
+                    <p class="text-gray-600">Companies Hiring</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-teal-600">92%</div>
+                    <p class="text-gray-600">Successful Placements</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-teal-600">14 days</div>
+                    <p class="text-gray-600">Average Time to Hire</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Why Employers Choose OpenRole</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">✅</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Verified Candidates</h3>
+                    <p class="text-gray-600">All candidates are verified with real profiles and authentic CVs. No fake applications or ghost candidates.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">💰</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Transparent Pricing</h3>
+                    <p class="text-gray-600">Clear, upfront pricing with no hidden fees. Pay only for what you use with our flexible plans.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Quality Matches</h3>
+                    <p class="text-gray-600">Our smart matching algorithm connects you with candidates who meet your exact requirements.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Analytics Dashboard</h3>
+                    <p class="text-gray-600">Track your job performance, view applications, and manage your hiring pipeline in one place.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🔍</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">CV Database Access</h3>
+                    <p class="text-gray-600">Search our extensive database of CVs to find candidates who match your requirements.</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Fast & Easy</h3>
+                    <p class="text-gray-600">Post a job in minutes with our simple form. Your job goes live immediately after verification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">How It Works</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-teal-600">1</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Create Account</h3>
+                        <p class="text-sm text-gray-600">Sign up and verify your company details</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-teal-600">2</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Post Your Job</h3>
+                        <p class="text-sm text-gray-600">Fill in job details with mandatory salary information</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-teal-600">3</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Receive Applications</h3>
+                        <p class="text-sm text-gray-600">Get matched with qualified candidates instantly</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-teal-600">4</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Hire Great Talent</h3>
+                        <p class="text-sm text-gray-600">Interview and hire your perfect candidate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-4">Simple, Transparent Pricing</h2>
+            <p class="text-lg text-gray-600 text-center mb-12">Choose the plan that works best for your hiring needs</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic Plan -->
+                <div class="bg-white rounded-lg shadow-sm p-8 border-2 border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
+                    <p class="text-gray-600 mb-6">Perfect for small businesses</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">£99</span>
+                        <span class="text-gray-500">/per job</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>30-day job listing</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Basic applicant tracking</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Email support</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <span class="mr-2">✗</span>
+                            <span>CV database access</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <span class="mr-2">✗</span>
+                            <span>Featured listings</span>
+                        </li>
+                    </ul>
+                    <a href="/register" class="block text-center py-3 border-2 border-teal-600 text-teal-600 rounded font-semibold hover:bg-teal-50">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="bg-white rounded-lg shadow-lg p-8 border-2 border-teal-600 relative">
+                    <span class="absolute top-0 right-0 bg-teal-600 text-white text-xs px-3 py-1 rounded-bl">MOST POPULAR</span>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
+                    <p class="text-gray-600 mb-6">For growing companies</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">£249</span>
+                        <span class="text-gray-500">/per job</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>60-day job listing</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Advanced applicant tracking</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Limited CV database access</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Featured listing badge</span>
+                        </li>
+                    </ul>
+                    <a href="/register" class="block text-center py-3 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-white rounded-lg shadow-sm p-8 border-2 border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                    <p class="text-gray-600 mb-6">For large organizations</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">Custom</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Unlimited job listings</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Full applicant tracking suite</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Dedicated account manager</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Unlimited CV database access</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span>Custom branding</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block text-center py-3 border-2 border-teal-600 text-teal-600 rounded font-semibold hover:bg-teal-50">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+
+            <!-- Additional Options -->
+            <div class="mt-12 bg-gray-100 rounded-lg p-8 max-w-3xl mx-auto">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Additional Services</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">CV Database Access</h4>
+                        <p class="text-gray-600 text-sm mb-2">Search and contact candidates directly</p>
+                        <p class="text-lg font-semibold text-teal-600">£499/month</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Job Boost</h4>
+                        <p class="text-gray-600 text-sm mb-2">Get 3x more visibility for your job</p>
+                        <p class="text-lg font-semibold text-teal-600">£49/job</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">What Employers Say*</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        "OpenRole has transformed our hiring process. The quality of candidates is exceptional and the transparent salary requirements save us so much time."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900">Sarah Johnson*</p>
+                            <p class="text-sm text-gray-600">HR Director, TechStart*</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        "We've hired 12 people through OpenRole in the last 6 months. The platform is intuitive and the support team is incredibly responsive."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900">Michael Chen*</p>
+                            <p class="text-sm text-gray-600">CEO, Digital Agency*</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex mb-4">
+                        <span class="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        "The CV database feature is a game-changer. We can proactively reach out to candidates who are a perfect fit for our team."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900">Emma Williams*</p>
+                            <p class="text-sm text-gray-600">Talent Manager, FinTech Ltd*</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Disclaimer -->
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    * These testimonials are for demonstration purposes only and do not represent real individuals or companies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-teal-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Find Your Next Great Hire?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">
+                Join thousands of companies already using OpenRole to build their teams
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="/post-job" class="px-8 py-3 bg-white text-teal-600 font-semibold rounded hover:bg-gray-100 transition-colors">
+                    Post Your First Job
+                </a>
+                <a href="#contact" class="px-8 py-3 border-2 border-white text-white font-semibold rounded hover:bg-white hover:text-teal-600 transition-colors">
+                    Schedule a Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Get in Touch</h2>
+            
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Contact Sales</h3>
+                    <p class="text-gray-600 mb-6">
+                        Our team is here to help you find the right solution for your hiring needs.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">📧</span>
+                            <div>
+                                <p class="font-medium text-gray-900">Email</p>
+                                <p class="text-gray-600">employers@openrole.net</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">📞</span>
+                            <div>
+                                <p class="font-medium text-gray-900">Phone</p>
+                                <p class="text-gray-600">0800 123 4567</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">💬</span>
+                            <div>
+                                <p class="font-medium text-gray-900">Live Chat</p>
+                                <p class="text-gray-600">Mon-Fri 9am-6pm GMT</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <form class="bg-gray-100 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Request a Callback</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <input type="text" placeholder="Company Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <input type="text" placeholder="Your Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <input type="email" placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <input type="tel" placeholder="Phone Number" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700">
+                                Request Callback
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="/terms" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-white">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

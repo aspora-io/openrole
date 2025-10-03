@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test OpenRole Frontend</title>
+</head>
+<body>
+    <h1>Testing OpenRole API Integration</h1>
+    <div id="status"></div>
+    <div id="jobs"></div>
+    
+    <script>
+        const API_BASE_URL = 'http://145.223.75.73:3002';
+        
+        async function testAPI() {
+            const statusEl = document.getElementById('status');
+            const jobsEl = document.getElementById('jobs');
+            
+            try {
+                statusEl.innerHTML = 'Fetching jobs...';
+                const response = await fetch(`${API_BASE_URL}/api/jobs?per_page=3`);
+                const data = await response.json();
+                
+                statusEl.innerHTML = `Success! Found ${data.total} total jobs. Showing first 3:`;
+                
+                jobsEl.innerHTML = data.data.map(job => `
+                    <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+                        <h3>${job.title}</h3>
+                        <p><strong>Company:</strong> ${job.company}</p>
+                        <p><strong>Location:</strong> ${job.location}</p>
+                        <p><strong>Salary:</strong> £${job.salary_min} - £${job.salary_max}</p>
+                        <p><strong>Type:</strong> ${job.type}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                statusEl.innerHTML = 'Error: ' + error.message;
+                console.error('API Error:', error);
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

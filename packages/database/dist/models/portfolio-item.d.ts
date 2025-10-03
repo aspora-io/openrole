@@ -220,7 +220,52 @@ export declare const viewTrackingHelpers: {
 /**
  * Database query helpers
  */
-export declare const portfolioQueries: any;
+export declare const portfolioQueries: {
+    /**
+     * Common select fields for public portfolio items
+     */
+    readonly publicSelectFields: {
+        id: any;
+        profileId: any;
+        title: any;
+        description: any;
+        type: any;
+        externalUrl: any;
+        technologies: any;
+        projectDate: any;
+        role: any;
+        sortOrder: any;
+        viewCount: any;
+        createdAt: any;
+        updatedAt: any;
+    };
+    /**
+     * Fields for portfolio management (includes private data)
+     */
+    readonly managementSelectFields: {
+        fileName: any;
+        filePath: any;
+        fileSize: any;
+        mimeType: any;
+        linkValidated: any;
+        lastValidationCheck: any;
+        validationStatus: any;
+        isPublic: any;
+        id: any;
+        profileId: any;
+        title: any;
+        description: any;
+        type: any;
+        externalUrl: any;
+        technologies: any;
+        projectDate: any;
+        role: any;
+        sortOrder: any;
+        viewCount: any;
+        createdAt: any;
+        updatedAt: any;
+    };
+};
 /**
  * Export the table and all related types/helpers
  */
