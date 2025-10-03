@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16 gap-4">
+                <a href="/" class="flex items-center space-x-2 flex-shrink-0">
+                    <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">O</span>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-900 hidden sm:inline">OpenRole</span>
+                </a>
+                <div class="text-gray-600 text-right text-sm sm:text-base">
+                    <span class="hidden sm:inline">Don't have an account? </span>
+                    <a href="/register" class="text-teal-600 hover:text-teal-700 font-medium whitespace-nowrap">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full">
+            <!-- Success Message (hidden by default) -->
+            <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <p class="font-medium">Login successful!</p>
+                <p class="text-sm">Redirecting...</p>
+            </div>
+
+            <!-- Error Message (hidden by default) -->
+            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <p id="error-text">Invalid email or password</p>
+            </div>
+
+            <!-- Login Box -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">Welcome Back</h1>
+                <p class="text-gray-600 text-center mb-8">Sign in to your account to continue</p>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" name="email" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                               placeholder="you@example.com">
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <a href="/forgot-password" class="text-sm text-teal-600 hover:text-teal-700">Forgot password?</a>
+                        </div>
+                        <input type="password" name="password" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                               placeholder="Enter your password">
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" name="remember" id="remember" class="mr-2">
+                        <label for="remember" class="text-sm text-gray-600">Remember me</label>
+                    </div>
+                    
+                    <button type="submit" id="submit-button"
+                            class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <p class="text-center text-sm text-gray-600 mb-4">Or sign in with</p>
+                    <div class="space-y-3">
+                        <button onclick="loginWithGoogle()" class="w-full py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span class="text-gray-700">Continue with Google</span>
+                        </button>
+                        
+                        <button onclick="loginWithLinkedIn()" class="w-full py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                            <span class="text-gray-700">Continue with LinkedIn</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        // Check if user is already logged in
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Optionally redirect to dashboard or profile
+            console.log('User already logged in');
+        }
+
+        const form = document.getElementById('login-form');
+        const submitButton = document.getElementById('submit-button');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide any previous messages
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // Get form data
+            const formData = new FormData(form);
+            const loginData = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing in...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.token) {
+                    // Store token and user info
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Show success message
+                    successMessage.classList.remove('hidden');
+                    
+                    // Redirect based on user role
+                    setTimeout(() => {
+                        if (data.user.role === 'employer') {
+                            window.location.href = '/employer-dashboard';
+                        } else {
+                            // Check if there's a redirect URL
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const redirect = urlParams.get('redirect');
+                            window.location.href = redirect || '/';
+                        }
+                    }, 1000);
+                } else {
+                    // Show error message
+                    errorText.textContent = data.message || 'Invalid email or password';
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorText.textContent = 'An error occurred. Please check your connection and try again.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        });
+
+        // Handle Google SSO
+        function loginWithGoogle() {
+            // Store current URL for redirect after auth
+            sessionStorage.setItem('auth_redirect', window.location.href);
+            // Redirect to Google OAuth
+            window.location.href = `${API_BASE_URL}/api/auth/google`;
+        }
+        
+        // Handle LinkedIn SSO
+        function loginWithLinkedIn() {
+            // Store current URL for redirect after auth
+            sessionStorage.setItem('auth_redirect', window.location.href);
+            // Redirect to LinkedIn OAuth
+            window.location.href = `${API_BASE_URL}/api/auth/linkedin`;
+        }
+        
+        // Handle OAuth callback (check URL params on load)
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const authError = urlParams.get('error');
+        
+        if (token) {
+            // OAuth success - store token and user info
+            localStorage.setItem('authToken', token);
+            
+            // Fetch user info with token
+            fetch(`${API_BASE_URL}/api/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // Show success and redirect
+                    successMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        const redirect = sessionStorage.getItem('auth_redirect') || '/';
+                        sessionStorage.removeItem('auth_redirect');
+                        window.location.href = redirect;
+                    }, 1000);
+                }
+            })
+            .catch(err => console.error('Error fetching user info:', err));
+        } else if (authError) {
+            // OAuth error
+            errorText.textContent = 'Social login failed: ' + authError;
+            errorMessage.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

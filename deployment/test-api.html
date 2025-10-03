@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test - OpenRole</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">OpenRole API Integration Test</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">API Status</h2>
+            <div id="api-status">Checking...</div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Jobs from API</h2>
+            <div id="jobs-list">Loading...</div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Test Actions</h2>
+            <button onclick="testLogin()" class="bg-teal-600 text-white px-4 py-2 rounded mr-2">Test Login</button>
+            <button onclick="testSearch()" class="bg-blue-600 text-white px-4 py-2 rounded">Test Search</button>
+            <div id="test-results" class="mt-4"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://145.223.75.73:3002';
+        
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                document.getElementById('api-status').innerHTML = 
+                    `<span class="text-green-600">✅ ${data.status} - ${data.service}</span>`;
+            } catch (error) {
+                document.getElementById('api-status').innerHTML = 
+                    `<span class="text-red-600">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function loadJobs() {
+            try {
+                const response = await fetch(`${API_URL}/api/jobs`);
+                const data = await response.json();
+                
+                document.getElementById('jobs-list').innerHTML = data.data.map(job => `
+                    <div class="border-b py-3">
+                        <h3 class="font-semibold">${job.title}</h3>
+                        <p class="text-gray-600">${job.company} - ${job.location}</p>
+                        <p class="text-green-600">£${job.salary_min.toLocaleString()} - £${job.salary_max.toLocaleString()}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('jobs-list').innerHTML = 
+                    `<span class="text-red-600">Error loading jobs: ${error.message}</span>`;
+            }
+        }
+        
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'test123'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('test-results').innerHTML = 
+                    `<div class="text-green-600">Login successful! Token: ${data.token}</div>`;
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = 
+                    `<div class="text-red-600">Login error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSearch() {
+            try {
+                const response = await fetch(`${API_URL}/api/search?q=developer&location=london`);
+                const data = await response.json();
+                document.getElementById('test-results').innerHTML = 
+                    `<div class="text-green-600">Search found ${data.total} results</div>`;
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = 
+                    `<div class="text-red-600">Search error: ${error.message}</div>`;
+            }
+        }
+        
+        // Run tests on load
+        checkStatus();
+        loadJobs();
+    </script>
+</body>
+</html>

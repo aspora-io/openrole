@@ -3,167 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenRole - Find your perfect job</title>
+    <title>OpenRole - Job Board with Transparent Salaries</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        teal: {
-                            600: '#14B8A6',
-                            700: '#0F766E'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
                     <a href="/" class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">O</span>
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
                         </div>
-                        <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
                     </a>
-                    <nav class="hidden md:flex items-center space-x-6">
-                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
-                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
-                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
-                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
-                    </nav>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/jobs" class="text-gray-600 hover:text-teal-600">Find Jobs</a>
+                        <a href="/employers" class="text-gray-600 hover:text-teal-600">For Employers</a>
+                        <a href="/cv-upload" class="text-gray-600 hover:text-teal-600">Upload CV</a>
+                        <a href="/career-advice" class="text-gray-600 hover:text-teal-600">Career Advice</a>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
-                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                    <a href="/login" class="text-gray-600 hover:text-teal-600">Login</a>
+                    <a href="/register" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">Register</a>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Search Section -->
-    <section class="bg-gradient-to-br from-teal-50 to-white py-16">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-teal-600 to-teal-700 text-white py-20">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-5xl font-bold text-gray-900 mb-4">Find your perfect job</h1>
-            <p class="text-xl text-gray-600 mb-8">Over 1,000 jobs from top UK companies. All with transparent salaries.</p>
+            <h1 class="text-5xl font-bold mb-4">Find Your Perfect Job</h1>
+            <p class="text-xl mb-8">Transparent salaries. No ghost jobs. Real opportunities from verified UK companies.</p>
             
             <!-- Search Form -->
-            <form class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-2" action="/jobs.html" method="get">
-                <div class="flex flex-col md:flex-row gap-2">
-                    <div class="flex-1">
-                        <input type="text" name="query" placeholder="Job title, keywords or company" class="w-full px-4 py-3 focus:outline-none">
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" name="location" placeholder="Location or postcode" class="w-full px-4 py-3 focus:outline-none">
-                    </div>
-                    <button type="submit" class="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
-                        Search jobs
-                    </button>
-                </div>
-                
-                <!-- Job Type Filters -->
-                <div class="flex flex-wrap items-center gap-4 mt-4 px-4 pb-2">
-                    <span class="text-gray-600 text-sm">Job type:</span>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="types[]" value="permanent" class="mr-2 w-4 h-4 text-teal-600 rounded">
-                        <span class="text-sm text-gray-700">Permanent</span>
-                    </label>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="types[]" value="temporary" class="mr-2 w-4 h-4 text-teal-600 rounded">
-                        <span class="text-sm text-gray-700">Temporary</span>
-                    </label>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="types[]" value="part-time" class="mr-2 w-4 h-4 text-teal-600 rounded">
-                        <span class="text-sm text-gray-700">Part Time</span>
-                    </label>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="types[]" value="contract" class="mr-2 w-4 h-4 text-teal-600 rounded">
-                        <span class="text-sm text-gray-700">Contract</span>
-                    </label>
-                </div>
+            <form action="/jobs" class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-2 flex flex-wrap md:flex-nowrap gap-2">
+                <input type="text" name="q" placeholder="Job title or keywords" class="flex-1 px-4 py-3 text-gray-900 focus:outline-none">
+                <input type="text" name="location" placeholder="Location" class="flex-1 px-4 py-3 text-gray-900 focus:outline-none">
+                <button type="submit" class="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">
+                    Search Jobs
+                </button>
             </form>
         </div>
     </section>
 
-    <!-- Stats Bar -->
-    <section class="bg-teal-600 text-white py-4">
+    <!-- Stats Section -->
+    <section class="py-8 bg-white">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div>
-                    <span class="block text-2xl font-bold">1,247</span>
-                    <span class="text-sm">Jobs Available</span>
+                    <div class="text-3xl font-bold text-teal-600">125+</div>
+                    <div class="text-gray-600">Active Jobs</div>
                 </div>
                 <div>
-                    <span class="block text-2xl font-bold">523</span>
-                    <span class="text-sm">New Today</span>
+                    <div class="text-3xl font-bold text-teal-600">51</div>
+                    <div class="text-gray-600">Verified Companies</div>
                 </div>
                 <div>
-                    <span class="block text-2xl font-bold">15,482</span>
-                    <span class="text-sm">Active Companies</span>
+                    <div class="text-3xl font-bold text-teal-600">100%</div>
+                    <div class="text-gray-600">Salary Transparency</div>
                 </div>
                 <div>
-                    <span class="block text-2xl font-bold">100%</span>
-                    <span class="text-sm">Salary Transparency</span>
+                    <div class="text-3xl font-bold text-teal-600">0</div>
+                    <div class="text-gray-600">Ghost Jobs</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Featured Jobs Preview -->
-    <section class="py-12">
+    <!-- Featured Jobs Section -->
+    <section class="py-12 bg-gray-50">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Jobs</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Latest Jobs</h2>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <!-- Job Card 1 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Senior Software Developer</h3>
-                        <p class="text-gray-600">Tech Corp - London</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £60,000 - £80,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">We are looking for an experienced software developer to join our team. You'll work on cutting-edge projects...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
-                </div>
-                
-                <!-- Job Card 2 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Digital Marketing Manager</h3>
-                        <p class="text-gray-600">Global Marketing Ltd - Manchester</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £45,000 - £55,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">Exciting opportunity for a digital marketing professional to lead our online marketing strategy...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
-                </div>
-                
-                <!-- Job Card 3 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Data Analyst</h3>
-                        <p class="text-gray-600">Analytics Pro - Birmingham</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £35,000 - £45,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">Join our data team to help drive insights and business decisions. Strong SQL skills required...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
+            <!-- Jobs Container - Dynamically loaded -->
+            <div id="featured-jobs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Jobs will be loaded here -->
+                <div class="text-center col-span-full py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                    <p class="text-gray-600 mt-2">Loading jobs...</p>
                 </div>
             </div>
             
@@ -181,95 +102,163 @@
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Browse by Category</h2>
             
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <a href="/jobs.html?category=technology" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                <a href="/jobs?category=technology" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
                     <div class="text-3xl mb-3">💻</div>
                     <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Technology</h3>
-                    <p class="text-sm text-gray-600 mt-1">523 jobs</p>
+                    <p class="text-sm text-gray-600 mt-1">34 jobs</p>
                 </a>
-                <a href="/jobs.html?category=healthcare" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                <a href="/jobs?category=healthcare" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
                     <div class="text-3xl mb-3">🏥</div>
                     <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Healthcare</h3>
-                    <p class="text-sm text-gray-600 mt-1">187 jobs</p>
+                    <p class="text-sm text-gray-600 mt-1">35 jobs</p>
                 </a>
-                <a href="/jobs.html?category=finance" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
-                    <div class="text-3xl mb-3">💰</div>
+                <a href="/jobs?category=finance" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                    <div class="text-3xl mb-3">📊</div>
                     <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Finance</h3>
-                    <p class="text-sm text-gray-600 mt-1">294 jobs</p>
+                    <p class="text-sm text-gray-600 mt-1">38 jobs</p>
                 </a>
-                <a href="/jobs.html?category=education" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                <a href="/jobs?category=marketing" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                    <div class="text-3xl mb-3">📣</div>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Marketing</h3>
+                    <p class="text-sm text-gray-600 mt-1">34 jobs</p>
+                </a>
+                <a href="/jobs?category=sales" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                    <div class="text-3xl mb-3">💼</div>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Sales</h3>
+                    <p class="text-sm text-gray-600 mt-1">15 jobs</p>
+                </a>
+                <a href="/jobs?category=education" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
                     <div class="text-3xl mb-3">🎓</div>
                     <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Education</h3>
-                    <p class="text-sm text-gray-600 mt-1">156 jobs</p>
+                    <p class="text-sm text-gray-600 mt-1">12 jobs</p>
                 </a>
-                <a href="/jobs.html?category=retail" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                <a href="/jobs?category=engineering" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
+                    <div class="text-3xl mb-3">🔧</div>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Engineering</h3>
+                    <p class="text-sm text-gray-600 mt-1">28 jobs</p>
+                </a>
+                <a href="/jobs?category=retail" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
                     <div class="text-3xl mb-3">🛍️</div>
                     <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Retail</h3>
-                    <p class="text-sm text-gray-600 mt-1">412 jobs</p>
-                </a>
-                <a href="/jobs.html?category=construction" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
-                    <div class="text-3xl mb-3">🏗️</div>
-                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Construction</h3>
-                    <p class="text-sm text-gray-600 mt-1">98 jobs</p>
-                </a>
-                <a href="/jobs.html?category=hospitality" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
-                    <div class="text-3xl mb-3">🏨</div>
-                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Hospitality</h3>
-                    <p class="text-sm text-gray-600 mt-1">234 jobs</p>
-                </a>
-                <a href="/jobs.html?category=logistics" class="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow text-center group">
-                    <div class="text-3xl mb-3">🚛</div>
-                    <h3 class="font-semibold text-gray-900 group-hover:text-teal-600">Logistics</h3>
-                    <p class="text-sm text-gray-600 mt-1">178 jobs</p>
+                    <p class="text-sm text-gray-600 mt-1">37 jobs</p>
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- How It Works -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">How OpenRole Works</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">🔍</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Transparent Salaries</h3>
+                    <p class="text-gray-600">Every job listing includes a clear salary range. No more guessing or wasting time.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">✅</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Verified Employers</h3>
+                    <p class="text-gray-600">All companies are verified through Companies House. Real companies, real jobs.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">🚫</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">No Ghost Jobs</h3>
+                    <p class="text-gray-600">We regularly audit listings to ensure all jobs are current and actively hiring.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-8 mt-16">
+    <footer class="bg-gray-900 text-gray-300 py-8">
         <div class="container mx-auto px-4">
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
-                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <h3 class="text-xl font-bold text-white mb-4">OpenRole</h3>
+                    <p class="text-sm">The job board that puts transparency first. Find real jobs from verified UK companies.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Job Seekers</h4>
                     <ul class="space-y-2 text-sm">
                         <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
                         <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
                         <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
-                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                        <li><a href="/register" class="hover:text-white">Create Account</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <h4 class="font-semibold text-white mb-4">Employers</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
-                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
-                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/post-job" class="hover:text-white">Post a Job</a></li>
                         <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                        <li><a href="/employers" class="hover:text-white">Why OpenRole</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">About Us</a></li>
-                        <li><a href="#" class="hover:text-white">Contact</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-3">Connect</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
-                        <li><a href="#" class="hover:text-white">Twitter</a></li>
-                        <li><a href="#" class="hover:text-white">Facebook</a></li>
-                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                        <li><a href="/about" class="hover:text-white">About Us</a></li>
+                        <li><a href="/contact" class="hover:text-white">Contact</a></li>
+                        <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="/terms" class="hover:text-white">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+                <p>&copy; 2025 OpenRole. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        // Load featured jobs on homepage
+        async function loadFeaturedJobs() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/jobs?per_page=6`);
+                const data = await response.json();
+                const container = document.getElementById('featured-jobs');
+                
+                if (data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(job => `
+                        <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
+                            <div class="mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">${job.title}</h3>
+                                <p class="text-gray-600">${job.company} - ${job.location}</p>
+                            </div>
+                            <div class="mb-4">
+                                <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                                    £${(job.salary_min/1000).toFixed(0)}k - £${(job.salary_max/1000).toFixed(0)}k
+                                </span>
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full ml-2">
+                                    ${job.type}
+                                </span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">${job.description.substring(0, 100)}...</p>
+                            <a href="/job-detail?id=${job.id}" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray-600 col-span-full">No jobs available at the moment.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('featured-jobs').innerHTML = 
+                    '<p class="text-center text-gray-600 col-span-full">Error loading jobs. Please try again later.</p>';
+            }
+        }
+
+        // Load jobs when page loads
+        document.addEventListener('DOMContentLoaded', loadFeaturedJobs);
+    </script>
 </body>
 </html>

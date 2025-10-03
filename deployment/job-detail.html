@@ -3,313 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senior Software Developer - Tech Corp - OpenRole</title>
+    <title>Job Details - OpenRole</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        teal: {
-                            600: '#14B8A6',
-                            700: '#0F766E'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-8">
                     <a href="/" class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">O</span>
+                        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">O</span>
                         </div>
-                        <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                        <span class="text-2xl font-bold text-gray-900">OpenRole</span>
                     </a>
-                    <nav class="hidden md:flex items-center space-x-6">
-                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
-                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
-                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
-                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
-                    </nav>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="/jobs" class="text-gray-600 hover:text-teal-600">Find Jobs</a>
+                        <a href="/employers" class="text-gray-600 hover:text-teal-600">For Employers</a>
+                        <a href="/cv-upload" class="text-gray-600 hover:text-teal-600">Upload CV</a>
+                        <a href="/career-advice" class="text-gray-600 hover:text-teal-600">Career Advice</a>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
-                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                    <a href="/login" class="text-gray-600 hover:text-teal-600">Login</a>
+                    <a href="/register" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded transition-colors">Register</a>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Back Navigation -->
-    <section class="bg-white border-b">
-        <div class="container mx-auto px-4 py-3">
-            <a href="/jobs" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                <span>←</span> Back to job search
-            </a>
-        </div>
-    </section>
-
-    <!-- Job Header -->
-    <section class="bg-white shadow-sm">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full mb-3">Featured</span>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-3">Senior Software Developer</h1>
-                    <div class="flex flex-wrap items-center gap-4 text-gray-600">
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">🏢</span>
-                            <span class="font-medium">Tech Corp</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span>📍</span>
-                            <span>London</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span>💼</span>
-                            <span>Permanent</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <div class="text-2xl font-bold text-green-600 mb-2">£60,000 - £80,000</div>
-                    <div class="text-sm text-gray-500">per annum</div>
-                </div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="flex items-center gap-6 mt-6 pt-6 border-t text-sm text-gray-500">
-                <span>🕒 Posted 2 days ago</span>
-                <span>📅 Closes in 28 days</span>
-                <span>👥 47 applicants</span>
-                <span>👁️ 892 views</span>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-4 mt-6">
-                <a href="/login.html?redirect=/apply/job123" class="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
-                    Apply now
-                </a>
-                <button class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50">
-                    ⭐ Save job
-                </button>
-                <button class="p-3 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
-                    📤 Share
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Left Column - Job Details -->
-            <div class="lg:col-span-2 space-y-8">
-                <!-- Job Description -->
-                <section class="bg-white rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold mb-4">Job Description</h2>
-                    <div class="prose max-w-none text-gray-600">
-                        <p>We are looking for an experienced Senior Software Developer to join our growing team in London. This is an exciting opportunity to work on cutting-edge projects using the latest technologies.</p>
-                        
-                        <p>As a Senior Software Developer, you will be responsible for designing, developing, and maintaining high-quality software solutions. You'll work closely with product managers, designers, and other developers to deliver features that delight our users.</p>
-                        
-                        <p>We offer a collaborative environment where innovation is encouraged, and professional growth is supported. Join us in building the next generation of technology solutions!</p>
-                    </div>
-                </section>
-
-                <!-- Key Responsibilities -->
-                <section class="bg-white rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold mb-4">Key Responsibilities</h2>
-                    <ul class="space-y-2">
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-teal-600 mt-1">✓</span>
-                            <span>Design and implement scalable software solutions using modern technologies</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-teal-600 mt-1">✓</span>
-                            <span>Collaborate with cross-functional teams to deliver high-quality features</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-teal-600 mt-1">✓</span>
-                            <span>Mentor junior developers and contribute to technical documentation</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-teal-600 mt-1">✓</span>
-                            <span>Participate in code reviews and maintain high code quality standards</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-teal-600 mt-1">✓</span>
-                            <span>Debug and resolve complex technical issues in production</span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Requirements -->
-                <section class="bg-white rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold mb-4">Requirements</h2>
-                    <ul class="space-y-2">
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-gray-400">•</span>
-                            <span>5+ years of experience in software development</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-gray-400">•</span>
-                            <span>Strong proficiency in JavaScript/TypeScript, React, and Node.js</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-gray-400">•</span>
-                            <span>Experience with cloud platforms (AWS, GCP, or Azure)</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-gray-400">•</span>
-                            <span>Solid understanding of software design patterns and principles</span>
-                        </li>
-                        <li class="flex items-start gap-2 text-gray-600">
-                            <span class="text-gray-400">•</span>
-                            <span>Bachelor's degree in Computer Science or related field</span>
-                        </li>
-                    </ul>
-                </section>
-
-                <!-- Benefits -->
-                <section class="bg-white rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold mb-4">Benefits</h2>
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>Competitive salary with annual reviews</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>25 days holiday + bank holidays</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>Flexible working hours</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>Health insurance for you and family</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>Generous pension contribution</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-gray-600">
-                            <span class="text-green-600">✓</span>
-                            <span>Professional development budget</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Right Column - Company Info & Actions -->
-            <div class="space-y-6">
-                <!-- Company Info -->
-                <section class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="text-4xl">🏢</div>
-                        <h3 class="text-lg font-semibold">Tech Corp</h3>
-                    </div>
-                    <p class="text-gray-600 mb-4">Tech Corp is a leading technology company specializing in innovative software solutions. With over 500 employees across 5 offices, we're committed to creating products that make a difference.</p>
-                    <a href="/company/tech-corp" class="text-teal-600 hover:text-teal-700 font-medium">
-                        View company profile →
-                    </a>
-                    
-                    <div class="mt-6 pt-6 border-t">
-                        <a href="/login?redirect=/apply/job123" class="block w-full text-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
-                            Apply for this job
-                        </a>
-                        <p class="text-sm text-gray-500 text-center mt-3">
-                            28 days left to apply
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Similar Jobs -->
-                <section class="bg-white rounded-lg shadow-sm p-6">
-                    <h3 class="text-lg font-semibold mb-4">Similar Jobs</h3>
-                    <div class="space-y-3">
-                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
-                            <h4 class="font-medium text-gray-900">Full Stack Developer</h4>
-                            <p class="text-sm text-gray-600">Tech Corp • London</p>
-                            <p class="text-sm text-green-600 font-medium">£50,000 - £70,000</p>
-                        </a>
-                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
-                            <h4 class="font-medium text-gray-900">Frontend Developer</h4>
-                            <p class="text-sm text-gray-600">Digital Agency • Remote</p>
-                            <p class="text-sm text-green-600 font-medium">£45,000 - £60,000</p>
-                        </a>
-                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
-                            <h4 class="font-medium text-gray-900">Software Engineer</h4>
-                            <p class="text-sm text-gray-600">Startup Hub • Manchester</p>
-                            <p class="text-sm text-green-600 font-medium">£55,000 - £75,000</p>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- Report Job -->
-                <div class="text-center">
-                    <a href="#" class="text-sm text-gray-500 hover:text-gray-700">
-                        🚩 Report this job
-                    </a>
-                </div>
+    <!-- Job Details Container -->
+    <div id="job-container" class="py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center py-16">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+                <p class="text-gray-600 mt-4">Loading job details...</p>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-8 mt-16">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div>
-                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
-                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
-                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
-                        <li><a href="/login" class="hover:text-white">My Account</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
-                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
-                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
-                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">About Us</a></li>
-                        <li><a href="#" class="hover:text-white">Contact</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-3">Connect</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
-                        <li><a href="#" class="hover:text-white">Twitter</a></li>
-                        <li><a href="#" class="hover:text-white">Facebook</a></li>
-                        <li><a href="#" class="hover:text-white">Blog</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
-            </div>
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 OpenRole. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- API Integration -->
+    <script src="/api-integration.js"></script>
+    <script>
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('id');
+
+        async function loadJobDetails() {
+            if (!jobId) {
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            No job ID specified. <a href="/jobs" class="underline">Browse all jobs</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/jobs/${jobId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Job not found');
+                }
+                
+                const job = await response.json();
+                
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <!-- Breadcrumb -->
+                        <nav class="text-sm mb-6">
+                            <a href="/" class="text-gray-500 hover:text-teal-600">Home</a>
+                            <span class="mx-2 text-gray-500">/</span>
+                            <a href="/jobs" class="text-gray-500 hover:text-teal-600">Jobs</a>
+                            <span class="mx-2 text-gray-500">/</span>
+                            <span class="text-gray-700">${job.title || 'Job Details'}</span>
+                        </nav>
+
+                        <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+                            <!-- Main Content -->
+                            <div class="lg:col-span-2 mb-8 lg:mb-0">
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-4">${job.title || 'Job Title'}</h1>
+                                    
+                                    <div class="flex flex-wrap gap-4 mb-6 text-gray-600">
+                                        <div class="flex items-center">
+                                            <span class="mr-2">🏢</span>
+                                            <span>${job.company_name || job.company || 'Company Name'}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">📍</span>
+                                            <span>${job.location_general || job.location || 'Location'}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">💼</span>
+                                            <span>${job.employment_type || job.type || 'Full-time'}</span>
+                                        </div>
+                                        ${job.remote_type && job.remote_type !== 'office' ? `
+                                        <div class="flex items-center">
+                                            <span class="mr-2">🏠</span>
+                                            <span>${job.remote_type}</span>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Salary</h2>
+                                        <div class="text-2xl font-bold text-green-600">
+                                            £${job.salary_min ? job.salary_min.toLocaleString() : 'N/A'} - £${job.salary_max ? job.salary_max.toLocaleString() : 'N/A'}
+                                            <span class="text-sm font-normal text-gray-600">per year</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Job Description</h2>
+                                        <div class="prose max-w-none text-gray-700 whitespace-pre-wrap">${job.description || 'No description available.'}</div>
+                                    </div>
+
+                                    ${job.requirements ? `
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Requirements</h2>
+                                        <div class="prose max-w-none text-gray-700">${job.requirements}</div>
+                                    </div>
+                                    ` : ''}
+
+                                    ${job.benefits ? `
+                                    <div class="mb-6">
+                                        <h2 class="text-xl font-semibold mb-3">Benefits</h2>
+                                        <div class="prose max-w-none text-gray-700">${job.benefits}</div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-lg shadow p-6 mb-6 sticky top-20">
+                                    <h3 class="text-lg font-semibold mb-4">Apply for this job</h3>
+                                    <a href="/register" class="block w-full text-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors mb-3">
+                                        Register to Apply
+                                    </a>
+                                    <p class="text-sm text-gray-600 text-center mb-4">Already have an account? <a href="/login" class="text-teal-600 hover:underline">Login</a></p>
+                                    
+                                    <div class="border-t pt-4">
+                                        <button onclick="saveJob('${job.id}')" class="w-full px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                            💾 Save Job
+                                        </button>
+                                    </div>
+                                </div>
+
+                                ${job.company_description || job.website ? `
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h3 class="text-lg font-semibold mb-4">About ${job.company_name || job.company || 'the Company'}</h3>
+                                    ${job.company_description ? `<p class="text-gray-600 mb-4">${job.company_description}</p>` : ''}
+                                    ${job.website ? `<a href="${job.website}" target="_blank" class="text-teal-600 hover:underline">Visit company website →</a>` : ''}
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Update page title
+                document.title = `${job.title} - ${job.company_name || job.company} - OpenRole`;
+                
+            } catch (error) {
+                console.error('Error loading job:', error);
+                document.getElementById('job-container').innerHTML = `
+                    <div class="container mx-auto px-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            Error loading job details. <a href="/jobs" class="underline">Browse all jobs</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function saveJob(jobId) {
+            alert('Please login or register to save jobs');
+            window.location.href = '/login';
+        }
+
+        // Load job details when page loads
+        document.addEventListener('DOMContentLoaded', loadJobDetails);
+    </script>
 </body>
 </html>

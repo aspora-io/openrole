@@ -1,0 +1,10 @@
+# All GitHub workflows are disabled
+# This file prevents other workflows from running
+name: Workflows Disabled
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Workflows Disabled
+        run: echo "All GitHub workflows have been disabled"
