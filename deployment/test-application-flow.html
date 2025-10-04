@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Tracking Test - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Application Tracking System Test</h1>
+        
+        <!-- Test Status -->
+        <div id="test-status" class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 class="text-lg font-semibold text-blue-900">Test Status</h2>
+            <p class="text-blue-700" id="status-text">Ready to test...</p>
+        </div>
+
+        <!-- Test Controls -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4">Candidate Actions</h3>
+                <div class="space-y-3">
+                    <button onclick="simulateCandidateRegistration()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                        1. Register as Candidate
+                    </button>
+                    <button onclick="submitJobApplication()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                        2. Apply for Job
+                    </button>
+                    <button onclick="viewCandidateApplications()" class="w-full bg-purple-500 text-white p-2 rounded hover:bg-purple-600">
+                        3. View My Applications
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-4">Employer Actions</h3>
+                <div class="space-y-3">
+                    <button onclick="simulateEmployerRegistration()" class="w-full bg-orange-500 text-white p-2 rounded hover:bg-orange-600">
+                        1. Register as Employer
+                    </button>
+                    <button onclick="viewEmployerApplications()" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600">
+                        2. View Received Applications
+                    </button>
+                    <button onclick="updateApplicationStatus()" class="w-full bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">
+                        3. Update Application Status
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold mb-4">Test Results</h3>
+            <div id="results" class="space-y-4">
+                <p class="text-gray-600">Run tests to see results...</p>
+            </div>
+        </div>
+
+        <!-- Clear Data -->
+        <div class="mt-8 text-center">
+            <button onclick="clearAllData()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                Clear All Test Data
+            </button>
+        </div>
+    </div>
+
+    <script src="/application-tracker.js"></script>
+    <script>
+        let currentCandidateId = null;
+        let currentEmployerId = null;
+        let currentApplicationId = null;
+
+        function updateStatus(message, type = 'info') {
+            const statusText = document.getElementById('status-text');
+            const statusDiv = document.getElementById('test-status');
+            
+            statusText.textContent = message;
+            
+            // Update colors based on type
+            const colorClasses = {
+                info: 'bg-blue-50 border-blue-200 text-blue-700',
+                success: 'bg-green-50 border-green-200 text-green-700',
+                error: 'bg-red-50 border-red-200 text-red-700',
+                warning: 'bg-yellow-50 border-yellow-200 text-yellow-700'
+            };
+            
+            statusDiv.className = `mb-8 p-4 border rounded-lg ${colorClasses[type] || colorClasses.info}`;
+        }
+
+        function addResult(message, data = null) {
+            const results = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'p-3 bg-gray-50 rounded border-l-4 border-blue-500';
+            
+            let content = `<p class="font-medium">${message}</p>`;
+            if (data) {
+                content += `<pre class="text-xs text-gray-600 mt-2 overflow-x-auto">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            resultDiv.innerHTML = content;
+            
+            if (results.firstChild?.textContent === 'Run tests to see results...') {
+                results.innerHTML = '';
+            }
+            
+            results.appendChild(resultDiv);
+        }
+
+        function simulateCandidateRegistration() {
+            try {
+                currentCandidateId = 'test_candidate_' + Date.now();
+                
+                // Simulate storing user data
+                const candidateUser = {
+                    id: currentCandidateId,
+                    firstName: 'Test',
+                    lastName: 'Candidate',
+                    email: 'test.candidate@example.com',
+                    userType: 'candidate'
+                };
+                
+                localStorage.setItem('authToken', 'test_token_' + Date.now());
+                localStorage.setItem('user', JSON.stringify(candidateUser));
+                
+                updateStatus('Candidate registered successfully', 'success');
+                addResult('✅ Candidate Registration', candidateUser);
+                
+            } catch (error) {
+                updateStatus('Error registering candidate: ' + error.message, 'error');
+                addResult('❌ Candidate Registration Failed', { error: error.message });
+            }
+        }
+
+        function simulateEmployerRegistration() {
+            try {
+                currentEmployerId = 'emp_techcorp_001'; // Match the job's employer ID
+                
+                const employerUser = {
+                    id: currentEmployerId,
+                    firstName: 'Test',
+                    lastName: 'Employer',
+                    email: 'test.employer@techcorp.com',
+                    userType: 'employer',
+                    company: 'Tech Corp'
+                };
+                
+                localStorage.setItem('authToken', 'test_employer_token_' + Date.now());
+                localStorage.setItem('user', JSON.stringify(employerUser));
+                
+                updateStatus('Employer registered successfully', 'success');
+                addResult('✅ Employer Registration', employerUser);
+                
+            } catch (error) {
+                updateStatus('Error registering employer: ' + error.message, 'error');
+                addResult('❌ Employer Registration Failed', { error: error.message });
+            }
+        }
+
+        function submitJobApplication() {
+            try {
+                if (!currentCandidateId) {
+                    updateStatus('Please register as candidate first', 'warning');
+                    return;
+                }
+
+                const jobData = {
+                    id: 'job_senior_dev_001',
+                    title: 'Senior Software Developer',
+                    company: 'Tech Corp',
+                    location: 'London',
+                    salary: '£60,000 - £80,000',
+                    employerId: 'emp_techcorp_001',
+                    employerName: 'Tech Corp'
+                };
+
+                const candidateData = {
+                    id: currentCandidateId,
+                    firstName: 'Test',
+                    lastName: 'Candidate',
+                    email: 'test.candidate@example.com',
+                    coverLetter: 'I am very interested in this position and believe I would be a great fit.',
+                    cvAttached: true
+                };
+
+                const application = ApplicationTracker.submitApplication(jobData, candidateData);
+                currentApplicationId = application.id;
+                
+                updateStatus('Job application submitted successfully', 'success');
+                addResult('✅ Job Application Submitted', application);
+                
+            } catch (error) {
+                updateStatus('Error submitting application: ' + error.message, 'error');
+                addResult('❌ Job Application Failed', { error: error.message });
+            }
+        }
+
+        function viewCandidateApplications() {
+            try {
+                if (!currentCandidateId) {
+                    updateStatus('Please register as candidate first', 'warning');
+                    return;
+                }
+
+                const applications = ApplicationTracker.getCandidateApplications(currentCandidateId);
+                const stats = ApplicationTracker.getCandidateStats(currentCandidateId);
+                
+                updateStatus(`Found ${applications.length} applications for candidate`, 'success');
+                addResult('📄 Candidate Applications', { stats, applications });
+                
+            } catch (error) {
+                updateStatus('Error viewing candidate applications: ' + error.message, 'error');
+                addResult('❌ View Candidate Applications Failed', { error: error.message });
+            }
+        }
+
+        function viewEmployerApplications() {
+            try {
+                if (!currentEmployerId) {
+                    updateStatus('Please register as employer first', 'warning');
+                    return;
+                }
+
+                const applications = ApplicationTracker.getEmployerApplications(currentEmployerId);
+                const stats = ApplicationTracker.getEmployerStats(currentEmployerId);
+                
+                updateStatus(`Found ${applications.length} applications for employer`, 'success');
+                addResult('📋 Employer Applications', { stats, applications });
+                
+            } catch (error) {
+                updateStatus('Error viewing employer applications: ' + error.message, 'error');
+                addResult('❌ View Employer Applications Failed', { error: error.message });
+            }
+        }
+
+        function updateApplicationStatus() {
+            try {
+                if (!currentApplicationId) {
+                    updateStatus('Please submit an application first', 'warning');
+                    return;
+                }
+
+                const updatedApp = ApplicationTracker.updateApplicationStatus(
+                    currentApplicationId, 
+                    'interviewing', 
+                    'Candidate invited for interview'
+                );
+                
+                if (updatedApp) {
+                    updateStatus('Application status updated successfully', 'success');
+                    addResult('🔄 Application Status Updated', updatedApp);
+                } else {
+                    updateStatus('Application not found', 'error');
+                }
+                
+            } catch (error) {
+                updateStatus('Error updating application status: ' + error.message, 'error');
+                addResult('❌ Status Update Failed', { error: error.message });
+            }
+        }
+
+        function clearAllData() {
+            try {
+                ApplicationTracker.clearAllApplications();
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+                
+                currentCandidateId = null;
+                currentEmployerId = null;
+                currentApplicationId = null;
+                
+                document.getElementById('results').innerHTML = '<p class="text-gray-600">Run tests to see results...</p>';
+                
+                updateStatus('All test data cleared', 'success');
+                
+            } catch (error) {
+                updateStatus('Error clearing data: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize
+        updateStatus('Application Tracking System loaded and ready for testing');
+    </script>
+</body>
+</html>
