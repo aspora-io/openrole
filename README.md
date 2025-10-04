@@ -23,6 +23,11 @@ A fair, transparent job board that requires salary ranges, verifies employers, a
    - **API:** http://localhost:3011
    - **Database:** localhost:5432 (postgres/postgres)
    - **Redis:** localhost:6379
+   
+   **Live Production:** https://openrole.net
+   - **Jobs:** https://openrole.net/jobs
+   - **Applications:** https://openrole.net/applications
+   - **Dashboards:** https://openrole.net/candidate-dashboard
 
 4. **Stop services:**
    ```bash
@@ -43,23 +48,28 @@ Production is automatically deployed via GitHub Actions to https://openrole.net
 
 ## 📋 Development Roadmap
 
-### Sprint 1 (Current)
-- [ ] User authentication system
-- [ ] Basic job posting functionality
-- [ ] Job search and filtering
-- [ ] Mandatory salary transparency
+### Sprint 1 ✅ Completed
+- [x] User authentication system
+- [x] Basic job posting functionality
+- [x] Job search and filtering
+- [x] Mandatory salary transparency
+- [x] **Application tracking system** 
+- [x] **Enhanced candidate/employer dashboards**
+- [x] **Modern UI with visual depth**
 
-### Sprint 2
+### Sprint 2 (Current)
 - [ ] Better location precision (Dublin-specific)
 - [ ] Core vs nice-to-have skills categorization
 - [ ] Ghost job prevention system
 - [ ] Company verification workflow
+- [ ] CV & Profile Tools
+- [ ] Email notifications
 
 ### Sprint 3
-- [ ] CV & Profile Tools
-- [ ] Application tracking
-- [ ] Employer dashboard
-- [ ] Email notifications
+- [ ] Advanced search and filtering
+- [ ] Personalized job recommendations
+- [ ] Analytics dashboard
+- [ ] Mobile app development
 
 ## 🛠️ Tech Stack
 
@@ -95,6 +105,29 @@ Key entities:
 
 See `database/init.sql` for complete schema.
 
+## 🎯 Application Tracking System
+
+Our comprehensive application tracking system provides real-time visibility and management for both candidates and employers:
+
+### For Candidates
+- **Personal Applications Dashboard** - View all applications at `/applications`
+- **Real-time Status Updates** - Track progress from submission to decision
+- **Application History** - Complete timeline with status changes
+- **Duplicate Prevention** - Smart detection prevents multiple applications
+- **Interactive UI** - Modern design with glass morphism and animations
+
+### For Employers  
+- **Application Management** - Review and update application statuses
+- **Bulk Actions** - Efficiently manage multiple applications
+- **Status Workflow** - Guided process from review to hiring decision
+- **Candidate Communication** - Track interactions and notes
+
+### Technical Features
+- **localStorage Persistence** - Reliable client-side storage
+- **Event-driven Updates** - Real-time synchronization across dashboards
+- **Performance Optimized** - Efficient filtering and sorting
+- **Mobile Responsive** - Seamless experience across devices
+
 ## 🔧 Development Workflow
 
 1. **Create feature branch:** `git checkout -b feature/job-search`
@@ -106,24 +139,29 @@ See `database/init.sql` for complete schema.
 ## 📊 Core Features
 
 ### ✅ Implemented
-- Landing page with value proposition
-- Docker-based development environment
-- Production deployment pipeline
-- Database schema design
+- **Landing page** with value proposition and modern design
+- **User authentication** (signup/login/logout)
+- **Job posting** with mandatory salary requirements
+- **Job search and filtering** with multiple criteria
+- **Application tracking system** with real-time updates
+- **Enhanced dashboards** for candidates and employers
+- **Modern UI design** with glass morphism and visual depth
+- **Clean URL routing** for professional navigation
+- **Docker-based development** environment
+- **Production deployment** pipeline with SSL
 
-### 🚧 In Development (Sprint 1)
-- User authentication (signup/login)
-- Job posting form with salary requirements
-- Job listing and search functionality
-- Basic employer/candidate dashboards
-
-### 📋 Planned
+### 🚧 In Development (Sprint 2)
 - Advanced location filtering (Dublin-specific)
 - Skills categorization (core vs nice-to-have)
 - Ghost job prevention system
 - CV & Profile Tools
-- Application tracking
+- Email notifications
+
+### 📋 Planned
+- Advanced search algorithms
 - Personalized job recommendations
+- Analytics dashboard
+- Mobile application
 
 ## 🌟 Key Differentiators
 
