@@ -27,7 +27,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
 
   // Hooks for fetching user data
   const { profile } = useProfile();
-  const { cvDocuments, loading: cvLoading } = useCV();
+  const { generatedCVs, loading: cvLoading } = useCV();
   const { portfolioItems, loading: portfolioLoading } = usePortfolio();
 
   // Handle form submission
@@ -140,9 +140,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-2 text-gray-600">Loading your CVs...</p>
                   </div>
-                ) : cvDocuments && cvDocuments.length > 0 ? (
+                ) : generatedCVs && generatedCVs.length > 0 ? (
                   <div className="space-y-3">
-                    {cvDocuments.map(cv => (
+                    {generatedCVs.map(cv => (
                       <label 
                         key={cv.id} 
                         className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
