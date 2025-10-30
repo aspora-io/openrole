@@ -310,7 +310,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                 </div>
 
                 <div className="space-y-6">
-                  {job.custom_questions.map((question, index) => (
+                  {job.custom_questions.map((question: any, index: number) => (
                     <div key={index}>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         {question.question}
