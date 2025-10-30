@@ -21,8 +21,8 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
   const [applicationData, setApplicationData] = useState({
     cv_document_id: '',
     cover_letter: '',
-    portfolio_items: [],
-    custom_responses: {}
+    portfolio_items: [] as string[],
+    custom_responses: {} as Record<string, string>
   });
 
   // Hooks for fetching user data
