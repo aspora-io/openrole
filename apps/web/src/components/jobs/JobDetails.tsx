@@ -22,8 +22,8 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ApplicationForm } from './ApplicationForm';
-import { SimilarJobs } from './SimilarJobs';
-import { CompanyInfo } from './CompanyInfo';
+// import { SimilarJobs } from './SimilarJobs'; // TODO: Create this component
+// import { CompanyInfo } from './CompanyInfo'; // TODO: Create this component
 
 interface JobDetailsProps {
   jobId: string;
