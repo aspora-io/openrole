@@ -59,7 +59,7 @@ export const useEmployer = () => {
 
   // Load employer data on mount
   useEffect(() => {
-    if (isAuthenticated && user?.user_type === 'employer') {
+    if (isAuthenticated && user?.role === 'employer') {
       loadDashboard();
       loadJobs();
       loadTemplates();
