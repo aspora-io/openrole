@@ -120,7 +120,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
   // Get employment type display
   const getEmploymentTypeDisplay = () => {
-    const typeMap = {
+    const typeMap: Record<string, string> = {
       'full-time': 'Full-time',
       'part-time': 'Part-time',
       'contract': 'Contract',
