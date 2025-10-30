@@ -131,7 +131,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
   // Get experience level display
   const getExperienceLevelDisplay = () => {
-    const levelMap = {
+    const levelMap: Record<string, string> = {
       'entry': 'Entry Level',
       'mid': 'Mid Level',
       'senior': 'Senior Level',
