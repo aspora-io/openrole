@@ -22,7 +22,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
     cv_document_id: '',
     cover_letter: '',
     portfolio_items: [] as string[],
-    custom_responses: {} as Record<string, string>
+    custom_responses: {} as Record<string, string | string[]>
   });
 
   // Hooks for fetching user data
