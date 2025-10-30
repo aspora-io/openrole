@@ -59,7 +59,7 @@ export const useAuth = () => {
       }
 
       // Verify token and get user data
-      const response = await api.get('/auth/me');
+      const response: any = await api.get('/auth/me');
       if (response.success) {
         setState(prev => ({
           ...prev,
@@ -94,7 +94,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.post('/auth/login', { email, password });
+      const response: any = await api.post('/auth/login', { email, password });
       
       if (response.success) {
         const { token, user } = response.data;
@@ -129,7 +129,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.post('/auth/register', userData);
+      const response: any = await api.post('/auth/register', userData);
       
       if (response.success) {
         const { token, user } = response.data;
@@ -202,7 +202,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.put('/auth/profile', profileData);
+      const response: any = await api.put('/auth/profile', profileData);
       
       if (response.success) {
         setState(prev => ({
@@ -230,7 +230,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.post('/auth/change-password', {
+      const response: any = await api.post('/auth/change-password', {
         currentPassword,
         newPassword
       });
@@ -256,7 +256,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.post('/auth/forgot-password', { email });
+      const response: any = await api.post('/auth/forgot-password', { email });
       
       if (response.success) {
         setState(prev => ({ ...prev, loading: false }));
@@ -279,7 +279,7 @@ export const useAuth = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await api.post('/auth/reset-password', {
+      const response: any = await api.post('/auth/reset-password', {
         token,
         newPassword
       });
