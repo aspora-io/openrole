@@ -2,24 +2,22 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package.json
-COPY package.json ./
+# Copy package files
+COPY package*.json ./
 
-# Install dependencies (ignore workspace errors)
-RUN npm install --force || npm install --legacy-peer-deps || true
+# Install dependencies with force to handle workspace issues
+RUN npm install --force
 
 # Copy all app files
 COPY . .
 
-# Remove workspace references from package.json
-RUN sed -i 's/"@openrole\/[^"]*": "workspace:\*"//g' package.json && \
-    sed -i 's/,,/,/g' package.json && \
-    sed -i 's/,}/}/g' package.json
-
-# Try to build (may skip if dependencies fail)
-RUN npm run build || echo "Build skipped - will run in dev mode"
+# Build the application
+RUN npm run build
 
 EXPOSE 3000
 
-# Start the app (fallback to dev if build failed)
-CMD ["sh", "-c", "npm run start || npm run dev"]
+# Set production environment
+ENV NODE_ENV=production
+
+# Start in production mode
+CMD ["npm", "run", "start"]

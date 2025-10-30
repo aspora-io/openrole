@@ -450,7 +450,7 @@ export default function DashboardPage() {
                     <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
                   </div>
                   <div className="p-6">
-                    {employerDashboard?.recent_applications?.length > 0 ? (
+                    {employerDashboard?.recent_applications && employerDashboard.recent_applications.length > 0 ? (
                       <div className="space-y-4">
                         {employerDashboard.recent_applications.slice(0, 5).map((application: any) => (
                           <div key={application.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
