@@ -75,8 +75,8 @@ export const useApplications = () => {
       if (options.limit) searchParams.append('limit', options.limit.toString());
       if (options.status) searchParams.append('status', options.status);
 
-      const response = await api.get(`/applications?${searchParams.toString()}`);
-      
+      const response: any = await api.get(`/applications?${searchParams.toString()}`);
+
       if (response.success) {
         setApplications(response.data.applications || []);
       } else {
@@ -95,7 +95,7 @@ export const useApplications = () => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await api.get('/applications/stats');
+      const response: any = await api.get('/applications/stats');
       
       if (response.success) {
         setStats(response.data);
@@ -122,7 +122,7 @@ export const useApplications = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post(`/jobs/${jobId}/apply`, applicationData);
+      const response: any = await api.post(`/jobs/${jobId}/apply`, applicationData);
       
       if (response.success) {
         // Refresh applications list
@@ -153,7 +153,7 @@ export const useApplications = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.delete(`/applications/${applicationId}`);
+      const response: any = await api.delete(`/applications/${applicationId}`);
       
       if (response.success) {
         // Optimistically update the applications list
@@ -190,7 +190,7 @@ export const useApplications = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/applications/${applicationId}`);
+      const response: any = await api.get(`/applications/${applicationId}`);
       
       if (response.success) {
         return response.data;
@@ -211,7 +211,7 @@ export const useApplications = () => {
     if (!isAuthenticated) return [];
 
     try {
-      const response = await api.get(`/applications/${applicationId}/timeline`);
+      const response: any = await api.get(`/applications/${applicationId}/timeline`);
       
       if (response.success) {
         return response.data;
