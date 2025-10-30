@@ -100,8 +100,33 @@ const educationCreateSchema = z.object({
 
 /**
  * Education update schema (partial)
+ * Note: Using explicit optional fields since the base schema has refinements
  */
-const educationUpdateSchema = educationCreateSchema.partial();
+const educationUpdateSchema = z.object({
+  institution: z.string().min(1).max(200).optional(),
+  degree: z.string().min(1).max(200).optional(),
+  degreeType: z.enum(['HIGH_SCHOOL', 'ASSOCIATE', 'BACHELOR', 'MASTER', 'PHD', 'CERTIFICATE', 'DIPLOMA', 'OTHER']).optional(),
+  fieldOfStudy: z.string().max(200).optional(),
+  location: z.string().max(200).optional(),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  graduationYear: z.number().min(1950).max(new Date().getFullYear() + 10).optional(),
+  isCurrentlyEnrolled: z.boolean().optional(),
+  gpa: z.number().min(0).max(4.0).optional(),
+  maxGpa: z.number().min(0).max(4.0).optional(),
+  description: z.string().max(1000).optional(),
+  achievements: z.array(z.string().max(300)).max(10).optional(),
+  coursework: z.array(z.string().max(100)).max(20).optional(),
+  activities: z.array(z.string().max(200)).max(10).optional(),
+  honors: z.array(z.string().max(200)).max(10).optional(),
+  thesis: z.object({
+    title: z.string().max(300),
+    description: z.string().max(1000).optional(),
+    advisor: z.string().max(100).optional(),
+    url: z.string().url().optional()
+  }).optional(),
+  isVerified: z.boolean().optional()
+}).passthrough();
 
 /**
  * GET /api/education/user/:userId

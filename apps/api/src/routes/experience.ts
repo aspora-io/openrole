@@ -99,8 +99,30 @@ const workExperienceCreateSchema = z.object({
 
 /**
  * Work experience update schema (partial)
+ * Note: Using passthrough instead of partial since the base schema has refinements
  */
-const workExperienceUpdateSchema = workExperienceCreateSchema.partial();
+const workExperienceUpdateSchema = z.object({
+  jobTitle: z.string().min(1).max(100).optional(),
+  companyName: z.string().min(1).max(200).optional(),
+  location: z.string().max(200).optional(),
+  employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE', 'INTERNSHIP', 'VOLUNTEER']).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  isCurrentRole: z.boolean().optional(),
+  description: z.string().max(2000).optional(),
+  achievements: z.array(z.string().max(500)).max(10).optional(),
+  technologies: z.array(z.string().max(50)).max(20).optional(),
+  teamSize: z.number().int().positive().optional(),
+  responsibilities: z.array(z.string().max(500)).max(10).optional(),
+  references: z.array(z.object({
+    name: z.string().max(100),
+    position: z.string().max(100),
+    company: z.string().max(200),
+    email: z.string().email().optional(),
+    phone: z.string().max(20).optional(),
+    relationship: z.string().max(100)
+  })).max(3).optional()
+}).passthrough();
 
 /**
  * GET /api/experience/user/:userId
