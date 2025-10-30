@@ -12,7 +12,7 @@ import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { z } from 'zod';
 import { ErrorFactory } from './errors';
-import { privacyService } from '../services/privacy-service';
+import { privacyService } from '../services/privacy.service';
 
 // Privacy levels enum
 export enum PrivacyLevel {

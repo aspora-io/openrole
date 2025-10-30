@@ -21,7 +21,7 @@ import {
   validationHelpers 
 } from '../middleware/validation';
 import { asyncHandler, ErrorFactory } from '../middleware/errors';
-import { privacyService } from '../services/privacy-service';
+import { privacyService } from '../services/privacy.service';
 
 const app = new Hono<{ Variables: { user?: any; userId?: string } }>();
 
