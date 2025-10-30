@@ -72,7 +72,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/employer/dashboard?days=${days}`);
+      const response: any = await api.get(`/employer/dashboard?days=${days}`);
       
       if (response.success) {
         setDashboard(response.data);
@@ -104,7 +104,7 @@ export const useEmployer = () => {
       if (options.status) searchParams.append('status', options.status);
       if (options.sort) searchParams.append('sort', options.sort);
 
-      const response = await api.get(`/employer/jobs?${searchParams.toString()}`);
+      const response: any = await api.get(`/employer/jobs?${searchParams.toString()}`);
       
       if (response.success) {
         setJobs(response.data.jobs || []);
@@ -125,7 +125,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post('/jobs', jobData);
+      const response: any = await api.post('/jobs', jobData);
       
       if (response.success) {
         // Refresh jobs list
@@ -150,7 +150,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.put(`/jobs/${jobId}`, jobData);
+      const response: any = await api.put(`/jobs/${jobId}`, jobData);
       
       if (response.success) {
         // Update jobs list
@@ -179,7 +179,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.delete(`/jobs/${jobId}`);
+      const response: any = await api.delete(`/jobs/${jobId}`);
       
       if (response.success) {
         // Remove from jobs list
@@ -204,7 +204,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post(`/jobs/${jobId}/publish`);
+      const response: any = await api.post(`/jobs/${jobId}/publish`);
       
       if (response.success) {
         // Update job status
@@ -233,7 +233,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post(`/jobs/${jobId}/pause`);
+      const response: any = await api.post(`/jobs/${jobId}/pause`);
       
       if (response.success) {
         // Update job status
@@ -262,7 +262,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post(`/jobs/${jobId}/clone`);
+      const response: any = await api.post(`/jobs/${jobId}/clone`);
       
       if (response.success) {
         // Refresh jobs list
@@ -300,7 +300,7 @@ export const useEmployer = () => {
       if (options.jobId) searchParams.append('job_id', options.jobId);
       if (options.sort) searchParams.append('sort', options.sort);
 
-      const response = await api.get(`/employer/applications?${searchParams.toString()}`);
+      const response: any = await api.get(`/employer/applications?${searchParams.toString()}`);
       
       if (response.success) {
         setApplications(response.data.applications || []);
@@ -331,7 +331,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.put(`/applications/${applicationId}/status`, statusData);
+      const response: any = await api.put(`/applications/${applicationId}/status`, statusData);
       
       if (response.success) {
         // Update applications list
@@ -357,7 +357,7 @@ export const useEmployer = () => {
   // Load job templates
   const loadTemplates = useCallback(async () => {
     try {
-      const response = await api.get('/employer/templates');
+      const response: any = await api.get('/employer/templates');
       
       if (response.success) {
         setTemplates(response.data);
@@ -380,7 +380,7 @@ export const useEmployer = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post('/employer/templates', templateData);
+      const response: any = await api.post('/employer/templates', templateData);
       
       if (response.success) {
         // Refresh templates list
@@ -412,7 +412,7 @@ export const useEmployer = () => {
       if (options.days) searchParams.append('days', options.days.toString());
       if (options.jobId) searchParams.append('job_id', options.jobId);
 
-      const response = await api.get(`/employer/analytics?${searchParams.toString()}`);
+      const response: any = await api.get(`/employer/analytics?${searchParams.toString()}`);
       
       if (response.success) {
         setAnalytics(response.data);
