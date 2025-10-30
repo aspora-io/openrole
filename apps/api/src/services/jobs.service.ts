@@ -912,6 +912,3 @@ export class JobsService {
     }
   }
 }
-
-// Import necessary database schemas (these would be defined in your database schema file)
-const { jobs, companies, job_analytics, saved_jobs, job_views, application_pipeline } = {} as any;
