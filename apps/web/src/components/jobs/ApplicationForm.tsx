@@ -46,12 +46,12 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
     }
 
     // Validate custom questions
-    const missingResponses = job.custom_questions?.filter(q => 
+    const missingResponses = job.custom_questions?.filter((q: any) =>
       q.required && !applicationData.custom_responses[q.question]
     );
     
     if (missingResponses?.length > 0) {
-      alert(`Please answer all required questions: ${missingResponses.map(q => q.question).join(', ')}`);
+      alert(`Please answer all required questions: ${missingResponses.map((q: any) => q.question).join(', ')}`);
       return;
     }
 
