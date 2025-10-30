@@ -266,17 +266,10 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                           className="mt-1 mr-3"
                         />
                         <div className="flex-1">
-                          {item.thumbnail_url && (
-                            <img 
-                              src={item.thumbnail_url} 
-                              alt={item.title}
-                              className="w-full h-32 object-cover rounded mb-2"
-                            />
-                          )}
                           <div className="font-medium text-gray-900">{item.title}</div>
                           <div className="text-sm text-gray-600 mb-2">{item.description}</div>
                           <div className="flex flex-wrap gap-1">
-                            {item.technologies.slice(0, 3).map(tech => (
+                            {item.technologies && item.technologies.slice(0, 3).map((tech: string) => (
                               <span 
                                 key={tech}
                                 className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
