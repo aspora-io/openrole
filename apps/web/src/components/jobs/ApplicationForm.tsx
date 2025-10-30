@@ -353,7 +353,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                       
                       {question.type === 'multiselect' && (
                         <div className="space-y-2">
-                          {question.options?.map(option => (
+                          {question.options?.map((option: string) => (
                             <label key={option} className="flex items-center">
                               <input
                                 type="checkbox"
