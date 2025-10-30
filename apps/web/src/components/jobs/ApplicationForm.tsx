@@ -156,9 +156,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                           className="mr-3"
                         />
                         <div className="flex-1">
-                          <div className="font-medium text-gray-900">{cv.title}</div>
+                          <div className="font-medium text-gray-900">{cv.label}</div>
                           <div className="text-sm text-gray-600">
-                            {cv.template_name} • Updated {new Date(cv.updated_at).toLocaleDateString()}
+                            {cv.format.toUpperCase()} • Generated {new Date(cv.generatedAt).toLocaleDateString()}
                           </div>
                         </div>
                         <div className="text-sm text-gray-500">
