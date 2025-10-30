@@ -1,6 +1,12 @@
 import { eq, and, desc, asc, gte, lte, like, ilike, inArray, sql, count } from 'drizzle-orm';
-import { db } from '../lib/database';
+import { db, jobs, companies, jobAnalytics, savedJobs, jobViews, applications } from '../lib/database';
+import type { Job, NewJob, JobAnalytics as JobAnalyticsType } from '../lib/database';
 import { z } from 'zod';
+
+// Alias for backward compatibility
+const application_pipeline = applications;
+const job_analytics = jobAnalytics;
+const job_views = jobViews;
 
 // Job service for comprehensive job management
 export class JobsService {

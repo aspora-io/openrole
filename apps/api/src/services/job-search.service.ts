@@ -1,5 +1,6 @@
 import { eq, and, or, desc, asc, gte, lte, like, ilike, inArray, sql, count } from 'drizzle-orm';
-import { db } from '../lib/database';
+import { db, jobs, companies } from '../lib/database';
+import type { Job } from '../lib/database';
 
 // Advanced job search service with filtering, sorting, and relevance scoring
 export class JobSearchService {
