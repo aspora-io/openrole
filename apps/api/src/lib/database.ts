@@ -1,22 +1,70 @@
 /**
- * Database Configuration and Models
- * 
- * Placeholder implementation for database connection and models
- * until proper database packages are implemented.
- * 
+ * Database Configuration and Connection
+ *
+ * Production-ready database configuration with connection pooling
+ * and complete Drizzle ORM schema integration.
+ *
  * @author OpenRole Team
- * @date 2025-09-30
+ * @date 2025-10-30 (Refactored)
  */
 
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import * as schema from './schema';
 
-// Database connection
-const connectionString = process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/openrole';
-const client = postgres(connectionString);
-export const db = drizzle(client);
+// Database connection with pooling configuration
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/openrole';
 
-// Placeholder database models - these would normally come from @openrole/database
+// Configure postgres client with connection pooling for production
+const client = postgres(connectionString, {
+  max: parseInt(process.env.DB_POOL_MAX || '10'), // Maximum connections in pool
+  idle_timeout: parseInt(process.env.DB_IDLE_TIMEOUT || '20'), // Close idle connections after 20s
+  connect_timeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '10'), // Connection timeout
+});
+
+// Initialize Drizzle with complete schema
+export const db = drizzle(client, { schema });
+
+// Export raw postgres client for direct SQL queries (used by auth)
+export const pgClient = client;
+
+// Export all schema tables for convenient access
+export {
+  users,
+  companies,
+  jobs,
+  applications,
+  profiles,
+  jobAnalytics,
+  jobViews,
+  savedJobs,
+  importHistory,
+} from './schema';
+
+// Export all types for type-safe database operations
+export type {
+  User,
+  NewUser,
+  Company,
+  NewCompany,
+  Job,
+  NewJob,
+  Application,
+  NewApplication,
+  Profile,
+  NewProfile,
+  JobAnalytics,
+  NewJobAnalytics,
+  JobView,
+  NewJobView,
+  SavedJob,
+  NewSavedJob,
+  ImportHistory,
+  NewImportHistory,
+} from './schema';
+
+// Legacy placeholder models (DEPRECATED - Use schema tables instead)
+// Kept temporarily for backward compatibility with CV/Profile features
 export const candidateProfiles = {
   id: 'id',
   userId: 'userId',

@@ -11,10 +11,7 @@
 import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import * as jwt from 'jsonwebtoken';
-import { db } from '@openrole/database';
-import { eq } from 'drizzle-orm';
-// TODO: Import user models when available
-// import { users } from '@openrole/database/models/user';
+import { pgClient as db } from '../lib/database';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'development-secret-key';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
@@ -100,16 +97,36 @@ export class AuthService {
    * Get user data from database
    */
   static async getUserById(userId: string): Promise<AuthenticatedUser | null> {
-    // TODO: Implement user retrieval when user models are available
-    // For now, return mock user data
-    return {
-      id: userId,
-      email: 'user@example.com',
-      role: 'candidate',
-      isVerified: true,
-      permissions: ['profile:read', 'profile:write', 'cv:read', 'cv:write'],
-      createdAt: new Date()
-    };
+    try {
+      const result = await db`
+        SELECT id, email, user_type, verified, created_at
+        FROM users 
+        WHERE id = ${userId}
+      `;
+
+      if (result.length === 0) {
+        return null;
+      }
+
+      const user = result[0];
+      
+      // Define permissions based on user type
+      const permissions = user.user_type === 'employer' 
+        ? ['profile:read', 'profile:write', 'jobs:read', 'jobs:write', 'applications:read']
+        : ['profile:read', 'profile:write', 'cv:read', 'cv:write', 'applications:write'];
+
+      return {
+        id: user.id,
+        email: user.email,
+        role: user.user_type,
+        isVerified: user.verified,
+        permissions,
+        createdAt: user.created_at
+      };
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      return null;
+    }
   }
 
   /**
@@ -358,29 +375,35 @@ export const addRequestContext = async (c: Context, next: Next) => {
 export const authPatterns = {
   // Basic authenticated route
   authenticated: [authMiddleware],
-  
+
   // Authenticated with verification required
   verifiedUser: [authMiddleware, requireVerification],
-  
+
   // Admin only
   adminOnly: [authMiddleware, requireRole(['admin'])],
-  
+
   // Candidate only
   candidateOnly: [authMiddleware, requireRole(['candidate'])],
-  
+
   // Employer only
   employerOnly: [authMiddleware, requireRole(['employer'])],
-  
+
   // Candidate or Admin
   candidateOrAdmin: [authMiddleware, requireRole(['candidate', 'admin'])],
-  
+
   // Optional authentication with rate limiting
   publicWithLimits: [optionalAuthMiddleware, rateLimitByUser(100, 60000)],
-  
+
   // High-security endpoints
   highSecurity: [
-    authMiddleware, 
-    requireVerification, 
+    authMiddleware,
+    requireVerification,
     rateLimitByUser(10, 60000)
   ]
 };
+
+/**
+ * Alias for authMiddleware for better compatibility
+ * Some routes use requireAuth instead of authMiddleware
+ */
+export const requireAuth = authMiddleware;
