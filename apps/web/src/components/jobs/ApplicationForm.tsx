@@ -357,12 +357,12 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                             <label key={option} className="flex items-center">
                               <input
                                 type="checkbox"
-                                checked={(applicationData.custom_responses[question.question] || []).includes(option)}
+                                checked={Array.isArray(applicationData.custom_responses[question.question]) && (applicationData.custom_responses[question.question] as string[]).includes(option)}
                                 onChange={(e) => {
-                                  const current = applicationData.custom_responses[question.question] || [];
-                                  const updated = e.target.checked 
+                                  const current = (applicationData.custom_responses[question.question] as string[]) || [];
+                                  const updated = e.target.checked
                                     ? [...current, option]
-                                    : current.filter(item => item !== option);
+                                    : current.filter((item: string) => item !== option);
                                   handleCustomResponse(question.question, updated);
                                 }}
                                 className="mr-2"
