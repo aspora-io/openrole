@@ -18,13 +18,10 @@ RUN sed -i 's/"@openrole\/[^"]*": "workspace:\*"//g' package.json && \
     sed -i 's/,,/,/g' package.json && \
     sed -i 's/,}/}/g' package.json
 
-# Install TypeScript globally if not included
-RUN npm install -g typescript
-
-# Try to build TypeScript (allow failure by using `|| true`)
-RUN npm run build || true
+# Install tsx for running TypeScript directly
+RUN npm install -g tsx
 
 EXPOSE 3001
 
-# Start the app - try compiled version first, fallback to dev mode
-CMD ["sh", "-c", "node dist/index.js || npm run dev"]
+# Run in dev mode using tsx
+CMD ["npm", "run", "dev"]
