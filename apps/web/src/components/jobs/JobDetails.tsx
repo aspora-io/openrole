@@ -62,8 +62,8 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ jobId }) => {
 
         // Check if job is saved (if user is logged in)
         // TODO: Implement saved job check
-      } catch (err) {
-        setError(err.message);
+      } catch (err: any) {
+        setError(err.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
