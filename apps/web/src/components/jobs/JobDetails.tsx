@@ -458,10 +458,10 @@ export const JobDetails: React.FC<JobDetailsProps> = ({ jobId }) => {
             </div>
 
             {/* Company Information */}
-            <CompanyInfo company={job.company} />
+            {/* TODO: <CompanyInfo company={job.company} /> */}
 
             {/* Similar Jobs */}
-            <SimilarJobs jobs={similarJobs} />
+            {/* TODO: <SimilarJobs jobs={similarJobs} /> */}
           </div>
 
           {/* Sidebar */}
