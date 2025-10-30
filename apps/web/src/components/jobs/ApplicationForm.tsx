@@ -67,7 +67,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
   };
 
   // Handle custom question responses
-  const handleCustomResponse = (question: string, response: string) => {
+  const handleCustomResponse = (question: string, response: string | string[]) => {
     setApplicationData(prev => ({
       ...prev,
       custom_responses: {
