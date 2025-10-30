@@ -496,6 +496,312 @@ export class JobsService {
   }
   
   // ============================================================================
+  // BULK IMPORT METHODS
+  // ============================================================================
+  
+  // Bulk import scraped jobs
+  async bulkImportJobs(importData: {
+    jobs: any[];
+    source_name: string;
+    import_note?: string;
+    auto_publish?: boolean;
+    deduplicate?: boolean;
+    imported_by: string;
+    imported_at: string;
+  }) {
+    const { jobs, source_name, import_note, auto_publish = false, deduplicate = true, imported_by, imported_at } = importData;
+    
+    // Validate job count limit
+    if (jobs.length > 1000) {
+      throw new Error('Too many jobs in bulk import. Maximum 1000 jobs allowed.');
+    }
+    
+    let importedCount = 0;
+    let skippedCount = 0;
+    let failedCount = 0;
+    const errors: string[] = [];
+    const jobsCreated: any[] = [];
+    
+    try {
+      // Find existing jobs if deduplication is enabled
+      let existingJobs: any[] = [];
+      if (deduplicate) {
+        const sourceIds = jobs.map(job => job.source_id).filter(Boolean);
+        if (sourceIds.length > 0) {
+          existingJobs = await this.findExistingJobsBySourceId(sourceIds);
+        }
+      }
+      
+      // Process each job
+      for (const jobData of jobs) {
+        try {
+          // Validate job data
+          const validation = this.validateImportedJob(jobData);
+          if (!validation.isValid) {
+            failedCount++;
+            errors.push(`Job "${jobData.title || 'Unknown'}": ${validation.errors.join(', ')}`);
+            continue;
+          }
+          
+          // Check for duplicates
+          if (deduplicate && jobData.source_id) {
+            const isDuplicate = existingJobs.some(existing => 
+              existing.source_id === jobData.source_id && 
+              existing.company_name === jobData.company_name
+            );
+            
+            if (isDuplicate) {
+              skippedCount++;
+              continue;
+            }
+          }
+          
+          // Find or create company
+          const company = await this.findOrCreateCompany(jobData.company_name);
+          
+          // Prepare job data for creation
+          const jobCreateData = {
+            title: jobData.title,
+            description: jobData.description,
+            salary_min: jobData.salary_min,
+            salary_max: jobData.salary_max,
+            salary_currency: jobData.salary_currency || 'EUR',
+            location_precise: jobData.location_precise,
+            location_general: jobData.location_general,
+            remote_type: jobData.remote_type || 'office',
+            employment_type: jobData.employment_type || 'full-time',
+            experience_level: jobData.experience_level || 'mid',
+            core_skills: jobData.core_skills || [],
+            nice_to_have_skills: jobData.nice_to_have_skills || [],
+            external_application_url: jobData.external_url,
+            tags: jobData.tags || [],
+            company_id: company.id,
+            posted_by: imported_by,
+            status: 'draft',
+            source: jobData.source || 'import',
+            source_id: jobData.source_id
+          };
+          
+          // Create job
+          const createdJob = await this.createJob(jobCreateData);
+          
+          // Auto-publish if requested
+          if (auto_publish) {
+            const publishedJob = await this.publishJob(createdJob.id, imported_by);
+            jobsCreated.push({
+              id: publishedJob.id,
+              title: publishedJob.title,
+              status: publishedJob.status
+            });
+          } else {
+            jobsCreated.push({
+              id: createdJob.id,
+              title: createdJob.title,
+              status: createdJob.status
+            });
+          }
+          
+          importedCount++;
+          
+        } catch (error) {
+          failedCount++;
+          errors.push(`Job "${jobData.title || 'Unknown'}": ${error.message}`);
+          console.error('Import job error:', error);
+        }
+      }
+      
+      // Create import history record
+      const importRecord = await this.createImportHistory({
+        source_name,
+        import_note,
+        imported_by,
+        imported_at,
+        jobs_processed: jobs.length,
+        jobs_imported: importedCount,
+        jobs_skipped: skippedCount,
+        jobs_failed: failedCount
+      });
+      
+      return {
+        import_id: importRecord.id,
+        imported_count: importedCount,
+        skipped_count: skippedCount,
+        failed_count: failedCount,
+        status: failedCount === jobs.length ? 'failed' : importedCount > 0 ? 'completed' : 'no_changes',
+        jobs_created: jobsCreated,
+        errors
+      };
+      
+    } catch (error) {
+      console.error('Bulk import error:', error);
+      throw new Error(`Bulk import failed: ${error.message}`);
+    }
+  }
+  
+  // Get import history with pagination
+  async getImportHistory(options: {
+    page?: number;
+    limit?: number;
+  } = {}) {
+    try {
+      const { page = 1, limit = 20 } = options;
+      const offset = (page - 1) * limit;
+      
+      const imports = await this.queryImportHistory(limit, offset);
+      const totalCount = await this.countImportHistory();
+      
+      return {
+        imports,
+        total: totalCount[0]?.count || 0,
+        page,
+        limit,
+        totalPages: Math.ceil((totalCount[0]?.count || 0) / limit)
+      };
+    } catch (error) {
+      console.error('Get import history error:', error);
+      throw new Error('Failed to get import history');
+    }
+  }
+  
+  // Find existing jobs by source IDs
+  async findExistingJobsBySourceId(sourceIds: string[]) {
+    try {
+      return await this.queryJobsBySourceIds(sourceIds);
+    } catch (error) {
+      console.error('Find existing jobs error:', error);
+      return [];
+    }
+  }
+  
+  // Find or create company
+  async findOrCreateCompany(companyName: string) {
+    try {
+      // Try to find existing company
+      let company = await this.findCompanyByName(companyName);
+      
+      if (!company) {
+        // Create new company
+        company = await this.createImportedCompany(companyName);
+      }
+      
+      return company;
+    } catch (error) {
+      console.error('Find or create company error:', error);
+      throw new Error(`Failed to find or create company: ${companyName}`);
+    }
+  }
+  
+  // Validate imported job data
+  validateImportedJob(jobData: any): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    // Required fields validation
+    if (!jobData.title || jobData.title.length < 3) {
+      errors.push('Title must be at least 3 characters long');
+    }
+    if (jobData.title && jobData.title.length > 255) {
+      errors.push('Title must not exceed 255 characters');
+    }
+    
+    if (!jobData.description || jobData.description.length < 10) {
+      errors.push('Description must be at least 10 characters long');
+    }
+    
+    if (!jobData.company_name || jobData.company_name.trim().length === 0) {
+      errors.push('Company name is required');
+    }
+    if (jobData.company_name && jobData.company_name.length > 255) {
+      errors.push('Company name must not exceed 255 characters');
+    }
+    
+    // Salary validation
+    if (typeof jobData.salary_min !== 'number' || jobData.salary_min < 0) {
+      errors.push('Minimum salary must be a positive number');
+    }
+    if (typeof jobData.salary_max !== 'number' || jobData.salary_max < 0) {
+      errors.push('Maximum salary must be a positive number');
+    }
+    if (jobData.salary_min && jobData.salary_max && jobData.salary_min > jobData.salary_max) {
+      errors.push('Minimum salary cannot be greater than maximum salary');
+    }
+    
+    // Optional field validation
+    if (jobData.external_url && !this.isValidUrl(jobData.external_url)) {
+      errors.push('External URL must be a valid URL');
+    }
+    
+    // Enum validation
+    const validRemoteTypes = ['remote', 'hybrid', 'office'];
+    if (jobData.remote_type && !validRemoteTypes.includes(jobData.remote_type)) {
+      errors.push('Remote type must be one of: remote, hybrid, office');
+    }
+    
+    const validEmploymentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+    if (jobData.employment_type && !validEmploymentTypes.includes(jobData.employment_type)) {
+      errors.push('Employment type must be one of: full-time, part-time, contract, internship');
+    }
+    
+    const validExperienceLevels = ['entry', 'mid', 'senior', 'lead', 'executive'];
+    if (jobData.experience_level && !validExperienceLevels.includes(jobData.experience_level)) {
+      errors.push('Experience level must be one of: entry, mid, senior, lead, executive');
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+  
+  // ============================================================================
+  // DATABASE QUERY METHODS (to be implemented with actual DB operations)
+  // ============================================================================
+  
+  async createImportHistory(historyData: {
+    source_name: string;
+    import_note?: string;
+    imported_by: string;
+    imported_at: string;
+    jobs_processed: number;
+    jobs_imported: number;
+    jobs_skipped: number;
+    jobs_failed: number;
+  }) {
+    // TODO: Implement actual database insert for import_history table
+    // This is a placeholder for the actual implementation
+    return { id: 'import-' + Date.now() };
+  }
+  
+  async queryImportHistory(limit: number, offset: number) {
+    // TODO: Implement actual database query for import_history table
+    // This is a placeholder for the actual implementation
+    return [];
+  }
+  
+  async countImportHistory() {
+    // TODO: Implement actual database count for import_history table
+    // This is a placeholder for the actual implementation
+    return [{ count: 0 }];
+  }
+  
+  async queryJobsBySourceIds(sourceIds: string[]) {
+    // TODO: Implement actual database query for jobs by source_id
+    // This is a placeholder for the actual implementation
+    return [];
+  }
+  
+  async findCompanyByName(companyName: string) {
+    // TODO: Implement actual database query for companies by name
+    // This is a placeholder for the actual implementation
+    return null;
+  }
+  
+  async createImportedCompany(companyName: string) {
+    // TODO: Implement actual database insert for companies table
+    // This is a placeholder for the actual implementation
+    return { id: 'company-' + Date.now(), name: companyName };
+  }
+
+  // ============================================================================
   // HELPER METHODS
   // ============================================================================
   
@@ -588,6 +894,15 @@ export class JobsService {
         });
     } catch (error) {
       console.error('Update daily analytics error:', error);
+    }
+  }
+  
+  private isValidUrl(urlString: string): boolean {
+    try {
+      const url = new URL(urlString);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
     }
   }
 }

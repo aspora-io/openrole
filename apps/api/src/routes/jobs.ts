@@ -82,6 +82,33 @@ const createJobSchema = z.object({
 // Job update schema (partial)
 const updateJobSchema = createJobSchema.partial();
 
+// Bulk import schema for scraped jobs
+const bulkImportJobSchema = z.object({
+  jobs: z.array(z.object({
+    title: z.string().min(3).max(255),
+    description: z.string().min(10),
+    company_name: z.string().min(1).max(255),
+    salary_min: z.number().min(0),
+    salary_max: z.number().min(0),
+    salary_currency: z.string().length(3).default('EUR'),
+    location_precise: z.string().optional(),
+    location_general: z.string().optional(),
+    remote_type: z.enum(['remote', 'hybrid', 'office']).default('office'),
+    employment_type: z.enum(['full-time', 'part-time', 'contract', 'internship']).default('full-time'),
+    experience_level: z.enum(['entry', 'mid', 'senior', 'lead', 'executive']).default('mid'),
+    core_skills: z.array(z.string()).default([]),
+    nice_to_have_skills: z.array(z.string()).default([]),
+    external_url: z.string().url().optional(),
+    source: z.string().default('import'),
+    source_id: z.string().optional(), // Original ID from source
+    tags: z.array(z.string()).default([])
+  })).min(1).max(1000), // Allow up to 1000 jobs per import
+  source_name: z.string().min(1).max(100),
+  import_note: z.string().optional(),
+  auto_publish: z.boolean().default(false),
+  deduplicate: z.boolean().default(true)
+});
+
 // Application schema
 const applyToJobSchema = z.object({
   cv_document_id: z.string().uuid().optional(),
@@ -458,6 +485,61 @@ jobs.post('/:id/clone', requireAuth, requireRole(['employer', 'admin']), async (
   } catch (error) {
     console.error('Clone job error:', error);
     return c.json({ success: false, error: 'Failed to clone job' }, 500);
+  }
+});
+
+// ============================================================================
+// ADMIN ENDPOINTS
+// ============================================================================
+
+// POST /api/v1/jobs/bulk-import - Bulk import scraped jobs
+jobs.post('/bulk-import', 
+  requireAuth,
+  requireRole(['admin']),
+  validateInput('json', bulkImportJobSchema),
+  async (c) => {
+    try {
+      const importData = c.req.valid('json');
+      const importedBy = (c as any).userId;
+      
+      const jobsService = new JobsService();
+      
+      // Process bulk import
+      const result = await jobsService.bulkImportJobs({
+        ...importData,
+        imported_by: importedBy,
+        imported_at: new Date().toISOString()
+      });
+      
+      return c.json({ 
+        success: true, 
+        data: result,
+        message: `Successfully imported ${result.imported_count} jobs from ${importData.source_name}`
+      }, 201);
+    } catch (error) {
+      console.error('Bulk import error:', error);
+      return c.json({ 
+        success: false, 
+        error: 'Failed to import jobs',
+        details: error.message 
+      }, 500);
+    }
+  }
+);
+
+// GET /api/v1/jobs/import-history - Get import history
+jobs.get('/import-history', requireAuth, requireRole(['admin']), async (c) => {
+  try {
+    const page = parseInt(c.req.query('page') || '1');
+    const limit = parseInt(c.req.query('limit') || '20');
+    
+    const jobsService = new JobsService();
+    const history = await jobsService.getImportHistory({ page, limit });
+    
+    return c.json({ success: true, data: history });
+  } catch (error) {
+    console.error('Get import history error:', error);
+    return c.json({ success: false, error: 'Failed to get import history' }, 500);
   }
 });
 
