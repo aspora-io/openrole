@@ -25,7 +25,8 @@
     "@hookform/resolvers": "^3.9.0",
     "react-dropzone": "^14.2.3",
     "axios": "^1.7.0",
-    "lucide-react": "^0.400.0"
+    "lucide-react": "^0.400.0",
+    "date-fns": "^2.30.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
