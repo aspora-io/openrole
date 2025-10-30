@@ -55,7 +55,7 @@ export const useEmployer = () => {
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated }: any = useAuth();
 
   // Load employer data on mount
   useEffect(() => {
