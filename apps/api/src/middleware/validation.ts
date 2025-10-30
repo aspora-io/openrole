@@ -11,15 +11,13 @@
 import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { z, ZodSchema, ZodError } from 'zod';
-import { 
-  profileSchemas,
-  cvSchemas,
-  portfolioSchemas,
-  validateProfileData,
-  validateCVData,
-  validatePortfolioData,
-  ValidationResult 
-} from '@openrole/validation';
+// Validation schemas - temporarily inline until @openrole/validation package is complete
+// TODO: Move to dedicated validation package
+type ValidationResult = {
+  success: boolean;
+  errors?: any[];
+  data?: any;
+};
 
 /**
  * Validation configuration interface
@@ -507,4 +505,48 @@ export const validationHelpers = {
       return false;
     }
   }
+};
+
+/**
+ * Simplified validation middleware for route usage
+ * Validates request data against a Zod schema
+ */
+export const validateInput = (source: 'json' | 'query' | 'param', schema: ZodSchema<any>) => {
+  return async (c: Context, next: Next) => {
+    try {
+      let data: any;
+
+      switch (source) {
+        case 'json':
+          data = await c.req.json();
+          break;
+        case 'query':
+          data = c.req.query();
+          break;
+        case 'param':
+          data = c.req.param();
+          break;
+        default:
+          throw new HTTPException(400, { message: 'Invalid validation source' });
+      }
+
+      const validated = schema.parse(data);
+      (c as any).validated = (c as any).validated || {};
+      (c as any).validated[source] = validated;
+
+      await next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const errors = error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message
+        }));
+        throw new HTTPException(400, {
+          message: 'Validation failed',
+          cause: errors
+        });
+      }
+      throw error;
+    }
+  };
 };
