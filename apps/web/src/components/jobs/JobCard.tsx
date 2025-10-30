@@ -81,7 +81,7 @@ export const JobCard: React.FC<JobCardProps> = ({
       ? formatAmount(salary_min)
       : `${formatAmount(salary_min)} - ${formatAmount(salary_max)}`;
 
-    const typeMap = {
+    const typeMap: Record<string, string> = {
       annual: '/year',
       monthly: '/month',
       daily: '/day',
