@@ -345,7 +345,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
                           required={question.required}
                         >
                           <option value="">Select an option</option>
-                          {question.options?.map(option => (
+                          {question.options?.map((option: string) => (
                             <option key={option} value={option}>{option}</option>
                           ))}
                         </select>
