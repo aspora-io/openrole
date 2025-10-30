@@ -17,6 +17,10 @@ import privacyRoutes from './routes/privacy';
 import experienceRoutes from './routes/experience';
 import educationRoutes from './routes/education';
 
+// Import authentication routes
+import authRoutes from './routes/auth';
+import oauthRoutes from './routes/oauth';
+
 // Import new job board routes
 import jobsRoutes from './routes/jobs';
 import applicationsRoutes from './routes/applications';
@@ -123,6 +127,10 @@ app.get('/api/v1', (c) => {
     }
   });
 });
+
+// Mount authentication route handlers
+app.route('/api/auth', authRoutes);
+app.route('/api/auth', oauthRoutes);
 
 // Mount existing CV & Profile Tools route handlers
 app.route('/api/v1/profile', profileRoutes);

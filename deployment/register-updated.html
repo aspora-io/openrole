@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">O</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                </a>
+                <div class="text-gray-600">
+                    Already have an account? 
+                    <a href="/login" class="text-teal-600 hover:text-teal-700 font-medium">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Register Section -->
+    <section class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full">
+            <!-- Register Box -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">Create Account</h1>
+                <p class="text-gray-600 text-center mb-8">Join OpenRole and find your dream job</p>
+
+                <!-- Error/Success Messages -->
+                <div id="message-container" class="hidden mb-4">
+                    <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                        <span id="error-text"></span>
+                    </div>
+                    <div id="success-message" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+                        <span id="success-text"></span>
+                    </div>
+                </div>
+
+                <!-- Register Tabs -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button id="candidate-tab" class="flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600" onclick="switchTab('candidate')">
+                        Job Seeker
+                    </button>
+                    <button id="employer-tab" class="flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('employer')">
+                        Employer
+                    </button>
+                </div>
+
+                <!-- Register Form -->
+                <form id="register-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <input 
+                                type="text" 
+                                id="first_name"
+                                placeholder="First name" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                required
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <input 
+                                type="text" 
+                                id="last_name"
+                                placeholder="Last name" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email"
+                            placeholder="Enter your email" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <!-- Company field for employers -->
+                    <div id="company-field" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                        <input 
+                            type="text" 
+                            id="company_name"
+                            placeholder="Your company name" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input 
+                            type="password" 
+                            id="password"
+                            placeholder="Create a password" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                            minlength="8"
+                        >
+                        <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirm_password"
+                            placeholder="Confirm your password" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <div class="flex items-start">
+                        <input type="checkbox" id="terms" class="mr-2 w-4 h-4 text-teal-600 rounded mt-1" required>
+                        <label for="terms" class="text-sm text-gray-700">
+                            I agree to the 
+                            <a href="/terms" class="text-teal-600 hover:text-teal-700">Terms of Service</a>
+                            and 
+                            <a href="/privacy" class="text-teal-600 hover:text-teal-700">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="register-button" class="w-full py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700 transition-colors">
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <!-- Social Login -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="registerWithGoogle()" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                        <span class="text-xl mr-2">🔍</span>
+                        Google
+                    </button>
+                    <button type="button" onclick="registerWithLinkedIn()" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors" disabled>
+                        <span class="text-xl mr-2">in</span>
+                        LinkedIn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="mt-8 text-center text-sm text-gray-600">
+                <p>
+                    By creating an account, you agree to our 
+                    <a href="/terms" class="text-teal-600 hover:text-teal-700">Terms of Service</a>
+                    and 
+                    <a href="/privacy" class="text-teal-600 hover:text-teal-700">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="bg-gray-100 py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Why Join OpenRole?</h2>
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">💰</div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Transparent Salaries</h3>
+                    <p class="text-gray-600 text-sm">See salary ranges upfront - no surprises, no wasted time</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Quality Jobs</h3>
+                    <p class="text-gray-600 text-sm">Verified employers and real opportunities only</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🚀</div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Fast Applications</h3>
+                    <p class="text-gray-600 text-sm">Apply quickly with your saved profile and CV</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-auto">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved.</p>
+                <p class="mt-2">
+                    <a href="/" class="hover:text-white">Home</a> | 
+                    <a href="/jobs" class="hover:text-white">Jobs</a> | 
+                    <a href="/employers" class="hover:text-white">Employers</a> | 
+                    <a href="/terms" class="hover:text-white">Terms</a> | 
+                    <a href="/privacy" class="hover:text-white">Privacy</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/api-integration.js"></script>
+    <script>
+        // Define API base URL
+        const API_BASE_URL = window.location.origin;
+        let selectedUserType = 'candidate';
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token && user.id) {
+                // User is already logged in, redirect to appropriate dashboard
+                if (user.userType === 'candidate') {
+                    window.location.href = '/candidate-dashboard';
+                } else if (user.userType === 'employer') {
+                    window.location.href = '/employer-dashboard';
+                } else {
+                    window.location.href = '/';
+                }
+                return;
+            }
+
+            // Check for error messages in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            if (error) {
+                showError(getErrorMessage(error));
+            }
+        });
+
+        // Tab switching
+        function switchTab(userType) {
+            selectedUserType = userType;
+            
+            const candidateTab = document.getElementById('candidate-tab');
+            const employerTab = document.getElementById('employer-tab');
+            const companyField = document.getElementById('company-field');
+            const companyInput = document.getElementById('company_name');
+            
+            if (userType === 'candidate') {
+                candidateTab.className = 'flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600';
+                employerTab.className = 'flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700';
+                companyField.classList.add('hidden');
+                companyInput.required = false;
+            } else {
+                candidateTab.className = 'flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700';
+                employerTab.className = 'flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600';
+                companyField.classList.remove('hidden');
+                companyInput.required = true;
+            }
+        }
+
+        // Form submission
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const companyName = document.getElementById('company_name').value;
+            const button = document.getElementById('register-button');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = 'Creating account...';
+            
+            try {
+                const requestBody = {
+                    email: email,
+                    password: password,
+                    first_name: firstName,
+                    last_name: lastName,
+                    user_type: selectedUserType
+                };
+                
+                // Add company name for employers
+                if (selectedUserType === 'employer' && companyName) {
+                    requestBody.company_name = companyName;
+                }
+                
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store authentication data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showSuccess('Account created successfully! Redirecting...');
+                    
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.userType === 'candidate') {
+                            window.location.href = '/candidate-dashboard';
+                        } else if (data.user.userType === 'employer') {
+                            window.location.href = '/employer-dashboard';
+                        } else {
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                } else {
+                    showError(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Create Account';
+            }
+        });
+
+        // OAuth registration functions
+        function registerWithGoogle() {
+            // Store selected user type for post-OAuth redirect
+            sessionStorage.setItem('selectedUserType', selectedUserType);
+            window.location.href = `${API_BASE_URL}/api/auth/google`;
+        }
+
+        function registerWithLinkedIn() {
+            showError('LinkedIn registration is coming soon!');
+        }
+
+        // Message display functions
+        function showError(message) {
+            const container = document.getElementById('message-container');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            const errorText = document.getElementById('error-text');
+            
+            errorText.textContent = message;
+            container.classList.remove('hidden');
+            errorDiv.classList.remove('hidden');
+            successDiv.classList.add('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('message-container');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            const successText = document.getElementById('success-text');
+            
+            successText.textContent = message;
+            container.classList.remove('hidden');
+            successDiv.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+        }
+
+        function getErrorMessage(error) {
+            const errorMessages = {
+                'user_exists': 'An account with this email already exists',
+                'invalid_email': 'Please enter a valid email address',
+                'weak_password': 'Password must be at least 8 characters',
+                'oauth_failed': 'Social registration failed. Please try again.',
+                'validation_error': 'Please check your information and try again'
+            };
+            return errorMessages[error] || 'An error occurred. Please try again.';
+        }
+    </script>
+</body>
+</html>

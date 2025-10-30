@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senior Software Engineer - Google - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">O</span>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="/jobs" class="text-gray-700 hover:text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
+                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
+                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/login" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
+                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Back Navigation -->
+    <section class="bg-white border-b">
+        <div class="container mx-auto px-4 py-3">
+            <a href="/jobs" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                <span>←</span> Back to job search
+            </a>
+        </div>
+    </section>
+
+    <!-- Job Header -->
+    <section class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full mb-3">Featured</span>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-3">Senior Software Engineer</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-gray-600">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🏢</span>
+                            <span class="font-medium">Google</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span>📍</span>
+                            <span>London</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span>💼</span>
+                            <span>Permanent</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-green-600 mb-2">€80k - €120k</div>
+                    <div class="text-sm text-gray-500">per annum</div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="flex items-center gap-6 mt-6 pt-6 border-t text-sm text-gray-500">
+                <span>🕒 Posted 2 days ago</span>
+                <span>📅 Closes in 28 days</span>
+                <span>👥 47 applicants</span>
+                <span>👁️ 892 views</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-4 mt-6">
+                <button id="apply-btn" onclick="applyForJob()" class="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
+                    Apply now
+                </button>
+                <button class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50">
+                    ⭐ Save job
+                </button>
+                <button class="p-3 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                    📤 Share
+                </button>
+            </div>
+            
+            <!-- Application Status Message -->
+            <div id="application-status" class="hidden mt-4 p-4 rounded-lg"></div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column - Job Details -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Job Description -->
+                <section class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-4">Job Description</h2>
+                    <div class="prose max-w-none text-gray-600">
+                        <p>We are looking for an experienced Senior Software Engineer to join our growing team in London. This is an exciting opportunity to work on cutting-edge projects using the latest technologies.</p>
+                        
+                        <p>As a Senior Software Engineer, you will be responsible for designing, developing, and maintaining high-quality software solutions. You'll work closely with product managers, designers, and other developers to deliver features that delight our users.</p>
+                        
+                        <p>We offer a collaborative environment where innovation is encouraged, and professional growth is supported. Join us in building the next generation of technology solutions!</p>
+                    </div>
+                </section>
+
+                <!-- Key Responsibilities -->
+                <section class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-4">Key Responsibilities</h2>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-teal-600 mt-1">✓</span>
+                            <span>Design and implement scalable software solutions using modern technologies</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-teal-600 mt-1">✓</span>
+                            <span>Collaborate with cross-functional teams to deliver high-quality features</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-teal-600 mt-1">✓</span>
+                            <span>Mentor junior developers and contribute to technical documentation</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-teal-600 mt-1">✓</span>
+                            <span>Participate in code reviews and maintain high code quality standards</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-teal-600 mt-1">✓</span>
+                            <span>Debug and resolve complex technical issues in production</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Requirements -->
+                <section class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-4">Requirements</h2>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-gray-400">•</span>
+                            <span>5+ years of experience in software development</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-gray-400">•</span>
+                            <span>Strong proficiency in JavaScript/TypeScript, React, and Node.js</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-gray-400">•</span>
+                            <span>Experience with cloud platforms (AWS, GCP, or Azure)</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-gray-400">•</span>
+                            <span>Solid understanding of software design patterns and principles</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-600">
+                            <span class="text-gray-400">•</span>
+                            <span>Bachelor's degree in Computer Science or related field</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Benefits -->
+                <section class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold mb-4">Benefits</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>Competitive salary with annual reviews</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>25 days holiday + bank holidays</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>Flexible working hours</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>Health insurance for you and family</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>Generous pension contribution</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-600">
+                            <span class="text-green-600">✓</span>
+                            <span>Professional development budget</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column - Company Info & Actions -->
+            <div class="space-y-6">
+                <!-- Company Info -->
+                <section class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="text-4xl">🏢</div>
+                        <h3 class="text-lg font-semibold">Google</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">Google is a leading technology company specializing in innovative software solutions. With over 500 employees across 5 offices, we're committed to creating products that make a difference.</p>
+                    <a href="/company/tech-corp" class="text-teal-600 hover:text-teal-700 font-medium">
+                        View company profile →
+                    </a>
+                    
+                    <div class="mt-6 pt-6 border-t">
+                        <button id="apply-btn-sidebar" onclick="applyForJob()" class="block w-full text-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors">
+                            Apply for this job
+                        </button>
+                        <p class="text-sm text-gray-500 text-center mt-3">
+                            28 days left to apply
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Similar Jobs -->
+                <section class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-semibold mb-4">Similar Jobs</h3>
+                    <div class="space-y-3">
+                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
+                            <h4 class="font-medium text-gray-900">Full Stack Developer</h4>
+                            <p class="text-sm text-gray-600">Google • London</p>
+                            <p class="text-sm text-green-600 font-medium">£50,000 - £70,000</p>
+                        </a>
+                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
+                            <h4 class="font-medium text-gray-900">Frontend Developer</h4>
+                            <p class="text-sm text-gray-600">Digital Agency • Remote</p>
+                            <p class="text-sm text-green-600 font-medium">£45,000 - £60,000</p>
+                        </a>
+                        <a href="#" class="block hover:bg-gray-50 p-3 rounded">
+                            <h4 class="font-medium text-gray-900">Software Engineer</h4>
+                            <p class="text-sm text-gray-600">Startup Hub • Manchester</p>
+                            <p class="text-sm text-green-600 font-medium">£55,000 - £75,000</p>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Report Job -->
+                <div class="text-center">
+                    <a href="#" class="text-sm text-gray-500 hover:text-gray-700">
+                        🚩 Report this job
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                        <li><a href="/login" class="hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-white">Twitter</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="#" class="hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/application-tracker.js"></script>
+    <script>
+        let jobData = null;
+
+        // Load job data from URL parameter
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobId = urlParams.get('id');
+            
+            if (!jobId) {
+                showError('No job ID provided in URL');
+                return;
+            }
+
+            try {
+                await loadJobData(jobId);
+                if (jobData) {
+                    populateJobDetails();
+                    checkAuthenticationAndApplicationStatus();
+                } else {
+                    showError(`Job with ID "${jobId}" not found`);
+                }
+            } catch (error) {
+                console.error('Error loading job:', error);
+                showError('Error loading job details');
+            }
+        });
+
+        async function loadJobData(jobId) {
+            try {
+                const response = await fetch('/jobs.json');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.jobs) {
+                    const job = data.data.jobs.find(j => j.id === jobId);
+                    if (job) {
+                        jobData = {
+                            id: job.id,
+                            title: job.title,
+                            company: job.company_name,
+                            location: job.location_general,
+                            salary: formatSalary(job.salary_min, job.salary_max),
+                            employerId: `emp_${job.company_name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_001`,
+                            employerName: job.company_name,
+                            remoteType: job.remote_type,
+                            employmentType: job.employment_type,
+                            experienceLevel: job.experience_level,
+                            coreSkills: job.core_skills || [],
+                            description: job.description,
+                            createdAt: job.created_at
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+                throw error;
+            }
+        }
+
+        function formatSalary(min, max) {
+            const formatNumber = (num) => {
+                return new Intl.NumberFormat('en-GB', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(num);
+            };
+            
+            return `${formatNumber(min)} - ${formatNumber(max)}`;
+        }
+
+        function populateJobDetails() {
+            if (!jobData) return;
+
+            // Update page title
+            document.title = `${jobData.title} - ${jobData.company} - OpenRole`;
+
+            // Update header section
+            document.querySelector('h1').textContent = jobData.title;
+            document.querySelector('.text-2xl.font-bold.text-green-600').textContent = jobData.salary;
+            
+            // Update company info
+            const companyElements = document.querySelectorAll('[class*="font-medium"]:not([class*="text-sm"])');
+            companyElements.forEach(el => {
+                if (el.textContent.trim() === 'Google') {
+                    el.textContent = jobData.company;
+                }
+            });
+
+            // Update location - find span containing "London"
+            const locationElements = document.querySelectorAll('span');
+            locationElements.forEach(span => {
+                if (span.textContent.trim() === 'London') {
+                    span.textContent = jobData.location;
+                }
+            });
+
+            // Update employment type - find span containing "Permanent"
+            const typeElements = document.querySelectorAll('span');
+            typeElements.forEach(span => {
+                if (span.textContent.trim() === 'Permanent') {
+                    span.textContent = jobData.employmentType.charAt(0).toUpperCase() + jobData.employmentType.slice(1);
+                }
+            });
+
+            // Update job description
+            const descriptionContainer = document.querySelector('.prose');
+            if (descriptionContainer && jobData.description) {
+                descriptionContainer.innerHTML = `<p>${jobData.description}</p>`;
+            }
+
+            // Update company sidebar
+            const companySidebarName = document.querySelector('.text-lg.font-semibold');
+            if (companySidebarName && companySidebarName.textContent === 'Google') {
+                companySidebarName.textContent = jobData.company;
+            }
+
+            // Update skills in requirements section
+            if (jobData.coreSkills && jobData.coreSkills.length > 0) {
+                const skillsText = jobData.coreSkills.join(', ');
+                const skillSpans = document.querySelectorAll('li span');
+                skillSpans.forEach(span => {
+                    if (span.textContent.includes('Strong proficiency in JavaScript/TypeScript')) {
+                        span.textContent = `Strong proficiency in ${skillsText}`;
+                    }
+                });
+            }
+
+            // Update posted date
+            if (jobData.createdAt) {
+                const postedDate = new Date(jobData.createdAt);
+                const daysAgo = Math.floor((new Date() - postedDate) / (1000 * 60 * 60 * 24));
+                const timeSpans = document.querySelectorAll('span');
+                timeSpans.forEach(span => {
+                    if (span.textContent.includes('Posted')) {
+                        span.textContent = `🕒 Posted ${daysAgo} days ago`;
+                    }
+                });
+            }
+        }
+
+        function showError(message) {
+            document.body.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center bg-gray-50">
+                    <div class="text-center">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-4">Error Loading Job Details</h1>
+                        <p class="text-gray-600 mb-6">${message}</p>
+                        <a href="/jobs" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded font-medium">
+                            Browse All Jobs
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAuthenticationAndApplicationStatus() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || !user.id) {
+                // User not logged in - redirect apply buttons to login
+                updateApplyButtonsForUnauthenticated();
+                return;
+            }
+
+            if (user.userType !== 'candidate') {
+                // User is employer - hide apply buttons
+                updateApplyButtonsForEmployer();
+                return;
+            }
+
+            // User is authenticated candidate - check if already applied
+            const hasApplied = ApplicationTracker.hasAppliedForJob(user.id, jobData.id);
+            
+            if (hasApplied) {
+                updateApplyButtonsForApplied();
+            } else {
+                updateApplyButtonsForCandidate();
+            }
+        }
+
+        function updateApplyButtonsForUnauthenticated() {
+            const applyBtn = document.getElementById('apply-btn');
+            const applySidebarBtn = document.getElementById('apply-btn-sidebar');
+            
+            applyBtn.onclick = () => window.location.href = '/auth?mode=signin';
+            applySidebarBtn.onclick = () => window.location.href = '/auth?mode=signin';
+            
+            applyBtn.textContent = 'Sign in to apply';
+            applySidebarBtn.textContent = 'Sign in to apply';
+        }
+
+        function updateApplyButtonsForEmployer() {
+            const applyBtn = document.getElementById('apply-btn');
+            const applySidebarBtn = document.getElementById('apply-btn-sidebar');
+            
+            applyBtn.style.display = 'none';
+            applySidebarBtn.style.display = 'none';
+        }
+
+        function updateApplyButtonsForApplied() {
+            const applyBtn = document.getElementById('apply-btn');
+            const applySidebarBtn = document.getElementById('apply-btn-sidebar');
+            
+            applyBtn.textContent = 'Already Applied';
+            applyBtn.className = 'px-8 py-3 bg-gray-400 text-white font-semibold rounded cursor-not-allowed';
+            applyBtn.disabled = true;
+            applyBtn.onclick = null;
+            
+            applySidebarBtn.textContent = 'Already Applied';
+            applySidebarBtn.className = 'block w-full text-center px-6 py-3 bg-gray-400 text-white font-semibold rounded cursor-not-allowed';
+            applySidebarBtn.disabled = true;
+            applySidebarBtn.onclick = null;
+
+            // Show application status
+            showApplicationStatus('success', '✅ You have already applied for this position. Check your dashboard for updates.');
+        }
+
+        function updateApplyButtonsForCandidate() {
+            // Buttons are already set up correctly for candidates
+        }
+
+        function applyForJob() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || !user.id) {
+                window.location.href = '/auth?mode=signin';
+                return;
+            }
+
+            if (user.userType !== 'candidate') {
+                showApplicationStatus('error', '❌ Only job seekers can apply for positions.');
+                return;
+            }
+
+            // Check if already applied
+            if (ApplicationTracker.hasAppliedForJob(user.id, jobData.id)) {
+                showApplicationStatus('warning', '⚠️ You have already applied for this position.');
+                return;
+            }
+
+            // Show application form modal or submit directly
+            submitApplication(user);
+        }
+
+        function submitApplication(user) {
+            try {
+                // In a real app, this would show a form for cover letter, CV upload, etc.
+                // For now, we'll submit with basic info
+                const candidateData = {
+                    id: user.id,
+                    firstName: user.firstName || 'User',
+                    lastName: user.lastName || '',
+                    email: user.email,
+                    coverLetter: 'Thank you for considering my application for this position.',
+                    cvAttached: false // In real app, this would be from file upload
+                };
+
+                const application = ApplicationTracker.submitApplication(jobData, candidateData);
+                
+                showApplicationStatus('success', `🎉 Application submitted successfully! Application ID: ${application.id.slice(-8)}`);
+                updateApplyButtonsForApplied();
+                
+                // Update applicant count (simulate)
+                updateApplicantCount();
+                
+            } catch (error) {
+                console.error('Error submitting application:', error);
+                showApplicationStatus('error', '❌ Error submitting application. Please try again.');
+            }
+        }
+
+        function showApplicationStatus(type, message) {
+            const statusDiv = document.getElementById('application-status');
+            const colorClasses = {
+                'success': 'bg-green-50 border border-green-200 text-green-800',
+                'error': 'bg-red-50 border border-red-200 text-red-800',
+                'warning': 'bg-yellow-50 border border-yellow-200 text-yellow-800',
+                'info': 'bg-blue-50 border border-blue-200 text-blue-800'
+            };
+            
+            statusDiv.className = `mt-4 p-4 rounded-lg ${colorClasses[type] || colorClasses.info}`;
+            statusDiv.textContent = message;
+            statusDiv.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 5000);
+            }
+        }
+
+        function updateApplicantCount() {
+            // In a real app, this would come from the server
+            const applicantSpan = document.querySelector('[data-applicants]') || 
+                                  document.querySelector('span:contains("applicants")');
+            if (applicantSpan) {
+                const currentCount = parseInt(applicantSpan.textContent.match(/\d+/)[0]);
+                applicantSpan.textContent = `👥 ${currentCount + 1} applicants`;
+            }
+        }
+
+        // Listen for application events to update UI in real-time
+        document.addEventListener('applicationSubmitted', function(event) {
+            console.log('Application submitted:', event.detail.application);
+            // Could trigger notifications, analytics, etc.
+        });
+    </script>
+</body>
+</html>

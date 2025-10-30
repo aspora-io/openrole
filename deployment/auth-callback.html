@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authenticating - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+            <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-teal-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+            <h2 id="status-title" class="text-2xl font-bold text-gray-900 mb-2">Completing authentication...</h2>
+            <p id="status-message" class="text-gray-600">Please wait while we sign you in</p>
+            
+            <!-- Error state (hidden by default) -->
+            <div id="error-state" class="hidden">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 mt-6">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <p class="text-red-600 font-medium mb-4">Authentication failed</p>
+                <a href="/login" class="text-teal-600 hover:text-teal-700 underline">Try again</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/api-integration.js"></script>
+    <script>
+        // Handle OAuth callback
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const error = urlParams.get('error');
+        const provider = urlParams.get('provider');
+        
+        async function handleCallback() {
+            if (error) {
+                // Show error state
+                document.getElementById('status-title').classList.add('hidden');
+                document.getElementById('status-message').classList.add('hidden');
+                document.getElementById('error-state').classList.remove('hidden');
+                
+                // Log error for debugging
+                console.error('OAuth error:', error);
+                
+                // Redirect to login after delay
+                setTimeout(() => {
+                    window.location.href = '/login?error=' + encodeURIComponent(error);
+                }, 3000);
+                
+            } else if (token) {
+                // Store token
+                localStorage.setItem('authToken', token);
+                
+                try {
+                    // Fetch user info
+                    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.user) {
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        
+                        // Update status
+                        document.getElementById('status-title').textContent = `Welcome back, ${data.user.firstName}!`;
+                        document.getElementById('status-message').textContent = 'Redirecting to your dashboard...';
+                        
+                        // Determine redirect URL based on user role
+                        let redirectUrl;
+                        if (data.user.userType === 'candidate') {
+                            redirectUrl = '/candidate-dashboard';
+                        } else if (data.user.userType === 'employer') {
+                            redirectUrl = '/employer-dashboard';
+                        } else if (data.user.userType === 'admin') {
+                            redirectUrl = '/admin-dashboard';
+                        } else {
+                            // Fallback to home page
+                            redirectUrl = '/';
+                        }
+                        
+                        // Check if there was an intended redirect
+                        const intendedRedirect = sessionStorage.getItem('auth_redirect');
+                        if (intendedRedirect) {
+                            redirectUrl = intendedRedirect;
+                            sessionStorage.removeItem('auth_redirect');
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.href = redirectUrl;
+                        }, 1500);
+                    } else {
+                        throw new Error('User data not found');
+                    }
+                } catch (err) {
+                    console.error('Error fetching user info:', err);
+                    
+                    // Show error state
+                    document.getElementById('status-title').textContent = 'Authentication Error';
+                    document.getElementById('status-message').textContent = 'Unable to complete sign in';
+                    document.getElementById('error-state').classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/login?error=fetch_failed';
+                    }, 3000);
+                }
+            } else {
+                // No token or error - redirect to login
+                window.location.href = '/login';
+            }
+        }
+        
+        // Handle callback on page load
+        handleCallback();
+    </script>
+</body>
+</html>

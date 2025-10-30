@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Unified Auth Google Button</title>
+</head>
+<body>
+    <h1>Unified Auth Google Button Test</h1>
+    
+    <button onclick="testGoogleButton()" style="padding: 10px; margin: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">
+        Test Google OAuth (Direct)
+    </button>
+    
+    <button onclick="continueWithGoogle()" style="padding: 10px; margin: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">
+        Test continueWithGoogle()
+    </button>
+    
+    <div id="output" style="margin: 20px; padding: 10px; border: 1px solid #ccc;">
+        Click buttons to test
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        let selectedUserType = 'candidate';
+        
+        function testGoogleButton() {
+            const output = document.getElementById('output');
+            output.innerHTML += 'Testing direct Google OAuth...<br>';
+            
+            try {
+                output.innerHTML += `API_BASE_URL: ${API_BASE_URL}<br>`;
+                output.innerHTML += `Selected User Type: ${selectedUserType}<br>`;
+                
+                sessionStorage.setItem('selectedUserType', selectedUserType);
+                window.location.href = `${API_BASE_URL}/api/auth/google`;
+            } catch (error) {
+                output.innerHTML += `Error: ${error.message}<br>`;
+            }
+        }
+        
+        function continueWithGoogle() {
+            const output = document.getElementById('output');
+            output.innerHTML += 'continueWithGoogle() called!<br>';
+            
+            try {
+                output.innerHTML += `API_BASE_URL: ${API_BASE_URL}<br>`;
+                output.innerHTML += `Selected User Type: ${selectedUserType}<br>`;
+                
+                sessionStorage.setItem('selectedUserType', selectedUserType);
+                window.location.href = `${API_BASE_URL}/api/auth/google`;
+            } catch (error) {
+                output.innerHTML += `Error: ${error.message}<br>`;
+            }
+        }
+    </script>
+</body>
+</html>

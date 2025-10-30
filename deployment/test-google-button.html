@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Google Button</title>
+</head>
+<body>
+    <h1>Google Button Test</h1>
+    <button onclick="testGoogleButton()" style="padding: 10px; margin: 10px; background: #4285f4; color: white; border: none; border-radius: 5px;">
+        Test Google OAuth
+    </button>
+    
+    <div id="output" style="margin: 20px; padding: 10px; border: 1px solid #ccc;">
+        Click the button to test Google OAuth
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        
+        function testGoogleButton() {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Testing Google OAuth...<br>';
+            
+            try {
+                output.innerHTML += `API_BASE_URL: ${API_BASE_URL}<br>`;
+                output.innerHTML += `Google URL: ${API_BASE_URL}/api/auth/google<br>`;
+                
+                // Test the API endpoint first
+                fetch(`${API_BASE_URL}/api/auth/google`, { method: 'HEAD' })
+                    .then(response => {
+                        output.innerHTML += `API Response Status: ${response.status}<br>`;
+                        if (response.status === 302 || response.ok) {
+                            output.innerHTML += `API is working! Redirecting...<br>`;
+                            // Actually redirect
+                            window.location.href = `${API_BASE_URL}/api/auth/google`;
+                        } else {
+                            output.innerHTML += `API Error: ${response.statusText}<br>`;
+                        }
+                    })
+                    .catch(error => {
+                        output.innerHTML += `Fetch Error: ${error.message}<br>`;
+                    });
+                    
+            } catch (error) {
+                output.innerHTML += `JavaScript Error: ${error.message}<br>`;
+            }
+        }
+
+        // Also test the original function
+        function loginWithGoogle() {
+            const output = document.getElementById('output');
+            output.innerHTML += 'Original loginWithGoogle called!<br>';
+            sessionStorage.setItem('selectedUserType', 'candidate');
+            window.location.href = `${API_BASE_URL}/api/auth/google`;
+        }
+    </script>
+</body>
+</html>

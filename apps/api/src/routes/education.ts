@@ -22,13 +22,26 @@ import {
 } from '../middleware/validation';
 import { asyncHandler, ErrorFactory } from '../middleware/errors';
 import { eq, and, desc, sql } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  education, 
-  InsertEducation, 
-  SelectEducation,
-  DegreeType 
-} from '@openrole/database/models/candidate-profile';
+import { db, candidateProfiles, education as educationTable, workExperience } from '../lib/database';
+
+// Type definitions for education
+type InsertEducation = any; // TODO: Add proper types when education schema is in schema.ts
+type SelectEducation = any;
+
+// Enum for degree types
+enum DegreeType {
+  HIGH_SCHOOL = 'HIGH_SCHOOL',
+  ASSOCIATE = 'ASSOCIATE',
+  BACHELOR = 'BACHELOR',
+  MASTER = 'MASTER',
+  PHD = 'PHD',
+  CERTIFICATE = 'CERTIFICATE',
+  DIPLOMA = 'DIPLOMA',
+  OTHER = 'OTHER'
+}
+
+// Alias for consistency
+const education = educationTable;
 
 const app = new Hono<{ Variables: { user?: any; userId?: string } }>();
 

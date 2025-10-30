@@ -22,14 +22,32 @@ import {
 } from '../middleware/validation';
 import { asyncHandler, ErrorFactory } from '../middleware/errors';
 import { eq, and, desc, sql } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  workExperience, 
-  InsertWorkExperience, 
-  SelectWorkExperience,
-  EmploymentType,
-  CompanySize 
-} from '@openrole/database/models/candidate-profile';
+import { db, workExperience as workExperienceTable, candidateProfiles } from '../lib/database';
+
+// Type definitions for work experience
+type InsertWorkExperience = any; // TODO: Add proper types when work_experience schema is in schema.ts
+type SelectWorkExperience = any;
+
+// Enum definitions
+enum EmploymentType {
+  FULL_TIME = 'FULL_TIME',
+  PART_TIME = 'PART_TIME',
+  CONTRACT = 'CONTRACT',
+  FREELANCE = 'FREELANCE',
+  INTERNSHIP = 'INTERNSHIP',
+  VOLUNTEER = 'VOLUNTEER'
+}
+
+enum CompanySize {
+  STARTUP = 'STARTUP',
+  SMALL = 'SMALL',
+  MEDIUM = 'MEDIUM',
+  LARGE = 'LARGE',
+  ENTERPRISE = 'ENTERPRISE'
+}
+
+// Alias for consistency
+const workExperience = workExperienceTable;
 
 const app = new Hono<{ Variables: { user?: any; userId?: string } }>();
 

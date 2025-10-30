@@ -97,16 +97,16 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
-                    <span class="block text-2xl font-bold">1,247</span>
+                    <span class="block text-2xl font-bold">66</span>
                     <span class="text-sm">Jobs Available</span>
                 </div>
                 <div>
-                    <span class="block text-2xl font-bold">523</span>
+                    <span class="block text-2xl font-bold">15</span>
                     <span class="text-sm">New Today</span>
                 </div>
                 <div>
-                    <span class="block text-2xl font-bold">15,482</span>
-                    <span class="text-sm">Active Companies</span>
+                    <span class="block text-2xl font-bold">48</span>
+                    <span class="text-sm">Verified Companies</span>
                 </div>
                 <div>
                     <span class="block text-2xl font-bold">100%</span>
@@ -116,55 +116,17 @@
         </div>
     </section>
 
-    <!-- Featured Jobs Preview -->
-    <section class="py-12">
+    <!-- Latest Jobs Section -->
+    <section class="py-12 bg-gray-50">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Jobs</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Latest Jobs</h2>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <!-- Job Card 1 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Senior Software Developer</h3>
-                        <p class="text-gray-600">Tech Corp - London</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £60,000 - £80,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">We are looking for an experienced software developer to join our team. You'll work on cutting-edge projects...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
-                </div>
-                
-                <!-- Job Card 2 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Digital Marketing Manager</h3>
-                        <p class="text-gray-600">Global Marketing Ltd - Manchester</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £45,000 - £55,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">Exciting opportunity for a digital marketing professional to lead our online marketing strategy...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
-                </div>
-                
-                <!-- Job Card 3 -->
-                <div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Data Analyst</h3>
-                        <p class="text-gray-600">Analytics Pro - Birmingham</p>
-                    </div>
-                    <div class="mb-4">
-                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                            £35,000 - £45,000
-                        </span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-4">Join our data team to help drive insights and business decisions. Strong SQL skills required...</p>
-                    <a href="/job-detail" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>
+            <!-- Jobs Container - Dynamically loaded -->
+            <div id="featured-jobs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Jobs will be loaded here -->
+                <div class="text-center col-span-full py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                    <p class="text-gray-600 mt-2">Loading jobs...</p>
                 </div>
             </div>
             
@@ -272,5 +234,65 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        async function loadFeaturedJobs() {
+            const container = document.getElementById('featured-jobs');
+            try {
+                const response = await fetch('/jobs.json');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.jobs && data.data.jobs.length > 0) {
+                    // Filter out market research studies from Ivy Exec
+                    const realJobs = data.data.jobs.filter(function(job) {
+                        return job.title.indexOf('$225/60min') === -1 && 
+                               job.title.indexOf('Paid Market Research Study') === -1 &&
+                               job.company_name !== 'Ivy Exec';
+                    });
+                    
+                    if (realJobs.length === 0) {
+                        container.innerHTML = '<p class="text-center text-gray-600 col-span-full">No real jobs available at the moment.</p>';
+                        return;
+                    }
+                    
+                    const jobs = realJobs.slice(0, 6);
+                    
+                    // Create HTML for each job
+                    let jobsHtml = '';
+                    for (let i = 0; i < jobs.length; i++) {
+                        const job = jobs[i];
+                        jobsHtml += '<div class="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">';
+                        jobsHtml += '<div class="mb-4">';
+                        jobsHtml += '<h3 class="text-lg font-semibold text-gray-900">' + (job.title || 'Job Title') + '</h3>';
+                        jobsHtml += '<p class="text-gray-600">' + (job.company_name || 'Company') + ' - ' + (job.location_general || 'Location') + '</p>';
+                        jobsHtml += '</div>';
+                        jobsHtml += '<div class="mb-4">';
+                        jobsHtml += '<span class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">';
+                        jobsHtml += '€' + Math.round((job.salary_min || 0)/1000) + 'k - €' + Math.round((job.salary_max || 0)/1000) + 'k';
+                        jobsHtml += '</span>';
+                        jobsHtml += '<span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full ml-2">';
+                        jobsHtml += (job.employment_type || 'full-time');
+                        jobsHtml += '</span>';
+                        jobsHtml += '</div>';
+                        jobsHtml += '<p class="text-gray-600 text-sm mb-4">' + ((job.description || '').substring(0, 100)) + '...</p>';
+                        jobsHtml += '<a href="/job-detail?id=' + (job.id || '') + '" class="text-teal-600 hover:text-teal-700 font-medium">View details →</a>';
+                        jobsHtml += '</div>';
+                    }
+                    
+                    container.innerHTML = jobsHtml;
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray-600 col-span-full">No jobs available at the moment.</p>';
+                }
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-gray-600 col-span-full">Error loading jobs. Please try again later.</p>';
+            }
+        }
+
+        // Load jobs when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting job load...');
+            loadFeaturedJobs();
+        });
+    </script>
 </body>
 </html>

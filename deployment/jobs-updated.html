@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">O</span>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="/jobs" class="text-teal-600 font-medium">Find Jobs</a>
+                        <a href="/cv-upload" class="text-gray-700 hover:text-teal-600 font-medium">Upload CV</a>
+                        <a href="/employers" class="text-gray-700 hover:text-teal-600 font-medium">Employers</a>
+                        <a href="/career-advice" class="text-gray-700 hover:text-teal-600 font-medium">Career Advice</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/auth" class="text-gray-700 hover:text-teal-600 font-medium">Sign in</a>
+                    <a href="/applications" class="text-gray-700 hover:text-teal-600 font-medium">My Applications</a>
+                    <a href="/register" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-6">
+            <div class="max-w-4xl mx-auto">
+                <form onsubmit="performSearch(event)" class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input 
+                            type="text" 
+                            id="search-query"
+                            placeholder="Job title, company, or keywords" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <input 
+                            type="text" 
+                            id="search-location"
+                            placeholder="Location" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="bg-teal-600 text-white px-8 py-3 rounded-lg hover:bg-teal-700 font-medium whitespace-nowrap"
+                    >
+                        Search Jobs
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Sort -->
+    <div class="bg-gray-50 border-b border-gray-200">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-wrap items-center gap-4">
+                <select id="salary-filter" onchange="filterJobs()" class="px-3 py-2 border border-gray-300 rounded">
+                    <option value="">Any salary</option>
+                    <option value="0-50000">€0 - €50,000</option>
+                    <option value="50000-80000">€50,000 - €80,000</option>
+                    <option value="80000-120000">€80,000 - €120,000</option>
+                    <option value="120000+">€120,000+</option>
+                </select>
+                <select id="experience-filter" onchange="filterJobs()" class="px-3 py-2 border border-gray-300 rounded">
+                    <option value="">Any experience</option>
+                    <option value="entry">Entry level</option>
+                    <option value="mid">Mid level</option>
+                    <option value="senior">Senior level</option>
+                </select>
+                <select id="location-filter" onchange="filterJobs()" class="px-3 py-2 border border-gray-300 rounded">
+                    <option value="">Any location</option>
+                    <option value="London">London</option>
+                    <option value="Manchester">Manchester</option>
+                    <option value="Birmingham">Birmingham</option>
+                    <option value="remote">Remote</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Results Summary -->
+            <div class="lg:w-3/4">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                        <span id="results-count">Loading jobs...</span>
+                    </h1>
+                    <p class="text-gray-600">Transparent salaries • Verified employers • No ghost jobs</p>
+                </div>
+
+                <!-- Jobs Container -->
+                <div id="jobs-container" class="space-y-6">
+                    <!-- Loading message -->
+                    <div class="text-center py-8">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-600">Loading jobs...</p>
+                    </div>
+                </div>
+
+                <!-- Load More Button -->
+                <div id="load-more-container" class="text-center mt-8 hidden">
+                    <button 
+                        onclick="loadMoreJobs()" 
+                        class="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 font-medium"
+                    >
+                        Load More Jobs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">Job Alerts</h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Get notified when new jobs matching your criteria are posted.
+                    </p>
+                    <button class="w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 font-medium">
+                        Create Alert
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">Why OpenRole?</h3>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center">
+                            <span class="text-green-600 mr-2">✓</span>
+                            All salaries visible upfront
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-600 mr-2">✓</span>
+                            Verified company profiles
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-600 mr-2">✓</span>
+                            No ghost job postings
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-600 mr-2">✓</span>
+                            Direct employer contact
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allJobs = [];
+        let filteredJobs = [];
+        let currentDisplayCount = 20;
+        let searchQuery = '';
+        let locationQuery = '';
+
+        // Load jobs from JSON file
+        async function loadJobs() {
+            try {
+                const response = await fetch('/jobs.json');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.jobs) {
+                    allJobs = data.data.jobs;
+                    filteredJobs = [...allJobs];
+                    displayJobs();
+                } else {
+                    showError('No jobs found');
+                }
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                showError('Error loading jobs. Please refresh the page.');
+            }
+        }
+
+        // Display jobs
+        function displayJobs() {
+            const container = document.getElementById('jobs-container');
+            const jobsToShow = filteredJobs.slice(0, currentDisplayCount);
+            
+            if (jobsToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
+                        <p class="text-gray-600">Try adjusting your search criteria or filters.</p>
+                    </div>
+                `;
+                document.getElementById('load-more-container').classList.add('hidden');
+                return;
+            }
+
+            container.innerHTML = jobsToShow.map(job => {
+                const salaryDisplay = job.salary_min && job.salary_max 
+                    ? `€${Math.round(job.salary_min/1000)}k - €${Math.round(job.salary_max/1000)}k`
+                    : job.salary_min 
+                    ? `€${Math.round(job.salary_min/1000)}k+`
+                    : 'Salary not disclosed';
+
+                const skills = job.core_skills && job.core_skills.length > 0 
+                    ? job.core_skills.slice(0, 3).join(', ')
+                    : '';
+
+                const timeAgo = getTimeAgo(job.created_at);
+
+                return `
+                    <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-6">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <a href="/job-detail?id=${job.id}" class="group">
+                                    <h2 class="text-xl font-semibold text-gray-900 group-hover:text-teal-600 mb-2">
+                                        ${job.title}
+                                    </h2>
+                                </a>
+                                <div class="flex items-center gap-4 mt-2 text-gray-600 mb-3">
+                                    <span>🏢 ${job.company_name}</span>
+                                    <span>📍 ${job.location_general}</span>
+                                    ${job.remote_type === 'remote' ? '<span class="text-teal-600 font-medium">(Remote)</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-6 text-sm mb-3">
+                                    <span class="text-green-600 font-semibold">💷 ${salaryDisplay}</span>
+                                    <span class="text-gray-500 capitalize">${job.employment_type}</span>
+                                    <span class="text-gray-500 capitalize">${job.experience_level} level</span>
+                                    <span class="text-gray-500">🕒 ${timeAgo}</span>
+                                </div>
+                                ${skills ? `
+                                    <div class="mb-3">
+                                        <span class="text-sm text-gray-600">Skills: ${skills}</span>
+                                    </div>
+                                ` : ''}
+                                <p class="text-gray-600 line-clamp-2">
+                                    ${job.description.substring(0, 200)}${job.description.length > 200 ? '...' : ''}
+                                </p>
+                                <div class="mt-4 flex items-center gap-4">
+                                    <a href="/job-detail?id=${job.id}" class="text-teal-600 hover:text-teal-700 font-medium">View details</a>
+                                    <button onclick="saveJob('${job.id}')" class="text-gray-500 hover:text-gray-700">⭐ Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Update results count
+            document.getElementById('results-count').textContent = `${filteredJobs.length} jobs found`;
+
+            // Show/hide load more button
+            const loadMoreContainer = document.getElementById('load-more-container');
+            if (filteredJobs.length > currentDisplayCount) {
+                loadMoreContainer.classList.remove('hidden');
+            } else {
+                loadMoreContainer.classList.add('hidden');
+            }
+        }
+
+        // Filter jobs
+        function filterJobs() {
+            const salaryFilter = document.getElementById('salary-filter').value;
+            const experienceFilter = document.getElementById('experience-filter').value;
+            const locationFilter = document.getElementById('location-filter').value;
+
+            filteredJobs = allJobs.filter(job => {
+                let matches = true;
+
+                // Salary filter
+                if (salaryFilter) {
+                    const [min, max] = salaryFilter.split('-').map(s => s.replace('+', ''));
+                    const jobSalary = job.salary_min || 0;
+                    
+                    if (salaryFilter.includes('+')) {
+                        matches = matches && jobSalary >= parseInt(min);
+                    } else {
+                        matches = matches && jobSalary >= parseInt(min) && jobSalary <= parseInt(max);
+                    }
+                }
+
+                // Experience filter
+                if (experienceFilter) {
+                    matches = matches && job.experience_level === experienceFilter;
+                }
+
+                // Location filter
+                if (locationFilter) {
+                    if (locationFilter === 'remote') {
+                        matches = matches && job.remote_type === 'remote';
+                    } else {
+                        matches = matches && job.location_general.toLowerCase().includes(locationFilter.toLowerCase());
+                    }
+                }
+
+                // Search query
+                if (searchQuery) {
+                    const searchLower = searchQuery.toLowerCase();
+                    matches = matches && (
+                        job.title.toLowerCase().includes(searchLower) ||
+                        job.company_name.toLowerCase().includes(searchLower) ||
+                        (job.core_skills && job.core_skills.some(skill => skill.toLowerCase().includes(searchLower)))
+                    );
+                }
+
+                // Location query
+                if (locationQuery) {
+                    const locationLower = locationQuery.toLowerCase();
+                    matches = matches && job.location_general.toLowerCase().includes(locationLower);
+                }
+
+                return matches;
+            });
+
+            currentDisplayCount = 20;
+            displayJobs();
+        }
+
+        // Search functionality
+        function performSearch(event) {
+            event.preventDefault();
+            searchQuery = document.getElementById('search-query').value;
+            locationQuery = document.getElementById('search-location').value;
+            filterJobs();
+        }
+
+        // Load more jobs
+        function loadMoreJobs() {
+            currentDisplayCount += 20;
+            displayJobs();
+        }
+
+        // Save job functionality
+        function saveJob(jobId) {
+            // Placeholder for save job functionality
+            alert('Job saved! (This would integrate with the application tracking system)');
+        }
+
+        // Helper function to calculate time ago
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            return `${Math.floor(diffDays / 30)} months ago`;
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.getElementById('jobs-container');
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="text-red-400 text-6xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Error Loading Jobs</h3>
+                    <p class="text-gray-600">${message}</p>
+                    <button onclick="loadJobs()" class="mt-4 bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            searchQuery = urlParams.get('q') || '';
+            locationQuery = urlParams.get('location') || '';
+
+            // Set initial form values
+            if (searchQuery) document.getElementById('search-query').value = searchQuery;
+            if (locationQuery) document.getElementById('search-location').value = locationQuery;
+
+            // Load jobs
+            loadJobs();
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 mt-16">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">O</span>
+                        </div>
+                        <span class="text-xl font-bold text-white">OpenRole</span>
+                    </div>
+                    <p class="text-sm">Transparent hiring for everyone. Find your next role with complete salary transparency.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Job Seekers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/jobs" class="hover:text-white">Browse Jobs</a></li>
+                        <li><a href="/applications" class="hover:text-white">My Applications</a></li>
+                        <li><a href="/cv-upload" class="hover:text-white">Upload CV</a></li>
+                        <li><a href="/career-advice" class="hover:text-white">Career Advice</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">For Employers</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/employers" class="hover:text-white">Post a Job</a></li>
+                        <li><a href="/employers#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="/employers" class="hover:text-white">CV Database</a></li>
+                        <li><a href="/employer-login" class="hover:text-white">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-3">About OpenRole</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                <p>&copy; 2024 OpenRole. All rights reserved. | Transparent hiring for everyone</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -9,25 +9,29 @@
  */
 
 import { eq, and, or, sql, desc, asc } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  candidateProfiles, 
-  workExperience, 
-  education, 
-  portfolioItems,
-  InsertCandidateProfile,
-  SelectCandidateProfile,
-  PrivacyLevel,
-  RemotePreference
-} from '@openrole/database/models/candidate-profile';
-import { 
-  profileSchemas,
-  validateProfileData,
-  ProfileCreateRequest,
-  ProfileUpdateRequest,
-  ProfileSearchCriteria,
-  ProfileSearchResult
-} from '@openrole/validation';
+import { db, candidateProfiles, workExperience, education, portfolioItems } from '../lib/database';
+
+// Type definitions
+type InsertCandidateProfile = any; // TODO: Add proper types
+type SelectCandidateProfile = any;
+type ProfileCreateRequest = any;
+type ProfileUpdateRequest = any;
+type ProfileSearchCriteria = any;
+type ProfileSearchResult = any;
+
+// Enum definitions
+enum PrivacyLevel {
+  PUBLIC = 'PUBLIC',
+  SEMI_PRIVATE = 'SEMI_PRIVATE',
+  PRIVATE = 'PRIVATE'
+}
+
+enum RemotePreference {
+  REMOTE_ONLY = 'REMOTE_ONLY',
+  HYBRID = 'HYBRID',
+  ON_SITE = 'ON_SITE',
+  NO_PREFERENCE = 'NO_PREFERENCE'
+}
 
 export interface IProfileService {
   // Core CRUD operations
@@ -67,10 +71,10 @@ export class ProfileService implements IProfileService {
    * Create a new candidate profile
    */
   async createProfile(userId: string, data: ProfileCreateRequest): Promise<SelectCandidateProfile> {
-    // Validate input data
-    const validation = validateProfileData(profileSchemas.profileCreate, data);
-    if (!validation.success) {
-      throw new Error(`Profile validation failed: ${validation.errors?.map(e => e.message).join(', ')}`);
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid profile data');
     }
 
     // Check if profile already exists
@@ -82,19 +86,19 @@ export class ProfileService implements IProfileService {
     // Prepare profile data
     const profileData: InsertCandidateProfile = {
       userId,
-      headline: validation.data.headline,
-      summary: validation.data.summary || null,
-      location: validation.data.location || null,
-      phoneNumber: validation.data.phoneNumber || null,
-      linkedinUrl: validation.data.linkedinUrl || null,
-      portfolioUrl: validation.data.portfolioUrl || null,
-      githubUrl: validation.data.githubUrl || null,
-      skills: validation.data.skills || [],
-      industries: validation.data.industries || [],
-      salaryExpectationMin: validation.data.salaryExpectationMin || null,
-      salaryExpectationMax: validation.data.salaryExpectationMax || null,
-      remotePreference: validation.data.remotePreference || RemotePreference.HYBRID,
-      privacyLevel: validation.data.privacyLevel || PrivacyLevel.SEMI_PRIVATE,
+      headline: data.headline,
+      summary: data.summary || null,
+      location: data.location || null,
+      phoneNumber: data.phoneNumber || null,
+      linkedinUrl: data.linkedinUrl || null,
+      portfolioUrl: data.portfolioUrl || null,
+      githubUrl: data.githubUrl || null,
+      skills: data.skills || [],
+      industries: data.industries || [],
+      salaryExpectationMin: data.salaryExpectationMin || null,
+      salaryExpectationMax: data.salaryExpectationMax || null,
+      remotePreference: data.remotePreference || RemotePreference.HYBRID,
+      privacyLevel: data.privacyLevel || PrivacyLevel.SEMI_PRIVATE,
       isComplete: false,
       isVerified: false,
       emailVerified: false,
@@ -149,10 +153,10 @@ export class ProfileService implements IProfileService {
    * Update candidate profile
    */
   async updateProfile(userId: string, data: ProfileUpdateRequest): Promise<SelectCandidateProfile> {
-    // Validate input data
-    const validation = validateProfileData(profileSchemas.profileUpdate, data);
-    if (!validation.success) {
-      throw new Error(`Profile validation failed: ${validation.errors?.map(e => e.message).join(', ')}`);
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid profile data');
     }
 
     // Check if profile exists
@@ -166,18 +170,18 @@ export class ProfileService implements IProfileService {
       updatedAt: new Date()
     };
 
-    if (validation.data.headline !== undefined) updateData.headline = validation.data.headline;
-    if (validation.data.summary !== undefined) updateData.summary = validation.data.summary;
-    if (validation.data.location !== undefined) updateData.location = validation.data.location;
-    if (validation.data.phoneNumber !== undefined) updateData.phoneNumber = validation.data.phoneNumber;
-    if (validation.data.linkedinUrl !== undefined) updateData.linkedinUrl = validation.data.linkedinUrl;
-    if (validation.data.portfolioUrl !== undefined) updateData.portfolioUrl = validation.data.portfolioUrl;
-    if (validation.data.githubUrl !== undefined) updateData.githubUrl = validation.data.githubUrl;
-    if (validation.data.skills !== undefined) updateData.skills = validation.data.skills;
-    if (validation.data.industries !== undefined) updateData.industries = validation.data.industries;
-    if (validation.data.salaryExpectationMin !== undefined) updateData.salaryExpectationMin = validation.data.salaryExpectationMin;
-    if (validation.data.salaryExpectationMax !== undefined) updateData.salaryExpectationMax = validation.data.salaryExpectationMax;
-    if (validation.data.remotePreference !== undefined) updateData.remotePreference = validation.data.remotePreference;
+    if (data.headline !== undefined) updateData.headline = data.headline;
+    if (data.summary !== undefined) updateData.summary = data.summary;
+    if (data.location !== undefined) updateData.location = data.location;
+    if (data.phoneNumber !== undefined) updateData.phoneNumber = data.phoneNumber;
+    if (data.linkedinUrl !== undefined) updateData.linkedinUrl = data.linkedinUrl;
+    if (data.portfolioUrl !== undefined) updateData.portfolioUrl = data.portfolioUrl;
+    if (data.githubUrl !== undefined) updateData.githubUrl = data.githubUrl;
+    if (data.skills !== undefined) updateData.skills = data.skills;
+    if (data.industries !== undefined) updateData.industries = data.industries;
+    if (data.salaryExpectationMin !== undefined) updateData.salaryExpectationMin = data.salaryExpectationMin;
+    if (data.salaryExpectationMax !== undefined) updateData.salaryExpectationMax = data.salaryExpectationMax;
+    if (data.remotePreference !== undefined) updateData.remotePreference = data.remotePreference;
 
     // Update profile
     const [updatedProfile] = await db
@@ -282,10 +286,10 @@ export class ProfileService implements IProfileService {
    * Search profiles based on criteria
    */
   async searchProfiles(criteria: ProfileSearchCriteria): Promise<ProfileSearchResult[]> {
-    // Validate search criteria
-    const validation = validateProfileData(profileSchemas.profileSearch, criteria);
-    if (!validation.success) {
-      throw new Error(`Search validation failed: ${validation.errors?.map(e => e.message).join(', ')}`);
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!criteria) {
+      criteria = {};
     }
 
     let query = db
@@ -318,41 +322,41 @@ export class ProfileService implements IProfileService {
     // Apply filters
     const conditions = [];
 
-    if (validation.data.skills && validation.data.skills.length > 0) {
+    if (criteria.skills && criteria.skills.length > 0) {
       // Search for profiles that have any of the specified skills
       conditions.push(
-        sql`${candidateProfiles.skills} @> ${JSON.stringify(validation.data.skills)}`
+        sql`${candidateProfiles.skills} @> ${JSON.stringify(criteria.skills)}`
       );
     }
 
-    if (validation.data.industries && validation.data.industries.length > 0) {
+    if (criteria.industries && criteria.industries.length > 0) {
       // Search for profiles in any of the specified industries
       conditions.push(
-        sql`${candidateProfiles.industries} && ${JSON.stringify(validation.data.industries)}`
+        sql`${candidateProfiles.industries} && ${JSON.stringify(criteria.industries)}`
       );
     }
 
-    if (validation.data.location) {
+    if (criteria.location) {
       conditions.push(
-        sql`${candidateProfiles.location} ILIKE ${'%' + validation.data.location + '%'}`
+        sql`${candidateProfiles.location} ILIKE ${'%' + criteria.location + '%'}`
       );
     }
 
-    if (validation.data.remotePreference) {
-      conditions.push(eq(candidateProfiles.remotePreference, validation.data.remotePreference));
+    if (criteria.remotePreference) {
+      conditions.push(eq(candidateProfiles.remotePreference, criteria.remotePreference));
     }
 
-    if (validation.data.salaryMin || validation.data.salaryMax) {
-      if (validation.data.salaryMin) {
-        conditions.push(sql`${candidateProfiles.salaryExpectationMax} >= ${validation.data.salaryMin}`);
+    if (criteria.salaryMin || criteria.salaryMax) {
+      if (criteria.salaryMin) {
+        conditions.push(sql`${candidateProfiles.salaryExpectationMax} >= ${criteria.salaryMin}`);
       }
-      if (validation.data.salaryMax) {
-        conditions.push(sql`${candidateProfiles.salaryExpectationMin} <= ${validation.data.salaryMax}`);
+      if (criteria.salaryMax) {
+        conditions.push(sql`${candidateProfiles.salaryExpectationMin} <= ${criteria.salaryMax}`);
       }
     }
 
-    if (validation.data.isVerified !== undefined) {
-      conditions.push(eq(candidateProfiles.isVerified, validation.data.isVerified));
+    if (criteria.isVerified !== undefined) {
+      conditions.push(eq(candidateProfiles.isVerified, criteria.isVerified));
     }
 
     if (conditions.length > 0) {
@@ -360,26 +364,26 @@ export class ProfileService implements IProfileService {
     }
 
     // Apply sorting
-    const sortField = validation.data.sortBy || 'updatedAt';
-    const sortOrder = validation.data.sortOrder || 'desc';
+    const sortField = criteria.sortBy || 'updatedAt';
+    const sortOrder = criteria.sortOrder || 'desc';
 
     switch (sortField) {
       case 'completionPercentage':
-        query = sortOrder === 'asc' 
+        query = sortOrder === 'asc'
           ? query.orderBy(asc(candidateProfiles.completionPercentage))
           : query.orderBy(desc(candidateProfiles.completionPercentage));
         break;
       case 'updatedAt':
       default:
-        query = sortOrder === 'asc' 
+        query = sortOrder === 'asc'
           ? query.orderBy(asc(candidateProfiles.updatedAt))
           : query.orderBy(desc(candidateProfiles.updatedAt));
         break;
     }
 
     // Apply pagination
-    const limit = Math.min(validation.data.limit || 20, 100); // Max 100 results
-    const offset = (validation.data.page || 1 - 1) * limit;
+    const limit = Math.min(criteria.limit || 20, 100); // Max 100 results
+    const offset = ((criteria.page || 1) - 1) * limit;
 
     const results = await query.limit(limit).offset(offset);
 

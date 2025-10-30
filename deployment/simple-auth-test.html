@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Auth Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-2xl font-bold mb-6">Simple Auth Test</h1>
+        
+        <button id="google-btn" class="w-full bg-blue-500 text-white p-3 rounded mb-4">
+            Continue with Google
+        </button>
+        
+        <div id="debug" class="text-xs text-gray-600 p-3 bg-gray-100 rounded"></div>
+    </div>
+
+    <script>
+        document.getElementById('google-btn').addEventListener('click', function() {
+            const debug = document.getElementById('debug');
+            debug.innerHTML = 'Button clicked!<br>';
+            
+            try {
+                const apiUrl = window.location.origin + '/api/auth/google';
+                debug.innerHTML += 'API URL: ' + apiUrl + '<br>';
+                
+                sessionStorage.setItem('selectedUserType', 'candidate');
+                debug.innerHTML += 'SessionStorage set<br>';
+                
+                debug.innerHTML += 'Redirecting...<br>';
+                window.location.href = apiUrl;
+            } catch (error) {
+                debug.innerHTML += 'ERROR: ' + error.message + '<br>';
+            }
+        });
+    </script>
+</body>
+</html>

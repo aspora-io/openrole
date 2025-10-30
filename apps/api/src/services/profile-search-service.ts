@@ -9,22 +9,25 @@
  */
 
 import { eq, and, or, sql, desc, asc, ilike, gt, lt, gte, lte } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  candidateProfiles,
-  workExperience,
-  education,
-  portfolioItems,
-  SelectCandidateProfile,
-  PrivacyLevel,
-  RemotePreference
-} from '@openrole/database/models/candidate-profile';
-import { 
-  profileSchemas,
-  validateProfileData,
-  ProfileSearchCriteria,
-  ProfileSearchResult
-} from '@openrole/validation';
+import { db, candidateProfiles, workExperience, education, portfolioItems } from '../lib/database';
+
+// Type definitions - TODO: Add proper types from database schema
+type SelectCandidateProfile = any;
+type ProfileSearchCriteria = any;
+type ProfileSearchResult = any;
+
+enum PrivacyLevel {
+  PUBLIC = 'PUBLIC',
+  SEMI_PRIVATE = 'SEMI_PRIVATE',
+  PRIVATE = 'PRIVATE'
+}
+
+enum RemotePreference {
+  REMOTE_ONLY = 'REMOTE_ONLY',
+  HYBRID = 'HYBRID',
+  ON_SITE = 'ON_SITE',
+  NO_PREFERENCE = 'NO_PREFERENCE'
+}
 
 export interface AdvancedSearchCriteria extends ProfileSearchCriteria {
   // Location-based search
@@ -144,10 +147,10 @@ export class ProfileSearchService implements IProfileSearchService {
       return cached.results;
     }
 
-    // Validate input
-    const validation = validateProfileData(profileSchemas.profileSearch, criteria);
-    if (!validation.success) {
-      throw new Error(`Search validation failed: ${validation.errors?.map(e => e.message).join(', ')}`);
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!criteria) {
+      criteria = {};
     }
 
     // Build base query

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth Flow - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-2xl font-bold mb-6">Auth Flow Test</h1>
+        
+        <div class="space-y-4">
+            <button onclick="testMainAuth()" class="w-full bg-blue-500 text-white p-3 rounded">
+                Test Main Auth Page
+            </button>
+            
+            <button onclick="testDirectGoogle()" class="w-full bg-red-500 text-white p-3 rounded">
+                Test Direct Google OAuth
+            </button>
+            
+            <button onclick="checkAuthStatus()" class="w-full bg-green-500 text-white p-3 rounded">
+                Check Auth Status
+            </button>
+        </div>
+        
+        <div id="output" class="mt-6 p-3 bg-gray-100 rounded text-sm">
+            Ready to test...
+        </div>
+    </div>
+
+    <script>
+        function testMainAuth() {
+            document.getElementById('output').innerHTML = 'Redirecting to main auth page...';
+            window.location.href = '/auth';
+        }
+        
+        function testDirectGoogle() {
+            document.getElementById('output').innerHTML = 'Testing direct Google OAuth...';
+            sessionStorage.setItem('selectedUserType', 'candidate');
+            window.location.href = '/api/auth/google';
+        }
+        
+        function checkAuthStatus() {
+            const output = document.getElementById('output');
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token) {
+                output.innerHTML = `
+                    <strong>Authenticated!</strong><br>
+                    User: ${user.first_name} ${user.last_name}<br>
+                    Email: ${user.email}<br>
+                    Type: ${user.userType}<br>
+                    Token: ${token.substring(0, 20)}...
+                `;
+            } else {
+                output.innerHTML = 'Not authenticated';
+            }
+        }
+    </script>
+</body>
+</html>

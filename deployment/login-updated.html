@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - OpenRole</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            600: '#14B8A6',
+                            700: '#0F766E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">O</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">OpenRole</span>
+                </a>
+                <div class="text-gray-600">
+                    Don't have an account? 
+                    <a href="/register" class="text-teal-600 hover:text-teal-700 font-medium">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="max-w-md w-full">
+            <!-- Login Box -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">Welcome Back</h1>
+                <p class="text-gray-600 text-center mb-8">Sign in to your account to continue</p>
+
+                <!-- Error/Success Messages -->
+                <div id="message-container" class="hidden mb-4">
+                    <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                        <span id="error-text"></span>
+                    </div>
+                    <div id="success-message" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+                        <span id="success-text"></span>
+                    </div>
+                </div>
+
+                <!-- Login Tabs -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button id="candidate-tab" class="flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600" onclick="switchTab('candidate')">
+                        Job Seeker
+                    </button>
+                    <button id="employer-tab" class="flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('employer')">
+                        Employer
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email"
+                            placeholder="Enter your email" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <a href="/forgot-password" class="text-sm text-teal-600 hover:text-teal-700">Forgot password?</a>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="password"
+                            placeholder="Enter your password" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            required
+                        >
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="mr-2 w-4 h-4 text-teal-600 rounded">
+                        <label for="remember" class="text-sm text-gray-700">Remember me</label>
+                    </div>
+
+                    <button type="submit" id="login-button" class="w-full py-3 bg-teal-600 text-white font-semibold rounded hover:bg-teal-700 transition-colors">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <!-- Social Login -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="loginWithGoogle()" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                        <span class="text-xl mr-2">🔍</span>
+                        Google
+                    </button>
+                    <button type="button" onclick="loginWithLinkedIn()" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors" disabled>
+                        <span class="text-xl mr-2">in</span>
+                        LinkedIn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="mt-8 text-center text-sm text-gray-600">
+                <p>
+                    By signing in, you agree to our 
+                    <a href="/terms" class="text-teal-600 hover:text-teal-700">Terms of Service</a>
+                    and 
+                    <a href="/privacy" class="text-teal-600 hover:text-teal-700">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script src="/api-integration.js"></script>
+    <script>
+        // Define API base URL
+        const API_BASE_URL = window.location.origin;
+        let selectedUserType = 'candidate';
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token && user.id) {
+                // User is already logged in, redirect to appropriate dashboard
+                if (user.userType === 'candidate') {
+                    window.location.href = '/candidate-dashboard';
+                } else if (user.userType === 'employer') {
+                    window.location.href = '/employer-dashboard';
+                } else {
+                    window.location.href = '/';
+                }
+                return;
+            }
+
+            // Check for error messages in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            if (error) {
+                showError(getErrorMessage(error));
+            }
+        });
+
+        // Tab switching
+        function switchTab(userType) {
+            selectedUserType = userType;
+            
+            const candidateTab = document.getElementById('candidate-tab');
+            const employerTab = document.getElementById('employer-tab');
+            
+            if (userType === 'candidate') {
+                candidateTab.className = 'flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600';
+                employerTab.className = 'flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700';
+            } else {
+                candidateTab.className = 'flex-1 py-2 text-center font-medium text-gray-500 hover:text-gray-700';
+                employerTab.className = 'flex-1 py-2 text-center font-medium text-teal-600 border-b-2 border-teal-600';
+            }
+        }
+
+        // Form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('login-button');
+            
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = 'Signing in...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store authentication data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showSuccess('Login successful! Redirecting...');
+                    
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.userType === 'candidate') {
+                            window.location.href = '/candidate-dashboard';
+                        } else if (data.user.userType === 'employer') {
+                            window.location.href = '/employer-dashboard';
+                        } else {
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                } else {
+                    showError(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Sign In';
+            }
+        });
+
+        // OAuth login functions
+        function loginWithGoogle() {
+            // Store selected user type for post-OAuth redirect
+            sessionStorage.setItem('selectedUserType', selectedUserType);
+            window.location.href = `${API_BASE_URL}/api/auth/google`;
+        }
+
+        function loginWithLinkedIn() {
+            showError('LinkedIn login is coming soon!');
+        }
+
+        // Message display functions
+        function showError(message) {
+            const container = document.getElementById('message-container');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            const errorText = document.getElementById('error-text');
+            
+            errorText.textContent = message;
+            container.classList.remove('hidden');
+            errorDiv.classList.remove('hidden');
+            successDiv.classList.add('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('message-container');
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            const successText = document.getElementById('success-text');
+            
+            successText.textContent = message;
+            container.classList.remove('hidden');
+            successDiv.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+        }
+
+        function getErrorMessage(error) {
+            const errorMessages = {
+                'invalid_credentials': 'Invalid email or password',
+                'user_not_found': 'Account not found',
+                'oauth_failed': 'Social login failed. Please try again.',
+                'fetch_failed': 'Unable to complete authentication',
+                'no_authorization_code': 'Authorization failed'
+            };
+            return errorMessages[error] || 'An error occurred. Please try again.';
+        }
+    </script>
+</body>
+</html>

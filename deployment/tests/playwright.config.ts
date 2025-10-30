@@ -70,6 +70,16 @@ export default defineConfig({
       name: 'Google Chrome',
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
+
+    /* Production testing */
+    {
+      name: 'production-chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://openrole.net'
+      },
+      testMatch: /.*production.*\.spec\.ts/,
+    },
   ],
 
   /* Run your local dev server before starting the tests */

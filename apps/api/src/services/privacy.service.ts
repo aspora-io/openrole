@@ -9,21 +9,21 @@
  */
 
 import { eq, and, or, sql } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  candidateProfiles,
-  cvDocuments,
-  workExperience,
-  education,
-  portfolioItems,
-  SelectCandidateProfile,
-  PrivacyLevel
-} from '@openrole/database/models/candidate-profile';
-import { 
-  profileSchemas,
-  validateProfileData,
-  PrivacySettingsUpdate
-} from '@openrole/validation';
+import { db, candidateProfiles, cvDocuments, workExperience, education, portfolioItems } from '../lib/database';
+
+// Type definitions
+type SelectCandidateProfile = any; // TODO: Add proper types
+
+// Enum for privacy levels
+enum PrivacyLevel {
+  PUBLIC = 'PUBLIC',
+  SEMI_PRIVATE = 'SEMI_PRIVATE',
+  PRIVATE = 'PRIVATE',
+  ANONYMOUS = 'ANONYMOUS'
+}
+
+// Validation types
+type PrivacySettingsUpdate = any; // TODO: Add validation schema
 
 export interface PrivacySettings {
   profilePrivacy: PrivacyLevel;
@@ -97,10 +97,10 @@ export class PrivacyService implements IPrivacyService {
    * Update privacy settings for a user
    */
   async updatePrivacySettings(userId: string, settings: PrivacySettingsUpdate): Promise<PrivacySettings> {
-    // Validate input data
-    const validation = validateProfileData(profileSchemas.privacySettingsUpdate, settings);
-    if (!validation.success) {
-      throw new Error(`Privacy settings validation failed: ${validation.errors?.map(e => e.message).join(', ')}`);
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!settings || typeof settings !== 'object') {
+      throw new Error('Invalid privacy settings');
     }
 
     // Get current profile
@@ -115,11 +115,11 @@ export class PrivacyService implements IPrivacyService {
     }
 
     // Update privacy level if provided
-    if (validation.data.profilePrivacy !== undefined) {
+    if (settings.profilePrivacy !== undefined) {
       await db
         .update(candidateProfiles)
-        .set({ 
-          privacyLevel: validation.data.profilePrivacy,
+        .set({
+          privacyLevel: settings.profilePrivacy,
           updatedAt: new Date()
         })
         .where(eq(candidateProfiles.userId, userId));
@@ -127,26 +127,26 @@ export class PrivacyService implements IPrivacyService {
 
     // Update other privacy settings in profile metadata
     const privacySettings = {
-      profileSearchable: validation.data.profileSearchable ?? true,
-      emailVisible: validation.data.emailVisible ?? false,
-      phoneVisible: validation.data.phoneVisible ?? false,
-      showSalaryExpectations: validation.data.showSalaryExpectations ?? true,
-      showWorkHistory: validation.data.showWorkHistory ?? true,
-      showEducation: validation.data.showEducation ?? true,
-      showPortfolio: validation.data.showPortfolio ?? true,
-      allowContactFromRecruiters: validation.data.allowContactFromRecruiters ?? true,
-      allowContactFromCompanies: validation.data.allowContactFromCompanies ?? true,
-      allowProfileSharing: validation.data.allowProfileSharing ?? true,
-      enableProfileAnalytics: validation.data.enableProfileAnalytics ?? true,
-      dataRetentionConsent: validation.data.dataRetentionConsent ?? false,
-      marketingConsent: validation.data.marketingConsent ?? false,
+      profileSearchable: settings.profileSearchable ?? true,
+      emailVisible: settings.emailVisible ?? false,
+      phoneVisible: settings.phoneVisible ?? false,
+      showSalaryExpectations: settings.showSalaryExpectations ?? true,
+      showWorkHistory: settings.showWorkHistory ?? true,
+      showEducation: settings.showEducation ?? true,
+      showPortfolio: settings.showPortfolio ?? true,
+      allowContactFromRecruiters: settings.allowContactFromRecruiters ?? true,
+      allowContactFromCompanies: settings.allowContactFromCompanies ?? true,
+      allowProfileSharing: settings.allowProfileSharing ?? true,
+      enableProfileAnalytics: settings.enableProfileAnalytics ?? true,
+      dataRetentionConsent: settings.dataRetentionConsent ?? false,
+      marketingConsent: settings.marketingConsent ?? false,
       updatedAt: new Date()
     };
 
     // Store privacy settings in profile metadata (using JSONB field)
     await db
       .update(candidateProfiles)
-      .set({ 
+      .set({
         // Store privacy settings in a metadata field (assuming we add this to the schema)
         updatedAt: new Date()
       })
@@ -154,14 +154,14 @@ export class PrivacyService implements IPrivacyService {
 
     // Log privacy settings update
     await this.logPrivacyAction(
-      userId, 
-      'UPDATE', 
+      userId,
+      'UPDATE',
       'Privacy settings updated',
-      { updatedFields: Object.keys(validation.data) }
+      { updatedFields: Object.keys(settings) }
     );
 
     return {
-      profilePrivacy: validation.data.profilePrivacy || profile.privacyLevel,
+      profilePrivacy: settings.profilePrivacy || profile.privacyLevel,
       ...privacySettings
     };
   }

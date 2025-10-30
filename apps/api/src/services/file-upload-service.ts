@@ -13,20 +13,17 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { promisify } from 'util';
 import { eq, and } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  cvDocuments,
-  portfolioItems,
-  InsertCVDocument,
-  InsertPortfolioItem,
-  CVStatus
-} from '@openrole/database/models/candidate-profile';
-import { 
-  cvSchemas,
-  validateCVFile,
-  validatePortfolioFile,
-  validateCVData
-} from '@openrole/validation';
+import { db, cvDocuments, portfolioItems } from '../lib/database';
+
+// Type definitions - TODO: Add proper types from database schema
+type InsertCVDocument = any;
+type InsertPortfolioItem = any;
+
+enum CVStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  ARCHIVED = 'ARCHIVED'
+}
 
 const mkdir = promisify(fs.mkdir);
 const writeFile = promisify(fs.writeFile);
@@ -145,20 +142,25 @@ export class FileUploadService implements IFileUploadService {
    * Upload CV file with validation and database storage
    */
   async uploadCV(
-    userId: string, 
-    file: Express.Multer.File, 
-    label: string, 
+    userId: string,
+    file: Express.Multer.File,
+    label: string,
     isDefault = false
   ): Promise<CVUploadResult> {
-    // Validate file
-    const fileValidation = validateCVFile({
-      name: file.originalname,
-      size: file.size,
-      type: file.mimetype
-    } as File);
+    // TODO: Add proper Zod file validation
+    // Simple validation for now
+    if (!file || !file.originalname) {
+      throw new Error('Invalid CV file');
+    }
 
-    if (!fileValidation.isValid) {
-      throw new Error(`CV file validation failed: ${fileValidation.errors.join(', ')}`);
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      throw new Error('CV file too large (max 10MB)');
+    }
+
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new Error('Invalid file type. Only PDF and Word documents are allowed.');
     }
 
     // Check storage quota
@@ -168,9 +170,8 @@ export class FileUploadService implements IFileUploadService {
     }
 
     // Validate label
-    const labelValidation = validateCVData(cvSchemas.cvLabel, label);
-    if (!labelValidation.success) {
-      throw new Error(`CV label validation failed: ${labelValidation.errors?.map(e => e.message).join(', ')}`);
+    if (!label || typeof label !== 'string' || label.length === 0) {
+      throw new Error('CV label is required');
     }
 
     // Create secure file path
@@ -384,15 +385,24 @@ export class FileUploadService implements IFileUploadService {
     portfolioId: string,
     portfolioType: string
   ): Promise<PortfolioUploadResult> {
-    // Validate file
-    const fileValidation = validatePortfolioFile({
-      name: file.originalname,
-      size: file.size,
-      type: file.mimetype
-    } as File);
+    // TODO: Add proper Zod file validation
+    // Simple validation for now
+    if (!file || !file.originalname) {
+      throw new Error('Invalid portfolio file');
+    }
 
-    if (!fileValidation.isValid) {
-      throw new Error(`Portfolio file validation failed: ${fileValidation.errors.join(', ')}`);
+    const maxSize = 20 * 1024 * 1024; // 20MB
+    if (file.size > maxSize) {
+      throw new Error('Portfolio file too large (max 20MB)');
+    }
+
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf',
+      'video/mp4', 'video/webm'
+    ];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new Error('Invalid file type for portfolio');
     }
 
     // Check storage quota

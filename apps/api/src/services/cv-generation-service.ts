@@ -13,28 +13,24 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { eq, and } from 'drizzle-orm';
-import { db } from '@openrole/database';
-import { 
-  candidateProfiles,
-  workExperience,
-  education,
-  portfolioItems,
-  cvDocuments,
-  SelectCandidateProfile,
-  SelectWorkExperience,
-  SelectEducation,
-  SelectPortfolioItem,
-  InsertCVDocument,
-  CVStatus
-} from '@openrole/database/models/candidate-profile';
-import { 
-  cvSchemas,
-  validateCVData,
-  CVGenerationRequest,
-  CVSections,
-  CVCustomizations
-} from '@openrole/validation';
+import { db, candidateProfiles, workExperience, education, portfolioItems, cvDocuments } from '../lib/database';
 import { fileUploadService } from './file-upload-service';
+
+// Type definitions - TODO: Add proper types from database schema
+type SelectCandidateProfile = any;
+type SelectWorkExperience = any;
+type SelectEducation = any;
+type SelectPortfolioItem = any;
+type InsertCVDocument = any;
+type CVGenerationRequest = any;
+type CVSections = any;
+type CVCustomizations = any;
+
+enum CVStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  ARCHIVED = 'ARCHIVED'
+}
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
@@ -653,10 +649,10 @@ export class CVGenerationService implements ICVGenerationService {
       errors.push('Invalid template ID');
     }
 
-    // Validate label
-    const labelValidation = validateCVData(cvSchemas.cvLabel, options.label);
-    if (!labelValidation.success) {
-      errors.push(...(labelValidation.errors?.map(e => e.message) || []));
+    // TODO: Add proper Zod validation
+    // Simple validation for now
+    if (!options.label || typeof options.label !== 'string' || options.label.length === 0) {
+      errors.push('CV label is required');
     }
 
     // Validate sections
@@ -664,11 +660,10 @@ export class CVGenerationService implements ICVGenerationService {
       errors.push('At least one section must be included');
     }
 
-    // Validate customizations if provided
+    // Simple customizations validation
     if (options.customizations) {
-      const customValidation = validateCVData(cvSchemas.cvCustomizations, options.customizations);
-      if (!customValidation.success) {
-        errors.push(...(customValidation.errors?.map(e => e.message) || []));
+      if (typeof options.customizations !== 'object') {
+        errors.push('Invalid customizations format');
       }
     }
 

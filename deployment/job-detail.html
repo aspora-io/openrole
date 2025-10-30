@@ -317,21 +317,159 @@
 
     <script src="/application-tracker.js"></script>
     <script>
-        // Job data (in a real app, this would come from the URL/API)
-        const jobData = {
-            id: 'job_senior_dev_001',
-            title: 'Senior Software Developer',
-            company: 'Tech Corp',
-            location: 'London',
-            salary: '£60,000 - £80,000',
-            employerId: 'emp_techcorp_001',
-            employerName: 'Tech Corp'
-        };
+        let jobData = null;
 
-        // Check authentication and application status on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuthenticationAndApplicationStatus();
+        // Load job data from URL parameter
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobId = urlParams.get('id');
+            
+            if (!jobId) {
+                showError('No job ID provided in URL');
+                return;
+            }
+
+            try {
+                await loadJobData(jobId);
+                if (jobData) {
+                    populateJobDetails();
+                    checkAuthenticationAndApplicationStatus();
+                } else {
+                    showError(`Job with ID "${jobId}" not found`);
+                }
+            } catch (error) {
+                console.error('Error loading job:', error);
+                showError('Error loading job details');
+            }
         });
+
+        async function loadJobData(jobId) {
+            try {
+                const response = await fetch('/jobs.json');
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.jobs) {
+                    const job = data.data.jobs.find(j => j.id === jobId);
+                    if (job) {
+                        jobData = {
+                            id: job.id,
+                            title: job.title,
+                            company: job.company_name,
+                            location: job.location_general,
+                            salary: formatSalary(job.salary_min, job.salary_max),
+                            employerId: `emp_${job.company_name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_001`,
+                            employerName: job.company_name,
+                            remoteType: job.remote_type,
+                            employmentType: job.employment_type,
+                            experienceLevel: job.experience_level,
+                            coreSkills: job.core_skills || [],
+                            description: job.description,
+                            createdAt: job.created_at
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+                throw error;
+            }
+        }
+
+        function formatSalary(min, max) {
+            const formatNumber = (num) => {
+                return new Intl.NumberFormat('en-GB', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(num);
+            };
+            
+            return `${formatNumber(min)} - ${formatNumber(max)}`;
+        }
+
+        function populateJobDetails() {
+            if (!jobData) return;
+
+            // Update page title
+            document.title = `${jobData.title} - ${jobData.company} - OpenRole`;
+
+            // Update header section
+            document.querySelector('h1').textContent = jobData.title;
+            document.querySelector('.text-2xl.font-bold.text-green-600').textContent = jobData.salary;
+            
+            // Update company info
+            const companyElements = document.querySelectorAll('[class*="font-medium"]:not([class*="text-sm"])');
+            companyElements.forEach(el => {
+                if (el.textContent.trim() === 'Tech Corp') {
+                    el.textContent = jobData.company;
+                }
+            });
+
+            // Update location - find span containing "London"
+            const locationElements = document.querySelectorAll('span');
+            locationElements.forEach(span => {
+                if (span.textContent.trim() === 'London') {
+                    span.textContent = jobData.location;
+                }
+            });
+
+            // Update employment type - find span containing "Permanent"
+            const typeElements = document.querySelectorAll('span');
+            typeElements.forEach(span => {
+                if (span.textContent.trim() === 'Permanent') {
+                    span.textContent = jobData.employmentType.charAt(0).toUpperCase() + jobData.employmentType.slice(1);
+                }
+            });
+
+            // Update job description
+            const descriptionContainer = document.querySelector('.prose');
+            if (descriptionContainer && jobData.description) {
+                descriptionContainer.innerHTML = `<p>${jobData.description}</p>`;
+            }
+
+            // Update company sidebar
+            const companySidebarName = document.querySelector('.text-lg.font-semibold');
+            if (companySidebarName && companySidebarName.textContent === 'Tech Corp') {
+                companySidebarName.textContent = jobData.company;
+            }
+
+            // Update skills in requirements section
+            if (jobData.coreSkills && jobData.coreSkills.length > 0) {
+                const skillsText = jobData.coreSkills.join(', ');
+                const skillSpans = document.querySelectorAll('li span');
+                skillSpans.forEach(span => {
+                    if (span.textContent.includes('Strong proficiency in JavaScript/TypeScript')) {
+                        span.textContent = `Strong proficiency in ${skillsText}`;
+                    }
+                });
+            }
+
+            // Update posted date
+            if (jobData.createdAt) {
+                const postedDate = new Date(jobData.createdAt);
+                const daysAgo = Math.floor((new Date() - postedDate) / (1000 * 60 * 60 * 24));
+                const timeSpans = document.querySelectorAll('span');
+                timeSpans.forEach(span => {
+                    if (span.textContent.includes('Posted')) {
+                        span.textContent = `🕒 Posted ${daysAgo} days ago`;
+                    }
+                });
+            }
+        }
+
+        function showError(message) {
+            document.body.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center bg-gray-50">
+                    <div class="text-center">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-4">Error Loading Job Details</h1>
+                        <p class="text-gray-600 mb-6">${message}</p>
+                        <a href="/jobs" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded font-medium">
+                            Browse All Jobs
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
 
         function checkAuthenticationAndApplicationStatus() {
             const token = localStorage.getItem('authToken');

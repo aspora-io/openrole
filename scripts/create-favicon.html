@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenRole Favicon Generator</title>
+</head>
+<body>
+    <h1>OpenRole Favicon Generator</h1>
+    <canvas id="canvas" width="32" height="32" style="border: 1px solid #ccc; image-rendering: pixelated; width: 320px; height: 320px;"></canvas>
+    <br><br>
+    <button onclick="generateFavicon()">Generate Favicon</button>
+    <button onclick="downloadFavicon()">Download as PNG</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function generateFavicon() {
+            // Clear canvas
+            ctx.clearRect(0, 0, 32, 32);
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 32, 32);
+            gradient.addColorStop(0, '#14B8A6'); // teal-600
+            gradient.addColorStop(1, '#0F766E'); // teal-700
+            
+            // Draw circle background
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(16, 16, 14, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Draw border
+            ctx.strokeStyle = '#0F766E';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Draw letter 'O'
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('O', 16, 16);
+        }
+
+        function downloadFavicon() {
+            const link = document.createElement('a');
+            link.download = 'favicon.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Generate on load
+        generateFavicon();
+    </script>
+</body>
+</html>

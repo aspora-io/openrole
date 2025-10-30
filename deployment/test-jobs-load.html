@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Jobs Loading</title>
+</head>
+<body>
+    <h1>Jobs Loading Test</h1>
+    <div id="status">Loading...</div>
+    <div id="results"></div>
+
+    <script>
+        async function testJobsLoad() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                statusDiv.textContent = 'Fetching jobs.json...';
+                const response = await fetch('/jobs.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                statusDiv.textContent = 'Success! Jobs loaded.';
+                resultsDiv.innerHTML = `
+                    <h2>Jobs Data Summary:</h2>
+                    <p><strong>Success:</strong> ${data.success}</p>
+                    <p><strong>Total Jobs:</strong> ${data.total}</p>
+                    <p><strong>Jobs Array Length:</strong> ${data.data && data.data.jobs ? data.data.jobs.length : 'N/A'}</p>
+                    ${data.data && data.data.jobs && data.data.jobs.length > 0 ? `
+                        <h3>First 3 Jobs:</h3>
+                        <ul>
+                            ${data.data.jobs.slice(0, 3).map(job => `
+                                <li><strong>${job.title}</strong> at ${job.company_name} (${job.location_general})</li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p>No jobs in array</p>'}
+                `;
+                
+            } catch (error) {
+                statusDiv.textContent = 'Error loading jobs!';
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error('Jobs loading error:', error);
+            }
+        }
+        
+        // Run test when page loads
+        document.addEventListener('DOMContentLoaded', testJobsLoad);
+    </script>
+</body>
+</html>
