@@ -71,7 +71,7 @@ export const useJobSearch = () => {
         }
       });
 
-      const response = await api.get(`/jobs?${searchParams.toString()}`);
+      const response: any = await api.get(`/jobs?${searchParams.toString()}`);
       
       if (response.success) {
         const { data, pagination: paginationData, filters } = response.data;
@@ -131,7 +131,7 @@ export const useJobSearch = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/jobs/trending?limit=${limit}&days=${days}`);
+      const response: any = await api.get(`/jobs/trending?limit=${limit}&days=${days}`);
       
       if (response.success) {
         return response.data;
@@ -155,7 +155,7 @@ export const useJobSearch = () => {
     try {
       if (!query.trim()) return [];
 
-      const response = await api.get(`/jobs/suggestions?query=${encodeURIComponent(query)}&type=${type}`);
+      const response: any = await api.get(`/jobs/suggestions?query=${encodeURIComponent(query)}&type=${type}`);
       
       if (response.success) {
         return response.data;
@@ -174,7 +174,7 @@ export const useJobSearch = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/jobs/${jobId}`);
+      const response: any = await api.get(`/jobs/${jobId}`);
       
       if (response.success) {
         return response.data;
@@ -193,7 +193,7 @@ export const useJobSearch = () => {
   // Get similar jobs
   const getSimilarJobs = useCallback(async (jobId: string, limit: number = 5) => {
     try {
-      const response = await api.get(`/jobs/${jobId}/similar?limit=${limit}`);
+      const response: any = await api.get(`/jobs/${jobId}/similar?limit=${limit}`);
       
       if (response.success) {
         return response.data;

@@ -25,7 +25,7 @@ export const useSavedJobs = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get('/jobs/saved');
+      const response: any = await api.get('/jobs/saved');
       
       if (response.success) {
         setSavedJobs(response.data.saved_jobs || []);
@@ -50,7 +50,7 @@ export const useSavedJobs = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post(`/jobs/${jobId}/save`);
+      const response: any = await api.post(`/jobs/${jobId}/save`);
       
       if (response.success) {
         // Optimistically add to saved jobs
@@ -81,7 +81,7 @@ export const useSavedJobs = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.delete(`/jobs/${jobId}/save`);
+      const response: any = await api.delete(`/jobs/${jobId}/save`);
       
       if (response.success) {
         // Optimistically remove from saved jobs

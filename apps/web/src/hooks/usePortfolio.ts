@@ -51,7 +51,7 @@ export function usePortfolio() {
     
     try {
       const url = userId ? `/api/portfolio?userId=${userId}` : '/api/portfolio';
-      const response = await apiClient.get<PortfolioItem[]>(url);
+      const response: any = await apiClient.get<PortfolioItem[]>(url);
       setPortfolioItems(response);
       return response;
     } catch (err: any) {
@@ -100,7 +100,7 @@ export function usePortfolio() {
     setError(null);
     
     try {
-      const response = await apiClient.put<PortfolioItem>(`/api/portfolio/${id}`, data);
+      const response: any = await apiClient.put<PortfolioItem>(`/api/portfolio/${id}`, data);
       setPortfolioItems(prev => prev.map(item => item.id === id ? response : item));
       return response;
     } catch (err: any) {
@@ -131,7 +131,7 @@ export function usePortfolio() {
     setError(null);
     
     try {
-      const response = await apiClient.post<PortfolioItem[]>('/api/portfolio/import/github', {
+      const response: any = await apiClient.post<PortfolioItem[]>('/api/portfolio/import/github', {
         githubUsername
       });
       
@@ -150,7 +150,7 @@ export function usePortfolio() {
     setError(null);
     
     try {
-      const response = await apiClient.post<{
+      const response: any = await apiClient.post<{
         validated: number;
         errors: Array<{ id: string; error: string }>;
       }>('/api/portfolio/validate-urls');
@@ -169,7 +169,7 @@ export function usePortfolio() {
 
   const getPortfolioStats = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         totalItems: number;
         itemsByType: Record<string, number>;
         publicItems: number;
@@ -212,7 +212,7 @@ export function usePortfolio() {
     setError(null);
     
     try {
-      const response = await apiClient.post<PortfolioItem>(`/api/portfolio/${id}/duplicate`);
+      const response: any = await apiClient.post<PortfolioItem>(`/api/portfolio/${id}/duplicate`);
       setPortfolioItems(prev => [response, ...prev]);
       return response;
     } catch (err: any) {
@@ -228,7 +228,7 @@ export function usePortfolio() {
     setError(null);
     
     try {
-      const response = await apiClient.get<PortfolioItem>(`/api/portfolio/${id}`);
+      const response: any = await apiClient.get<PortfolioItem>(`/api/portfolio/${id}`);
       return response;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch portfolio item');

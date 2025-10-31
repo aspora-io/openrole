@@ -63,7 +63,7 @@ export function useSearch() {
     setError(null);
     
     try {
-      const response = await apiClient.post<SearchResponse>('/api/search/profiles', criteria);
+      const response: any = await apiClient.post<SearchResponse>('/api/search/profiles', criteria);
       setResults(response.results);
       setPagination(response.pagination);
       setSuggestions(response.suggestions);
@@ -81,7 +81,7 @@ export function useSearch() {
     setError(null);
     
     try {
-      const response = await apiClient.post<SearchResponse>('/api/search/profiles', {
+      const response: any = await apiClient.post<SearchResponse>('/api/search/profiles', {
         ...criteria,
         page: currentPage + 1
       });
@@ -99,7 +99,7 @@ export function useSearch() {
 
   const getSkillSuggestions = useCallback(async (query: string) => {
     try {
-      const response = await apiClient.get<string[]>(`/api/search/skills/suggestions?q=${encodeURIComponent(query)}`);
+      const response: any = await apiClient.get<string[]>(`/api/search/skills/suggestions?q=${encodeURIComponent(query)}`);
       return response;
     } catch (err: any) {
       console.error('Failed to fetch skill suggestions:', err);
@@ -109,7 +109,7 @@ export function useSearch() {
 
   const getLocationSuggestions = useCallback(async (query: string) => {
     try {
-      const response = await apiClient.get<string[]>(`/api/search/locations/suggestions?q=${encodeURIComponent(query)}`);
+      const response: any = await apiClient.get<string[]>(`/api/search/locations/suggestions?q=${encodeURIComponent(query)}`);
       return response;
     } catch (err: any) {
       console.error('Failed to fetch location suggestions:', err);
@@ -119,7 +119,7 @@ export function useSearch() {
 
   const getIndustrySuggestions = useCallback(async (query: string) => {
     try {
-      const response = await apiClient.get<string[]>(`/api/search/industries/suggestions?q=${encodeURIComponent(query)}`);
+      const response: any = await apiClient.get<string[]>(`/api/search/industries/suggestions?q=${encodeURIComponent(query)}`);
       return response;
     } catch (err: any) {
       console.error('Failed to fetch industry suggestions:', err);

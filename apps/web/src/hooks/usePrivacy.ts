@@ -41,7 +41,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.get<PrivacySettings>('/api/privacy/settings');
+      const response: any = await apiClient.get<PrivacySettings>('/api/privacy/settings');
       setPrivacySettings(response);
       return response;
     } catch (err: any) {
@@ -57,7 +57,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.put<PrivacySettings>('/api/privacy/settings', settings);
+      const response: any = await apiClient.put<PrivacySettings>('/api/privacy/settings', settings);
       setPrivacySettings(response);
       return response;
     } catch (err: any) {
@@ -73,7 +73,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.post<DataExportResult>('/api/privacy/export', { format });
+      const response: any = await apiClient.post<DataExportResult>('/api/privacy/export', { format });
       return response;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Data export failed');
@@ -92,7 +92,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.post<DataDeletionResult>('/api/privacy/delete', {
+      const response: any = await apiClient.post<DataDeletionResult>('/api/privacy/delete', {
         confirmation: confirmationText
       });
       return response;
@@ -113,7 +113,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.post('/api/privacy/anonymize', {
+      const response: any = await apiClient.post('/api/privacy/anonymize', {
         confirmation: confirmationText
       });
       return response;
@@ -127,7 +127,7 @@ export function usePrivacy() {
 
   const getDataProcessingInfo = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         dataCollected: Array<{
           category: string;
           description: string;
@@ -156,7 +156,7 @@ export function usePrivacy() {
 
   const downloadDataExport = useCallback(async (exportId: string) => {
     try {
-      const response = await apiClient.get(`/api/privacy/export/${exportId}/download`, {
+      const response: any = await apiClient.get(`/api/privacy/export/${exportId}/download`, {
         responseType: 'blob'
       });
       
@@ -178,7 +178,7 @@ export function usePrivacy() {
 
   const getConsentHistory = useCallback(async () => {
     try {
-      const response = await apiClient.get<Array<{
+      const response: any = await apiClient.get<Array<{
         consentType: string;
         granted: boolean;
         timestamp: string;
@@ -198,7 +198,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.post('/api/privacy/consent', {
+      const response: any = await apiClient.post('/api/privacy/consent', {
         consentType,
         granted
       });
@@ -213,7 +213,7 @@ export function usePrivacy() {
 
   const checkDataPortability = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         canExport: boolean;
         lastExport?: string;
         cooldownPeriod: number;
@@ -232,7 +232,7 @@ export function usePrivacy() {
     setError(null);
     
     try {
-      const response = await apiClient.post('/api/privacy/breach-report', {
+      const response: any = await apiClient.post('/api/privacy/breach-report', {
         description,
         affectedData
       });
@@ -247,7 +247,7 @@ export function usePrivacy() {
 
   const getPrivacyDashboard = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         profileVisibility: string;
         dataSharing: {
           recruiters: boolean;

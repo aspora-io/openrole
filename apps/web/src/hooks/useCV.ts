@@ -62,7 +62,7 @@ export function useCV() {
         });
       }, 500);
 
-      const response = await apiClient.post<GeneratedCV>('/api/cv/generate', options);
+      const response: any = await apiClient.post<GeneratedCV>('/api/cv/generate', options);
       
       clearInterval(progressInterval);
       setGenerationProgress(100);
@@ -87,7 +87,7 @@ export function useCV() {
     setError(null);
     
     try {
-      const response = await apiClient.get<GeneratedCV[]>('/api/cv/generated');
+      const response: any = await apiClient.get<GeneratedCV[]>('/api/cv/generated');
       setGeneratedCVs(response);
       return response;
     } catch (err: any) {
@@ -103,7 +103,7 @@ export function useCV() {
     setError(null);
     
     try {
-      const response = await apiClient.get<CVTemplate[]>('/api/cv/templates');
+      const response: any = await apiClient.get<CVTemplate[]>('/api/cv/templates');
       setTemplates(response);
       return response;
     } catch (err: any) {
@@ -134,7 +134,7 @@ export function useCV() {
     setError(null);
     
     try {
-      const response = await apiClient.patch<GeneratedCV>(`/api/cv/${cvId}/default`);
+      const response: any = await apiClient.patch<GeneratedCV>(`/api/cv/${cvId}/default`);
       setGeneratedCVs(prev => prev.map(cv => ({
         ...cv,
         isDefault: cv.id === cvId
@@ -150,7 +150,7 @@ export function useCV() {
 
   const downloadCV = useCallback(async (cvId: string) => {
     try {
-      const response = await apiClient.get(`/api/cv/${cvId}/download`, {
+      const response: any = await apiClient.get(`/api/cv/${cvId}/download`, {
         responseType: 'blob'
       });
       
@@ -176,7 +176,7 @@ export function useCV() {
 
   const previewCV = useCallback(async (cvId: string) => {
     try {
-      const response = await apiClient.get<{ previewUrl: string }>(`/api/cv/${cvId}/preview`);
+      const response: any = await apiClient.get<{ previewUrl: string }>(`/api/cv/${cvId}/preview`);
       return response.previewUrl;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Preview failed');
@@ -197,7 +197,7 @@ export function useCV() {
         });
       }, 500);
 
-      const response = await apiClient.post<GeneratedCV>(`/api/cv/${cvId}/regenerate`, newOptions);
+      const response: any = await apiClient.post<GeneratedCV>(`/api/cv/${cvId}/regenerate`, newOptions);
       
       clearInterval(progressInterval);
       setGenerationProgress(100);

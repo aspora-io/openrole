@@ -43,7 +43,7 @@ export function useEducation() {
     
     try {
       const url = userId ? `/api/education?userId=${userId}` : '/api/education';
-      const response = await apiClient.get<Education[]>(url);
+      const response: any = await apiClient.get<Education[]>(url);
       
       // Sort by start date (most recent first)
       const sortedEducations = response.sort((a, b) => 
@@ -65,7 +65,7 @@ export function useEducation() {
     setError(null);
     
     try {
-      const response = await apiClient.post<Education>('/api/education', data);
+      const response: any = await apiClient.post<Education>('/api/education', data);
       
       // Add to educations and re-sort
       setEducations(prev => {
@@ -89,7 +89,7 @@ export function useEducation() {
     setError(null);
     
     try {
-      const response = await apiClient.put<Education>(`/api/education/${id}`, data);
+      const response: any = await apiClient.put<Education>(`/api/education/${id}`, data);
       
       setEducations(prev => {
         const updated = prev.map(edu => edu.id === id ? response : edu);
@@ -127,7 +127,7 @@ export function useEducation() {
     setError(null);
     
     try {
-      const response = await apiClient.get<Education>(`/api/education/${id}`);
+      const response: any = await apiClient.get<Education>(`/api/education/${id}`);
       return response;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch education entry');
@@ -139,7 +139,7 @@ export function useEducation() {
 
   const getEducationStats = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         totalEducations: number;
         highestDegree: string;
         fieldsOfStudy: Array<{ field: string; count: number }>;
@@ -167,7 +167,7 @@ export function useEducation() {
     setError(null);
     
     try {
-      const response = await apiClient.post<Education>(`/api/education/${id}/duplicate`);
+      const response: any = await apiClient.post<Education>(`/api/education/${id}/duplicate`);
       
       setEducations(prev => {
         const updated = [response, ...prev];
@@ -190,7 +190,7 @@ export function useEducation() {
     setError(null);
     
     try {
-      const response = await apiClient.post<Education[]>('/api/education/import/linkedin', {
+      const response: any = await apiClient.post<Education[]>('/api/education/import/linkedin', {
         data: linkedinData
       });
       

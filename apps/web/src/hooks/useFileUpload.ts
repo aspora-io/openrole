@@ -43,7 +43,7 @@ export function useFileUpload() {
     }));
 
     try {
-      const response = await apiClient.uploadFile<UploadedFile>(
+      const response: any = await apiClient.uploadFile<UploadedFile>(
         '/api/files/cv',
         formData,
         (progress) => {
@@ -91,7 +91,7 @@ export function useFileUpload() {
     }));
 
     try {
-      const response = await apiClient.uploadFile<UploadedFile>(
+      const response: any = await apiClient.uploadFile<UploadedFile>(
         '/api/files/portfolio',
         formData,
         (progress) => {
@@ -134,7 +134,7 @@ export function useFileUpload() {
     }));
 
     try {
-      const response = await apiClient.uploadFile<UploadedFile>(
+      const response: any = await apiClient.uploadFile<UploadedFile>(
         '/api/files/profile-photo',
         formData,
         (progress) => {
@@ -172,7 +172,7 @@ export function useFileUpload() {
     
     try {
       const url = fileType ? `/api/files?type=${fileType}` : '/api/files';
-      const response = await apiClient.get<UploadedFile[]>(url);
+      const response: any = await apiClient.get<UploadedFile[]>(url);
       setFiles(response);
       return response;
     } catch (err: any) {
@@ -203,7 +203,7 @@ export function useFileUpload() {
     setError(null);
     
     try {
-      const response = await apiClient.patch<UploadedFile>(`/api/files/${fileId}/default`);
+      const response: any = await apiClient.patch<UploadedFile>(`/api/files/${fileId}/default`);
       setFiles(prev => prev.map(file => ({
         ...file,
         isDefault: file.id === fileId
@@ -231,7 +231,7 @@ export function useFileUpload() {
 
   const getUploadQuota = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         used: number;
         limit: number;
         remaining: number;

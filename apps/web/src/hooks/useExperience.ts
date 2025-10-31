@@ -41,7 +41,7 @@ export function useExperience() {
     
     try {
       const url = userId ? `/api/experience?userId=${userId}` : '/api/experience';
-      const response = await apiClient.get<WorkExperience[]>(url);
+      const response: any = await apiClient.get<WorkExperience[]>(url);
       
       // Sort by start date (most recent first)
       const sortedExperiences = response.sort((a, b) => 
@@ -63,7 +63,7 @@ export function useExperience() {
     setError(null);
     
     try {
-      const response = await apiClient.post<WorkExperience>('/api/experience', data);
+      const response: any = await apiClient.post<WorkExperience>('/api/experience', data);
       
       // Add to experiences and re-sort
       setExperiences(prev => {
@@ -87,7 +87,7 @@ export function useExperience() {
     setError(null);
     
     try {
-      const response = await apiClient.put<WorkExperience>(`/api/experience/${id}`, data);
+      const response: any = await apiClient.put<WorkExperience>(`/api/experience/${id}`, data);
       
       setExperiences(prev => {
         const updated = prev.map(exp => exp.id === id ? response : exp);
@@ -125,7 +125,7 @@ export function useExperience() {
     setError(null);
     
     try {
-      const response = await apiClient.get<WorkExperience>(`/api/experience/${id}`);
+      const response: any = await apiClient.get<WorkExperience>(`/api/experience/${id}`);
       return response;
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch work experience');
@@ -137,7 +137,7 @@ export function useExperience() {
 
   const getExperienceStats = useCallback(async () => {
     try {
-      const response = await apiClient.get<{
+      const response: any = await apiClient.get<{
         totalExperiences: number;
         totalYearsExperience: number;
         currentPositions: number;
@@ -162,7 +162,7 @@ export function useExperience() {
     setError(null);
     
     try {
-      const response = await apiClient.post<WorkExperience>(`/api/experience/${id}/duplicate`);
+      const response: any = await apiClient.post<WorkExperience>(`/api/experience/${id}/duplicate`);
       
       setExperiences(prev => {
         const updated = [response, ...prev];
@@ -185,7 +185,7 @@ export function useExperience() {
     setError(null);
     
     try {
-      const response = await apiClient.post<WorkExperience[]>('/api/experience/import/linkedin', {
+      const response: any = await apiClient.post<WorkExperience[]>('/api/experience/import/linkedin', {
         data: linkedinData
       });
       
