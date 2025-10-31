@@ -3,8 +3,8 @@ version: '3.8'
 services:
   openrole-web:
     build:
-      context: .
-      dockerfile: ./apps/web/Dockerfile
+      context: ./apps/web
+      dockerfile: Dockerfile.simple
     container_name: openrole-web
     restart: unless-stopped
     networks:
@@ -23,8 +23,8 @@ services:
 
   openrole-api:
     build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
+      context: ./apps/api
+      dockerfile: Dockerfile.simple
     container_name: openrole-api
     restart: unless-stopped
     networks:
@@ -39,6 +39,35 @@ services:
       - "traefik.docker.network=traefik"
     environment:
       - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@openrole-db:5432/openrole
+      - REDIS_URL=redis://openrole-redis:6379
+      - JWT_SECRET=your-secret-key-change-in-production
+    depends_on:
+      - openrole-db
+      - openrole-redis
+
+  openrole-db:
+    image: postgres:16-alpine
+    container_name: openrole-db
+    restart: unless-stopped
+    networks:
+      - openrole-internal
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=openrole
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  openrole-redis:
+    image: redis:7-alpine
+    container_name: openrole-redis
+    restart: unless-stopped
+    networks:
+      - openrole-internal
+
+volumes:
+  postgres_data:
 
 networks:
   traefik:
