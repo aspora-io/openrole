@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, MapPin, Briefcase, Clock, Building2, TrendingUp, Users, CheckCircle } from 'lucide-react';
+import { FEATURES } from '../config/features';
 
 export default function HomePage() {
   const router = useRouter();
@@ -147,10 +148,14 @@ export default function HomePage() {
             <Link href="/jobs" className="text-teal-600 hover:underline">
               View all jobs
             </Link>
-            <span className="mx-2 text-gray-400">•</span>
-            <Link href="/cv-search" className="text-teal-600 hover:underline">
-              Post your CV
-            </Link>
+            {FEATURES.CV_UPLOAD && (
+              <>
+                <span className="mx-2 text-gray-400">•</span>
+                <Link href="/cv-search" className="text-teal-600 hover:underline">
+                  Post your CV
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -283,12 +288,14 @@ export default function HomePage() {
             >
               Post a job
             </Link>
-            <Link
-              href="/employer/cv-search"
-              className="px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded transition-colors"
-            >
-              Search CVs
-            </Link>
+            {FEATURES.CV_SEARCH && (
+              <Link
+                href="/employer/cv-search"
+                className="px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded transition-colors"
+              >
+                Search CVs
+              </Link>
+            )}
           </div>
         </div>
       </section>
