@@ -57,12 +57,14 @@ export const Header: React.FC = () => {
                   Upload CV
                 </Link>
               )}
-              <Link
-                href="/employers"
-                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
-              >
-                Employers
-              </Link>
+              {FEATURES.EMPLOYERS && (
+                <Link
+                  href="/employers"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+                >
+                  Employers
+                </Link>
+              )}
               <Link
                 href="/career-advice"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
@@ -253,13 +255,15 @@ export const Header: React.FC = () => {
                   Upload CV
                 </Link>
               )}
-              <Link
-                href="/employers"
-                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Employers
-              </Link>
+              {FEATURES.EMPLOYERS && (
+                <Link
+                  href="/employers"
+                  className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Employers
+                </Link>
+              )}
               <Link
                 href="/career-advice"
                 className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"

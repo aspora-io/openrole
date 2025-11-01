@@ -22,6 +22,7 @@ export const FEATURES = {
   JOB_APPLICATIONS: true,
 
   // Employer Features
+  EMPLOYERS: false,
   EMPLOYER_DASHBOARD: true,
   POST_JOBS: true,
   CV_SEARCH: false,

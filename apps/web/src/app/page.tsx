@@ -279,28 +279,30 @@ export default function HomePage() {
       </section>
 
       {/* Employer CTA */}
-      <section className="py-12 bg-gray-900 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-4">Employers: Find your next hire</h2>
-          <p className="mb-6 text-gray-300">Post jobs and access our CV database</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              href="/employer/post-job"
-              className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors"
-            >
-              Post a job
-            </Link>
-            {FEATURES.CV_SEARCH && (
+      {FEATURES.EMPLOYERS && (
+        <section className="py-12 bg-gray-900 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-2xl font-bold mb-4">Employers: Find your next hire</h2>
+            <p className="mb-6 text-gray-300">Post jobs and access our CV database</p>
+            <div className="flex flex-wrap gap-4 justify-center">
               <Link
-                href="/employer/cv-search"
-                className="px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded transition-colors"
+                href="/employer/post-job"
+                className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded transition-colors"
               >
-                Search CVs
+                Post a job
               </Link>
-            )}
+              {FEATURES.CV_SEARCH && (
+                <Link
+                  href="/employer/cv-search"
+                  className="px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded transition-colors"
+                >
+                  Search CVs
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
