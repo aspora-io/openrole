@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  Menu, 
-  X, 
+import {
+  Menu,
+  X,
   Search,
   FileText,
   Building2,
@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { FEATURES } from '../../config/features';
 
 export const Header: React.FC = () => {
   const router = useRouter();
@@ -48,12 +49,14 @@ export const Header: React.FC = () => {
               >
                 Find Jobs
               </Link>
-              <Link
-                href="/cv-upload"
-                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
-              >
-                Upload CV
-              </Link>
+              {FEATURES.CV_UPLOAD && (
+                <Link
+                  href="/cv-upload"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+                >
+                  Upload CV
+                </Link>
+              )}
               <Link
                 href="/employers"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
@@ -125,20 +128,24 @@ export const Header: React.FC = () => {
                               >
                                 Saved Jobs
                               </Link>
-                              <Link
-                                href="/job-alerts"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                onClick={() => setIsUserMenuOpen(false)}
-                              >
-                                Job Alerts
-                              </Link>
-                              <Link
-                                href="/cv-library"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                onClick={() => setIsUserMenuOpen(false)}
-                              >
-                                My CVs
-                              </Link>
+                              {FEATURES.JOB_ALERTS && (
+                                <Link
+                                  href="/job-alerts"
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                  onClick={() => setIsUserMenuOpen(false)}
+                                >
+                                  Job Alerts
+                                </Link>
+                              )}
+                              {FEATURES.CV_LIBRARY && (
+                                <Link
+                                  href="/cv-library"
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                  onClick={() => setIsUserMenuOpen(false)}
+                                >
+                                  My CVs
+                                </Link>
+                              )}
                             </>
                           )}
 
@@ -165,13 +172,15 @@ export const Header: React.FC = () => {
                               >
                                 Manage Jobs
                               </Link>
-                              <Link
-                                href="/employer/candidates"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                                onClick={() => setIsUserMenuOpen(false)}
-                              >
-                                Browse CVs
-                              </Link>
+                              {FEATURES.CV_SEARCH && (
+                                <Link
+                                  href="/employer/candidates"
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                  onClick={() => setIsUserMenuOpen(false)}
+                                >
+                                  Browse CVs
+                                </Link>
+                              )}
                             </>
                           )}
 
@@ -235,13 +244,15 @@ export const Header: React.FC = () => {
               >
                 Find Jobs
               </Link>
-              <Link
-                href="/cv-upload"
-                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Upload CV
-              </Link>
+              {FEATURES.CV_UPLOAD && (
+                <Link
+                  href="/cv-upload"
+                  className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Upload CV
+                </Link>
+              )}
               <Link
                 href="/employers"
                 className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
