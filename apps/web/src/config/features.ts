@@ -31,6 +31,7 @@ export const FEATURES = {
   // Advanced Features
   PRIVACY_SETTINGS: false,
   FILE_UPLOAD: false,
+  CAREER_ADVICE: false,
 } as const;
 
 /**

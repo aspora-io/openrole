@@ -65,12 +65,14 @@ export const Header: React.FC = () => {
                   Employers
                 </Link>
               )}
-              <Link
-                href="/career-advice"
-                className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
-              >
-                Career Advice
-              </Link>
+              {FEATURES.CAREER_ADVICE && (
+                <Link
+                  href="/career-advice"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors"
+                >
+                  Career Advice
+                </Link>
+              )}
             </nav>
           </div>
 
@@ -264,13 +266,15 @@ export const Header: React.FC = () => {
                   Employers
                 </Link>
               )}
-              <Link
-                href="/career-advice"
-                className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Career Advice
-              </Link>
+              {FEATURES.CAREER_ADVICE && (
+                <Link
+                  href="/career-advice"
+                  className="block px-3 py-2 text-gray-700 hover:text-teal-600 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Career Advice
+                </Link>
+              )}
 
               {!isAuthenticated && (
                 <div className="pt-4 border-t border-gray-100 space-y-2">
