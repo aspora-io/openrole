@@ -229,26 +229,28 @@ export default function HomePage() {
       </section>
 
       {/* Featured Employers */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-            Featured Employers
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {featuredEmployers.map((employer) => (
-              <Link
-                key={employer.name}
-                href={`/companies/${employer.name.toLowerCase().replace(' ', '-')}`}
-                className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow text-center"
-              >
-                <div className="text-4xl mb-2">{employer.logo}</div>
-                <h3 className="font-medium text-gray-800">{employer.name}</h3>
-                <p className="text-sm text-gray-600">{employer.jobs} jobs</p>
-              </Link>
-            ))}
+      {FEATURES.FEATURED_EMPLOYERS && (
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
+              Featured Employers
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {featuredEmployers.map((employer) => (
+                <Link
+                  key={employer.name}
+                  href={`/companies/${employer.name.toLowerCase().replace(' ', '-')}`}
+                  className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow text-center"
+                >
+                  <div className="text-4xl mb-2">{employer.logo}</div>
+                  <h3 className="font-medium text-gray-800">{employer.name}</h3>
+                  <p className="text-sm text-gray-600">{employer.jobs} jobs</p>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Why Choose OpenRole */}
       <section className="py-12">

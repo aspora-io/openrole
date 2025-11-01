@@ -25,6 +25,7 @@ export const FEATURES = {
   EMPLOYER_DASHBOARD: true,
   POST_JOBS: true,
   CV_SEARCH: false,
+  FEATURED_EMPLOYERS: false,
 
   // Advanced Features
   PRIVACY_SETTINGS: false,
